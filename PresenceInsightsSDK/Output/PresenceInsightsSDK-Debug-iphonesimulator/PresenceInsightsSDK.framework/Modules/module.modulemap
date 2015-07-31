@@ -1,0 +1,10 @@
+framework module PresenceInsightsSDK {
+  umbrella header "PresenceInsightsSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module PresenceInsightsSDK.Swift {
+    header "PresenceInsightsSDK-Swift.h"
+}
