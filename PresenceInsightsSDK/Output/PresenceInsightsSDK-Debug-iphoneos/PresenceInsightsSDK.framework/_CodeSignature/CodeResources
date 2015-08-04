@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/PresenceInsightsSDK-Swift.h</key>
 		<data>
-		gL38NZMQQs9jz7ycF1FQ6TlEyHQ=
+		II1iXmi/TgEB6qDrQ6efRvoGRHk=
 		</data>
 		<key>Headers/PresenceInsightsSDK.h</key>
 		<data>
@@ -14,7 +14,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		Ru+1q/yNPZWtthpc4m2Tn0owAqA=
+		GBz8pYDUhlWA2RP+zpYKT2v44Sc=
 		</data>
 		<key>Modules/PresenceInsightsSDK.swiftmodule/arm.swiftdoc</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>Modules/PresenceInsightsSDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		Oj5O0axZ4TmuY1Wq3iXQ7rNX91g=
+		Q1q4i8IQSbeP/HKrh/Rx03dnVyA=
 		</data>
 		<key>Modules/PresenceInsightsSDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -30,7 +30,7 @@
 		</data>
 		<key>Modules/PresenceInsightsSDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		4GQ+d8e421jye8PbU3e45Ry8+fA=
+		iJvSXV7RInnOcEcShqy2JhT2lq4=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -41,7 +41,7 @@
 	<dict>
 		<key>Headers/PresenceInsightsSDK-Swift.h</key>
 		<data>
-		gL38NZMQQs9jz7ycF1FQ6TlEyHQ=
+		II1iXmi/TgEB6qDrQ6efRvoGRHk=
 		</data>
 		<key>Headers/PresenceInsightsSDK.h</key>
 		<data>
@@ -53,7 +53,7 @@
 		</data>
 		<key>Modules/PresenceInsightsSDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		Oj5O0axZ4TmuY1Wq3iXQ7rNX91g=
+		Q1q4i8IQSbeP/HKrh/Rx03dnVyA=
 		</data>
 		<key>Modules/PresenceInsightsSDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -61,7 +61,7 @@
 		</data>
 		<key>Modules/PresenceInsightsSDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		4GQ+d8e421jye8PbU3e45Ry8+fA=
+		iJvSXV7RInnOcEcShqy2JhT2lq4=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>

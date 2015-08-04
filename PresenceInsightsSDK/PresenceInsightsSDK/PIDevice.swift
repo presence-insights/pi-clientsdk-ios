@@ -8,11 +8,6 @@
 
 import UIKit
 
-public enum PIDeviceType: String {
-    case Internal = "Internal"
-    case External = "External"
-}
-
 public class PIDevice: NSObject {
     
     // Defined Values
@@ -22,6 +17,7 @@ public class PIDevice: NSObject {
     let JSON_REGISTERED_KEY = "registered"
     let JSON_CODE_KEY = "@code"
     let JSON_DATA_KEY = "data"
+    let JSON_UNENCRYPTED_DATA_KEY = "unencryptedData"
     
     // Values every device has.
     private var _descriptor: String!
@@ -30,37 +26,41 @@ public class PIDevice: NSObject {
     // Optional values only registered devices have.
     public var code: String?
     public var name: String?
-    public var type: PIDeviceType?
+    public var type: String?
     public var data: NSMutableDictionary?
+    public var unencryptedData: NSMutableDictionary?
     
-    public init(name: String?, type: PIDeviceType?, data: NSMutableDictionary?, registered: Bool) {
+    public init(name: String?, type: String?, data: NSMutableDictionary?, unencryptedData: NSMutableDictionary?, registered: Bool) {
         
         self.name = name
         self.type = type
         self.data = data
+        self.unencryptedData = unencryptedData
         
         _registered = registered
         _descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
         
-        
     }
     
     public convenience init(name: String) {
-        self.init(name: name, type: PIDeviceType.External, data: NSMutableDictionary(), registered: true)
+        self.init(name: name, type: String(), data: NSMutableDictionary(), unencryptedData: NSMutableDictionary(), registered: true)
     }
     
     public convenience init(dictionary: NSDictionary) {
         
-        self.init(name: nil, type: nil, data: nil, registered: false)
+        self.init(name: nil, type: nil, data: nil, unencryptedData: nil, registered: false)
         
         if let name = dictionary[JSON_NAME_KEY] as? String {
             self.name = name
         }
         if let type =  dictionary[JSON_TYPE_KEY] as? String {
-            self.type = PIDeviceType(rawValue: type)
+            self.type = type;
         }
         if let dictionary = dictionary[JSON_DATA_KEY] as? NSDictionary {
             self.data = NSMutableDictionary(dictionary: dictionary)
+        }
+        if let dictionary = dictionary[JSON_UNENCRYPTED_DATA_KEY] as? NSDictionary {
+            self.unencryptedData = NSMutableDictionary(dictionary: dictionary)
         }
         
         self._registered = dictionary[JSON_REGISTERED_KEY] as! Bool
@@ -80,8 +80,21 @@ public class PIDevice: NSObject {
         }
     }
     
+    public func setUnencryptedDataObject(object: String, key: String) {
+        if let deviceData = unencryptedData {
+            deviceData.setObject(object, forKey: key)
+        } else {
+            unencryptedData = NSMutableDictionary()
+            unencryptedData!.setObject(object, forKey: key)
+        }
+    }
+    
     public func setRegistered(registered: Bool) {
         _registered = registered
+    }
+    
+    public func setRegistrationType(type: String) {
+        self.type = type;
     }
     
     public func setDeviceCode(code: String) {
@@ -106,11 +119,14 @@ public class PIDevice: NSObject {
         if let n = name {
             dictionary.setObject(n, forKey: JSON_NAME_KEY)
         }
-        if let t = type?.rawValue {
+        if let t = type {
             dictionary.setObject(t, forKey: JSON_TYPE_KEY)
         }
         if let d = data {
             dictionary.setObject(d, forKey: JSON_DATA_KEY)
+        }
+        if let uD = unencryptedData {
+            dictionary.setObject(uD, forKey: JSON_UNENCRYPTED_DATA_KEY)
         }
         if let c = code {
             dictionary.setObject(c, forKey: JSON_CODE_KEY)

@@ -127,8 +127,9 @@ public class PIAdapter: NSObject {
         
         if device.isRegistered() {
             newDevice.setObject(device.name!, forKey: device.JSON_NAME_KEY)
-            newDevice.setObject(device.type!.rawValue, forKey: device.JSON_TYPE_KEY)
+            newDevice.setObject(device.type!, forKey: device.JSON_TYPE_KEY)
             newDevice.setObject(device.data!, forKey: device.JSON_DATA_KEY)
+            newDevice.setObject(device.unencryptedData!, forKey: device.JSON_UNENCRYPTED_DATA_KEY)
         }
         
         let deviceJSON = self.dictionaryToJSON(newDevice)
@@ -288,6 +289,28 @@ public class PIAdapter: NSObject {
     
     /**
         END BEACON RELATED FUNCTIONS
+    */
+    
+    /**
+    BEGIN ORG RELATED FUNCTIONS
+    */
+    
+    public func getOrg(callback:(NSDictionary)->()) {
+        
+        // Swift cannot handle this complex of an expression without breaking it down.
+        var endpoint =  _configURL
+        
+        let request = buildRequest(endpoint, method: GET, body: nil)
+        performRequest(request, callback: {response in
+            
+            self.printDebug("Get Org Response: \(response)")
+            
+            callback(response as NSDictionary)
+        })
+    }
+    
+    /**
+    END ORG RELATED FUNCTIONS
     */
     
     /**
