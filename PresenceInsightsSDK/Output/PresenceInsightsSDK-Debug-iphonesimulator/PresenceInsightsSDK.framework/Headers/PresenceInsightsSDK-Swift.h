@@ -91,41 +91,192 @@ typedef struct _NSZone NSZone;
 
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
 #pragma clang diagnostic ignored "-Wduplicate-method-arg"
-@class PIDevice;
-@class PIBeacon;
-@class NSArray;
-@class NSDictionary;
-@class PIZone;
-@class UIImage;
 
 SWIFT_CLASS("_TtC19PresenceInsightsSDK9PIAdapter")
 @interface PIAdapter : NSObject
 
-/// INITIALIZERS
+/// Default object initializer.
+///
+/// \param tenant PI Tenant Code
+///
+/// \param org PI Org Code
+///
+/// \param baseURL The base URL of your PI service.
+///
+/// \param username PI Username
+///
+/// \param password PI Password
+///
+/// \returns An initialized PIAdapter.
 - (SWIFT_NULLABILITY(nonnull) instancetype)initWithTenant:(NSString * __nonnull)tenant org:(NSString * __nonnull)org baseURL:(NSString * __nonnull)baseURL username:(NSString * __nonnull)username password:(NSString * __nonnull)password OBJC_DESIGNATED_INITIALIZER;
-- (SWIFT_NULLABILITY(nonnull) instancetype)initWithTenant:(NSString * __nonnull)tenant org:(NSString * __nonnull)org username:(NSString * __nonnull)username password:(NSString * __nonnull)password;
-- (void)enableLogging;
 
-/// BEGIN DEVICE RELATED FUNCTIONS
+/// Convenience initializer which sets a default baseURL.
+///
+/// \param tenant PI Tenant Code
+///
+/// \param org PI Org Code
+///
+/// \param username PI Username
+///
+/// \param password PI Password
+///
+/// \returns An initialized PIAdapter.
+- (SWIFT_NULLABILITY(nonnull) instancetype)initWithTenant:(NSString * __nonnull)tenant org:(NSString * __nonnull)org username:(NSString * __nonnull)username password:(NSString * __nonnull)password;
+
+/// Public function to enable logging for debug purposes.
+- (void)enableLogging;
+@end
+
+@class UIImage;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to retrieve a floor's map image.
+///
+/// \param site PI Site code
+///
+/// \param floor PI Floor code
+///
+/// \param callback Returns a UIImage of the map upon task completion.
+- (void)getMap:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(UIImage * __nonnull))callback;
+@end
+
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to get all floors in a site.
+///
+/// \param site PI Site code
+///
+/// \param callback Returns a dictionary with floor code as the keys and floor name as the values.
+- (void)getAllFloors:(NSString * __nonnull)site callback:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
+@end
+
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to get all sites within the org.
+///
+/// \param callback Returns a dictionary with site code as the keys and site name as the values.
+- (void)getAllSites:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
+@end
+
+@class PIZone;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to retrieve all zones in a floor.
+///
+/// \param site PI Site code
+///
+/// \param floor PI Floor code
+///
+/// \param callback Returns an array of PIZones upon task completion.
+- (void)getAllZones:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(NSArray * __nonnull))callback;
+@end
+
+@class NSDictionary;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to retrive the org from PI.
+///
+/// \param callback Returns the raw dictionary from the Rest API upon task completion.
+- (void)getOrg:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
+@end
+
+@class PIBeacon;
+@class NSArray;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to get all beacon proximity UUIDs.
+///
+/// \param callback Returns a String array of all beacon proximity UUIDs upon task completion.
+- (void)getAllBeaconRegions:(void (^ __nonnull)(NSArray * __nonnull))callback;
+
+/// Public function to get all beacons on a specific floor.
+///
+/// \param site PI Site code
+///
+/// \param floor PI Floor code
+///
+/// \param callback Returns an array of PIBeacons upon task completion.
+- (void)getAllBeacons:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(NSArray * __nonnull))callback;
+
+/// Public function to send a payload of all beacons ranged by the device back to PI.
+///
+/// \param beaconData Array containing all ranged beacons and the time they were detected.
+- (void)sendBeaconPayload:(NSArray * __nonnull)beaconData;
+@end
+
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to print statements in the console when debug is enabled.
+/// Also appends the TAG to the message.
+///
+/// \param message The message to print in the console.
+- (void)printDebug:(NSString * __nonnull)message;
+@end
+
+@class PIDevice;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to register a device in PI. 
+/// If the device already exists it will be updated.
+///
+/// \param device PIDevice to be registered.
+///
+/// \param callback Returns a copy of the registered PIDevice upon task completion.
 - (void)registerDevice:(PIDevice * __nonnull)device callback:(void (^ __nonnull)(PIDevice * __nonnull))callback;
+
+/// Public function to unregister a device in PI.
+/// Sets device registered property to false and updates the device.
+///
+/// \param device PIDevice to unregister.
+///
+/// \param callback Returns a copy of the unregistered PIDevice upon task completion.
 - (void)unregisterDevice:(PIDevice * __nonnull)device callback:(void (^ __nonnull)(PIDevice * __nonnull))callback;
+
+/// Public function to update a device in PI. 
+/// It pulls down the remote version of the device then modifies it for re-upload.
+///
+/// \param device PIDevice to be updated.
+///
+/// \param callback Returns a copy of the updated PIDevice upon task completion.
 - (void)updateDevice:(PIDevice * __nonnull)device callback:(void (^ __nonnull)(PIDevice * __nonnull))callback;
+
+/// Public function to retrieve a device from PI using the device's code.
+///
+/// \param code The device's code.
+///
+/// \param callback Returns the PIDevice upon task completion.
 - (void)getDeviceByCode:(NSString * __nonnull)code callback:(void (^ __nonnull)(PIDevice * __nonnull))callback;
+
+/// Public function to retrice a device from PI using the device's descriptor.
+///
+/// \param descriptor The unhashed device descriptor. (Usually the UUID)
+///
+/// \param callback Returns the PIDevice upon task completion.
 - (void)getDeviceByDescriptor:(NSString * __nonnull)descriptor callback:(void (^ __nonnull)(PIDevice * __nonnull))callback;
 
-/// NOTE: Getting devices will only return the first 100 devices.
-/// A future implementation should probably account for page size and number
+/// Public function to retrieve all registered and unregistered devices from PI.
+///
+/// NOTE: Getting devices currently returns the first 100 devices.
+/// A future implementation should probably account for page size and number.
+///
+/// \param callback Returns an array of PIDevices upon task completion.
 - (void)getAllDevices:(void (^ __nonnull)(NSArray * __nonnull))callback;
+
+/// Public function to retrieve only registered devices from PI.
+///
+/// NOTE: Getting devices currently returns the first 100 devices.
+/// A future implementation should probably account for page size and number.
+///
+/// \param callback Returns an array of PIDevices upon task completion.
 - (void)getRegisteredDevices:(void (^ __nonnull)(NSArray * __nonnull))callback;
-- (void)getAllBeaconRegions:(void (^ __nonnull)(NSArray * __nonnull))callback;
-- (void)getAllBeacons:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(NSArray * __nonnull))callback;
-- (void)sendBeaconPayload:(NSArray * __nonnull)beaconData;
-- (void)getOrg:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
-- (void)getAllZones:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(NSArray * __nonnull))callback;
-- (void)getMap:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(UIImage * __nonnull))callback;
-- (void)getAllSites:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
-- (void)getAllFloors:(NSString * __nonnull)site callback:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
-- (void)printDebug:(NSString * __nonnull)message;
 @end
 
 @class CLBeacon;
@@ -150,9 +301,21 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK8PIBeacon")
 SWIFT_CLASS("_TtC19PresenceInsightsSDK14PIBeaconSensor")
 @interface PIBeaconSensor : NSObject
 - (SWIFT_NULLABILITY(nonnull) instancetype)initWithAdapter:(PIAdapter * __nonnull)adapter OBJC_DESIGNATED_INITIALIZER;
+
+/// Public function to start sensing and ranging beacons.
 - (void)start;
+
+/// Public function to stop beacon sensing and ranging.
 - (void)stop;
+
+/// Public function to start sensing and ranging beacons in a specific region.
+///
+/// \param region The region to look for.
 - (void)startForRegion:(CLBeaconRegion * __nonnull)region;
+
+/// Public function to set the frequency to report to PI.
+///
+/// \param interval The time interval between sending a beacon payload to PI. (milliseconds)
 - (void)setReportInterval:(NSTimeInterval)interval;
 @end
 
