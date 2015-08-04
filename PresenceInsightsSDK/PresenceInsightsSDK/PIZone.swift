@@ -1,15 +1,18 @@
-//
-//  PIZone.swift
-//  PresenceInsightsSDK
-//
-//  Created by Kyle Craig on 7/27/15.
-//  Copyright (c) 2015 IBM MIL. All rights reserved.
-//
+/**
+*   PresenceInsightsSDK
+*   PIZone.swift
+*
+*   Object to contain all zone information.
+*
+*   Created by Kyle Craig on 7/27/15.
+*   Copyright (c) 2015 IBM Corporation. All rights reserved.
+**/
 
 import UIKit
 
 public class PIZone: NSObject {
     
+    // Defined Values
     let JSON_NAME_KEY = "name"
     let JSON_X_KEY = "x"
     let JSON_Y_KEY = "y"
@@ -17,7 +20,7 @@ public class PIZone: NSObject {
     let JSON_HEIGHT_KEY = "height"
     let JSON_TAGS_KEY = "tags"
     
-    
+    // Zone properties
     public var name: String!
     public var x: CGFloat!
     public var y: CGFloat!

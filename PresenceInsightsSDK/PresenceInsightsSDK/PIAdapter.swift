@@ -12,6 +12,7 @@ import UIKit
 
 // TODO: Handle error states with throw once 2.0 is released.
 
+// MARK: - PIAdapter object
 public class PIAdapter: NSObject {
     
     private let TAG = "[MILPresenceInsightsSDK] "
@@ -82,10 +83,7 @@ public class PIAdapter: NSObject {
     }
 }
 
-/**
-    MARK: Device related functions
-*/
-
+// MARK: - Device related functions
 extension PIAdapter {
     
     /**
@@ -317,10 +315,7 @@ extension PIAdapter {
     }
 }
 
-/**
-    MARK: Beacon related functions
-*/
-
+// MARK: - Beacon related functions
 extension PIAdapter {
     
     /**
@@ -395,10 +390,7 @@ extension PIAdapter {
     }
 }
 
-/**
-    MARK: Org related functions
-*/
-
+// MARK: - Org related functions
 extension PIAdapter {
     
     /**
@@ -420,10 +412,7 @@ extension PIAdapter {
     }
 }
 
-/**
-    MARK: Zone related functions
-*/
-
+// MARK: - Zone related functions
 extension PIAdapter {
     
     /**
@@ -457,10 +446,7 @@ extension PIAdapter {
     }
 }
 
-/**
-    MARK: Map related functions
-*/
-
+// MARK: - Map related functions
 extension PIAdapter {
     
     /**
@@ -495,10 +481,7 @@ extension PIAdapter {
     }
 }
 
-/**
-    MARK: Site related functions
-*/
-
+// MARK: - Site related functions
 extension PIAdapter {
     
     /**
@@ -531,10 +514,7 @@ extension PIAdapter {
     }
 }
 
-/**
-    MARK: Floor related functions
-*/
-
+// MARK: - Floor related functions
 extension PIAdapter {
     
     /**
@@ -568,10 +548,7 @@ extension PIAdapter {
     }
 }
 
-/**
-    MARK: Utility functions
-*/
-
+// MARK: - Utility functions
 extension PIAdapter {
     
     /**

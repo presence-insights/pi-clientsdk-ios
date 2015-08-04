@@ -1,10 +1,10 @@
-//
-//  PresenceInsightsSDK.h
-//  PresenceInsightsSDK
-//
-//  Created by Kyle Craig on 7/16/15.
-//  Copyright (c) 2015 IBM MIL. All rights reserved.
-//
+/**
+ *   PresenceInsightsSDK
+ *   PresenceInsightsSDK.h
+ *
+ *   Created by Kyle Craig on 7/16/15.
+ *   Copyright (c) 2015 IBM Corporation. All rights reserved.
+ **/
 
 #import <UIKit/UIKit.h>
 

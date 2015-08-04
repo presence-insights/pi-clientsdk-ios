@@ -1,16 +1,19 @@
-//
-//  PIBeacon.swift
-//  PresenceInsightsSDK
-//
-//  Created by Kyle Craig on 7/16/15.
-//  Copyright (c) 2015 IBM MIL. All rights reserved.
-//
+/**
+*   PresenceInsightsSDK
+*   PIBeacon.swift
+*
+*   Object to contain all beacon information.
+*
+*   Created by Kyle Craig on 7/16/15.
+*   Copyright (c) 2015 IBM Corporation. All rights reserved.
+**/
 
 import UIKit
 import CoreLocation
 
 public class PIBeacon: NSObject {
     
+    // Defined Values
     let JSON_NAME_KEY = "name"
     let JSON_DESCRIPTION_KEY = "description"
     let JSON_UUID_KEY = "proximityUUID"
@@ -21,12 +24,12 @@ public class PIBeacon: NSObject {
     let JSON_SITE_KEY = "@site"
     let JSON_FLOOR_KEY = "@floor"
     
+    // Beacon properties
     public var name: String!
     public var beaconDescription: String!
     public var proximityUUID: String!
     public var major: String!
     public var minor: String!
-    
     public var x: CGFloat!
     public var y: CGFloat!
     public var site: String!
@@ -39,6 +42,10 @@ public class PIBeacon: NSObject {
         self.proximityUUID = proximityUUID
         self.major = major
         self.minor = minor
+        self.x = 0.0
+        self.y = 0.0
+        self.site = ""
+        self.floor = ""
         
     }
     
@@ -63,7 +70,6 @@ public class PIBeacon: NSObject {
         self.proximityUUID = dictionary[JSON_UUID_KEY] as! String
         self.major = dictionary[JSON_MAJOR_KEY] as! String
         self.minor = dictionary[JSON_MINOR_KEY] as! String
-        
         self.x = dictionary[JSON_X_KEY] as! CGFloat
         self.y = dictionary[JSON_Y_KEY] as! CGFloat
         self.site = dictionary[JSON_SITE_KEY] as! String
@@ -94,7 +100,6 @@ public class PIBeacon: NSObject {
         dictionary.setObject(proximityUUID, forKey: JSON_UUID_KEY)
         dictionary.setObject(major, forKey: JSON_MAJOR_KEY)
         dictionary.setObject(minor, forKey: JSON_MINOR_KEY)
-        
         dictionary.setObject(x, forKey: JSON_X_KEY)
         dictionary.setObject(y, forKey: JSON_Y_KEY)
         dictionary.setObject(site, forKey: JSON_SITE_KEY)
