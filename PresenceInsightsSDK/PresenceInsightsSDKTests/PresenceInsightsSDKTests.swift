@@ -39,7 +39,7 @@ class PresenceInsightsSDKTests: XCTestCase {
     // org
     func testGetOrg() {
         var expectation = expectationWithDescription("Test retrieving the org")
-        _adapter.getOrg { (result: NSDictionary) -> () in
+        _adapter.getOrg { (result: PIOrg) -> () in
             XCTAssertNotNil(result, "Should not be nil")
             expectation.fulfill()
         }

@@ -390,28 +390,6 @@ extension PIAdapter {
     }
 }
 
-// MARK: - Org related functions
-extension PIAdapter {
-    
-    /**
-    Public function to retrive the org from PI.
-    
-    :param: callback Returns the raw dictionary from the Rest API upon task completion.
-    */
-    public func getOrg(callback:(NSDictionary)->()) {
-        
-        var endpoint =  _configURL
-        
-        let request = buildRequest(endpoint, method: GET, body: nil)
-        performRequest(request, callback: {response in
-            
-            self.printDebug("Get Org Response: \(response)")
-            
-            callback(response as NSDictionary)
-        })
-    }
-}
-
 // MARK: - Zone related functions
 extension PIAdapter {
     
@@ -478,6 +456,30 @@ extension PIAdapter {
             }
         })
         
+    }
+}
+
+// MARK: - Org related functions
+extension PIAdapter {
+    
+    /**
+    Public function to retrive the org from PI.
+    
+    :param: callback Returns the raw dictionary from the Rest API upon task completion.
+    */
+    public func getOrg(callback:(PIOrg)->()) {
+        
+        var endpoint =  _configURL
+        
+        let request = buildRequest(endpoint, method: GET, body: nil)
+        performRequest(request, callback: {response in
+            
+            self.printDebug("Get Org Response: \(response)")
+            
+            let org = PIOrg(dictionary: response)
+            
+            callback(org)
+        })
     }
 }
 

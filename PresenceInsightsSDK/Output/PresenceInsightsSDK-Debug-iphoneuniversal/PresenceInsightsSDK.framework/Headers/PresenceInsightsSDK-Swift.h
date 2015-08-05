@@ -141,6 +141,30 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK9PIAdapter")
 - (void)getMap:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(UIImage * __nonnull))callback;
 @end
 
+@class PIZone;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to retrieve all zones in a floor.
+///
+/// \param site PI Site code
+///
+/// \param floor PI Floor code
+///
+/// \param callback Returns an array of PIZones upon task completion.
+- (void)getAllZones:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(NSArray * __nonnull))callback;
+@end
+
+@class PIOrg;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to retrive the org from PI.
+///
+/// \param callback Returns the raw dictionary from the Rest API upon task completion.
+- (void)getOrg:(void (^ __nonnull)(PIOrg * __nonnull))callback;
+@end
+
 
 @interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
 
@@ -159,30 +183,6 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK9PIAdapter")
 ///
 /// \param callback Returns a dictionary with site code as the keys and site name as the values.
 - (void)getAllSites:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
-@end
-
-@class PIZone;
-
-@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
-
-/// Public function to retrieve all zones in a floor.
-///
-/// \param site PI Site code
-///
-/// \param floor PI Floor code
-///
-/// \param callback Returns an array of PIZones upon task completion.
-- (void)getAllZones:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(NSArray * __nonnull))callback;
-@end
-
-@class NSDictionary;
-
-@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
-
-/// Public function to retrive the org from PI.
-///
-/// \param callback Returns the raw dictionary from the Rest API upon task completion.
-- (void)getOrg:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
 @end
 
 @class PIBeacon;
@@ -280,6 +280,7 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK9PIAdapter")
 @end
 
 @class CLBeacon;
+@class NSDictionary;
 
 SWIFT_CLASS("_TtC19PresenceInsightsSDK8PIBeacon")
 @interface PIBeacon : NSObject
@@ -352,6 +353,18 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK8PIDevice")
 - (void)setDeviceCode:(NSString * __nonnull)code;
 - (NSString * __nonnull)getDescriptor;
 - (BOOL)isRegistered;
+- (NSDictionary * __nonnull)toDictionary;
+@end
+
+
+SWIFT_CLASS("_TtC19PresenceInsightsSDK5PIOrg")
+@interface PIOrg : NSObject
+@property (nonatomic, copy) NSString * __null_unspecified name;
+@property (nonatomic, copy) NSString * __null_unspecified piDescription;
+@property (nonatomic, copy) NSArray * __null_unspecified registrationTypes;
+@property (nonatomic, copy) NSString * __null_unspecified publicKey;
+- (SWIFT_NULLABILITY(nonnull) instancetype)initWithName:(NSString * __nonnull)name description:(NSString * __nonnull)description registrationTypes:(NSArray * __nonnull)registrationTypes publicKey:(NSString * __nonnull)publicKey OBJC_DESIGNATED_INITIALIZER;
+- (SWIFT_NULLABILITY(nonnull) instancetype)initWithDictionary:(NSDictionary * __nonnull)dictionary;
 - (NSDictionary * __nonnull)toDictionary;
 @end
 
