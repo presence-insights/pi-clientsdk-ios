@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5111182C1B71420B009E0876 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5111182B1B71420B009E0876 /* Constants.swift */; };
 		D44A40A81B57FC6D0022C5CB /* PresenceInsightsSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = D44A40A71B57FC6D0022C5CB /* PresenceInsightsSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D44A40AE1B57FC6D0022C5CB /* PresenceInsightsSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */; };
 		D44A40B51B57FC6D0022C5CB /* PresenceInsightsSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44A40B41B57FC6D0022C5CB /* PresenceInsightsSDKTests.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5111182B1B71420B009E0876 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PresenceInsightsSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D44A40A61B57FC6D0022C5CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D44A40A71B57FC6D0022C5CB /* PresenceInsightsSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PresenceInsightsSDK.h; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 		D44A40B11B57FC6D0022C5CB /* PresenceInsightsSDKTests */ = {
 			isa = PBXGroup;
 			children = (
+				5111182B1B71420B009E0876 /* Constants.swift */,
 				D44A40B41B57FC6D0022C5CB /* PresenceInsightsSDKTests.swift */,
 				D44A40B21B57FC6D0022C5CB /* Supporting Files */,
 			);
@@ -275,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D44A40B51B57FC6D0022C5CB /* PresenceInsightsSDKTests.swift in Sources */,
+				5111182C1B71420B009E0876 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
