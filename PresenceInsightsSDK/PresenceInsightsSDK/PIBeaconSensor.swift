@@ -1,18 +1,22 @@
-//
-//  PIBeaconSensor.swift
-//  PresenceInsightsSDK
-//
-//  Created by Kyle Craig on 7/16/15.
-//  Copyright (c) 2015 IBM MIL. All rights reserved.
-//
+/**
+*   PresenceInsightsSDK
+*   PIBeaconSensor.swift
+*
+*   Handles all beacon and location management.
+*
+*   Created by Kyle Craig on 7/16/15.
+*   Copyright (c) 2015 IBM Corporation. All rights reserved.
+**/
 
 import UIKit
 import CoreLocation
 
+// MARK: - Delegate protocol.
 public protocol PIBeaconSensorDelegate {
     func didRangeBeacons(beacons:[CLBeacon])
 }
 
+// MARK: - PIBeaconSensor object
 public class PIBeaconSensor: NSObject {
     
     private var PI_REPORT_INTERVAL: NSTimeInterval = 5
@@ -35,6 +39,9 @@ public class PIBeaconSensor: NSObject {
         
     }
     
+    /**
+    Public function to start sensing and ranging beacons.
+    */
     public func start() {
         _piAdapter.getAllBeaconRegions({regions in
             
@@ -50,6 +57,9 @@ public class PIBeaconSensor: NSObject {
         })
     }
     
+    /**
+    Public function to stop beacon sensing and ranging.
+    */
     public func stop() {
         if _monitoredRegions.count > 0 {
             for region in _monitoredRegions {
@@ -61,6 +71,11 @@ public class PIBeaconSensor: NSObject {
         }
     }
     
+    /**
+    Public function to start sensing and ranging beacons in a specific region.
+    
+    :param: region The region to look for.
+    */
     public func startForRegion(region: CLBeaconRegion) {
         
         self._locationManager.startMonitoringForRegion(region)
@@ -69,10 +84,22 @@ public class PIBeaconSensor: NSObject {
         
     }
     
+    /**
+    Public function to set the frequency to report to PI.
+    
+    :param: interval The time interval between sending a beacon payload to PI. (milliseconds)
+    */
     public func setReportInterval(interval: NSTimeInterval) {
         PI_REPORT_INTERVAL = interval
     }
     
+    /**
+    Private function to convert a CLProximity to a String.
+    
+    :param: proximity CLProximity to convert.
+    
+    :returns: String value of CLProximity.
+    */
     private func proximityToString(proximity: CLProximity) -> String {
         switch (proximity) {
         case CLProximity.Far:
@@ -88,6 +115,13 @@ public class PIBeaconSensor: NSObject {
         }
     }
     
+    /**
+    Private function to convert an NSDate to an ISO8601 time string.
+    
+    :param: detectedTime NSDate to convert.
+    
+    :returns: ISO8601 formatted time string.
+    */
     private func timeAsISO8601String(detectedTime: NSDate) -> String {
         var dateFormatter = NSDateFormatter()
         var enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
@@ -97,6 +131,14 @@ public class PIBeaconSensor: NSObject {
         return dateFormatter.stringFromDate(detectedTime)
     }
     
+    /**
+    Private function to append the detected time to the beacon that was detected.
+    
+    :param: beacon       The detected beacon.
+    :param: detectedTime The time the beacon was detected.
+    
+    :returns: Dictionary of containing both the beacon data and the detected time.
+    */
     private func createDictionaryWith(beacon: CLBeacon, detectedTime: NSDate) -> NSDictionary {
         var dictionary = NSMutableDictionary()
         dictionary.setObject(UIDevice.currentDevice().identifierForVendor.UUIDString.lowercaseString, forKey: "descriptor")
@@ -118,6 +160,7 @@ public class PIBeaconSensor: NSObject {
     
 }
 
+// MARK: - CLLocationManagerDelegate functions
 extension PIBeaconSensor: CLLocationManagerDelegate {
     
     public func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {

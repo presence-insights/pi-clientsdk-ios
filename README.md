@@ -172,5 +172,3 @@ piBeaconSensor.stop()
 
 There are some other little things you can do with this SDK (mostly different ways to initialize or 
 modify objects), but these basics should be enough to get you started. Have fun!
-
-\- Kyle Craig

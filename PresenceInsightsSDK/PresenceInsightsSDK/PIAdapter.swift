@@ -1,15 +1,18 @@
-//
-//  PIAdapter.swift
-//  PresenceInsightsSDK
-//
-//  Created by Kyle Craig on 7/16/15.
-//  Copyright (c) 2015 IBM MIL. All rights reserved.
-//
+/**
+*   PresenceInsightsSDK
+*   PIAdapter.swift
+*
+*   Performs all communication to the PI Rest API.
+*
+*   Created by Kyle Craig on 7/16/15.
+*   Copyright (c) 2015 IBM Corporation. All rights reserved.
+**/
 
 import UIKit
 
 // TODO: Handle error states with throw once 2.0 is released.
 
+// MARK: - PIAdapter object
 public class PIAdapter: NSObject {
     
     private let TAG = "[MILPresenceInsightsSDK] "
@@ -33,7 +36,15 @@ public class PIAdapter: NSObject {
     private var _debug: Bool = false
     
     /**
-        INITIALIZERS
+    Default object initializer.
+    
+    :param: tenant   PI Tenant Code
+    :param: org      PI Org Code
+    :param: baseURL  The base URL of your PI service.
+    :param: username PI Username
+    :param: password PI Password
+    
+    :returns: An initialized PIAdapter.
     */
     public init(tenant:String, org:String, baseURL:String, username:String, password:String) {
         
@@ -49,19 +60,39 @@ public class PIAdapter: NSObject {
         
     }
     
+    /**
+    Convenience initializer which sets a default baseURL.
+    
+    :param: tenant   PI Tenant Code
+    :param: org      PI Org Code
+    :param: username PI Username
+    :param: password PI Password
+    
+    :returns: An initialized PIAdapter.
+    */
     public convenience init(tenant:String, org:String, username:String, password:String) {
         let defaultURL = "https://presenceinsights.ng.bluemix.net"
         self.init(tenant: tenant, org: org, baseURL: defaultURL, username: username, password: password)
     }
     
+    /**
+    Public function to enable logging for debug purposes.
+    */
     public func enableLogging() {
         _debug = true
     }
+}
+
+// MARK: - Device related functions
+extension PIAdapter {
     
-    /** 
-        BEGIN DEVICE RELATED FUNCTIONS
+    /**
+    Public function to register a device in PI. 
+    If the device already exists it will be updated.
+    
+    :param: device   PIDevice to be registered.
+    :param: callback Returns a copy of the registered PIDevice upon task completion.
     */
-    
     public func registerDevice(device: PIDevice, callback:(PIDevice)->()) {
         
         let endpoint = _configURL + "/devices"
@@ -78,7 +109,7 @@ public class PIAdapter: NSObject {
             // If device doesn't exist:
             if let code = response["@code"] as? String {
                 /**
-                This is a safeguard to ensure that all fields are uploaded appropriatly and may not be needed in the future once the PI service is more stable.
+                This is a safeguard to ensure that all fields are uploaded appropriatly
                 Ideally the code should be:
                 
                 callback(MILPIDevice(dictionary: response))
@@ -100,6 +131,13 @@ public class PIAdapter: NSObject {
         })
     }
     
+    /**
+    Public function to unregister a device in PI.
+    Sets device registered property to false and updates the device.
+    
+    :param: device   PIDevice to unregister.
+    :param: callback Returns a copy of the unregistered PIDevice upon task completion.
+    */
     public func unregisterDevice(device: PIDevice, callback:(PIDevice)->()) {
         
         device.setRegistered(false)
@@ -108,6 +146,13 @@ public class PIAdapter: NSObject {
         })
     }
     
+    /**
+    Public function to update a device in PI. 
+    It pulls down the remote version of the device then modifies it for re-upload.
+    
+    :param: device   PIDevice to be updated.
+    :param: callback Returns a copy of the updated PIDevice upon task completion.
+    */
     public func updateDevice(device: PIDevice, callback:(PIDevice)->()) {
         
         var endpoint = _configURL + "/devices?rawDescriptor=" + device.getDescriptor()
@@ -119,6 +164,14 @@ public class PIAdapter: NSObject {
         })
     }
     
+    /**
+    Private function that modifies the remote device dictionary object with a local PIDevice and uploads it to PI.
+    
+    :param: endpoint   The device endpoint to update.
+    :param: dictionary Current version of device in PI.
+    :param: device     Local PIDevice used to update remote device.
+    :param: callback   Returns the updated PIDevice object upon task completion.
+    */
     private func updateDeviceDictionary(endpoint: String, dictionary: NSDictionary, device: PIDevice, callback:(PIDevice)->()) {
         
         var newDevice = NSMutableDictionary(dictionary: dictionary)
@@ -144,6 +197,12 @@ public class PIAdapter: NSObject {
         
     }
     
+    /**
+    Public function to retrieve a device from PI using the device's code.
+    
+    :param: code     The device's code.
+    :param: callback Returns the PIDevice upon task completion.
+    */
     public func getDeviceByCode(code: String, callback:(PIDevice)->()) {
         
         let endpoint = _configURL + "/devices/" + code
@@ -153,6 +212,12 @@ public class PIAdapter: NSObject {
         })
     }
     
+    /**
+    Public function to retrice a device from PI using the device's descriptor.
+    
+    :param: descriptor The unhashed device descriptor. (Usually the UUID)
+    :param: callback   Returns the PIDevice upon task completion.
+    */
     public func getDeviceByDescriptor(descriptor: String, callback:(PIDevice)->()) {
         
         let endpoint = _configURL + "/devices?rawDescriptor=" + descriptor
@@ -163,6 +228,12 @@ public class PIAdapter: NSObject {
         
     }
     
+    /**
+    Private function to get a device using either code of descriptor.
+    
+    :param: endpoint The Rest API endpoint of the device object.
+    :param: callback Returns the dictionary object of the device upon task completion.
+    */
     private func getDevice(endpoint: String, callback: (NSDictionary)->()) {
         
         let request = buildRequest(endpoint, method: GET, body: nil)
@@ -184,9 +255,13 @@ public class PIAdapter: NSObject {
         })
     }
     
-    /** 
-        NOTE: Getting devices will only return the first 100 devices.
-        A future implementation should probably account for page size and number
+    /**
+    Public function to retrieve all registered and unregistered devices from PI.
+    
+    NOTE: Getting devices currently returns the first 100 devices.
+    A future implementation should probably account for page size and number.
+    
+    :param: callback Returns an array of PIDevices upon task completion.
     */
     public func getAllDevices(callback:([PIDevice])->()) {
         
@@ -197,6 +272,14 @@ public class PIAdapter: NSObject {
         })
     }
     
+    /**
+    Public function to retrieve only registered devices from PI.
+    
+    NOTE: Getting devices currently returns the first 100 devices.
+    A future implementation should probably account for page size and number.
+    
+    :param: callback Returns an array of PIDevices upon task completion.
+    */
     public func getRegisteredDevices(callback:([PIDevice])->()) {
         
         let endpoint = _configURL + "/devices?pageSize=100&registered=true"
@@ -206,6 +289,12 @@ public class PIAdapter: NSObject {
         })
     }
     
+    /**
+    Private function to handle getting multiple devices.
+    
+    :param: endpoint The Rest API endpoint of the devices.
+    :param: callback Returns an array of PIDevices upon task completion.
+    */
     private func getDevices(endpoint: String, callback:([PIDevice])->()) {
         
         let request = buildRequest(endpoint, method: GET, body: nil)
@@ -224,15 +313,16 @@ public class PIAdapter: NSObject {
             callback(devices)
         })
     }
+}
+
+// MARK: - Beacon related functions
+extension PIAdapter {
     
     /**
-        END DEVICE RELATED FUNCTIONS
-    */
+    Public function to get all beacon proximity UUIDs.
     
-    /**
-        BEGIN BEACON RELATED FUNCTIONS
+    :param: callback Returns a String array of all beacon proximity UUIDs upon task completion.
     */
-    
     public func getAllBeaconRegions(callback:([String]) -> ()) {
         
         let endpoint = _configURL + "/views/proximityUUID"
@@ -249,6 +339,13 @@ public class PIAdapter: NSObject {
         
     }
     
+    /**
+    Public function to get all beacons on a specific floor.
+    
+    :param: site     PI Site code
+    :param: floor    PI Floor code
+    :param: callback Returns an array of PIBeacons upon task completion.
+    */
     public func getAllBeacons(site: String, floor: String, callback:([PIBeacon])->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
@@ -272,6 +369,11 @@ public class PIAdapter: NSObject {
         })
     }
     
+    /**
+    Public function to send a payload of all beacons ranged by the device back to PI.
+    
+    :param: beaconData Array containing all ranged beacons and the time they were detected.
+    */
     public func sendBeaconPayload(beaconData:NSArray) {
         
         let endpoint = _baseURL + _beaconSegment + "tenants/" + _tenantCode + "/orgs/" + _orgCode
@@ -286,18 +388,18 @@ public class PIAdapter: NSObject {
             self.printDebug("Sent Beacon Payload Response: \(response)")
         })
     }
+}
+
+// MARK: - Org related functions
+extension PIAdapter {
     
     /**
-        END BEACON RELATED FUNCTIONS
-    */
+    Public function to retrive the org from PI.
     
-    /**
-    BEGIN ORG RELATED FUNCTIONS
+    :param: callback Returns the raw dictionary from the Rest API upon task completion.
     */
-    
     public func getOrg(callback:(NSDictionary)->()) {
         
-        // Swift cannot handle this complex of an expression without breaking it down.
         var endpoint =  _configURL
         
         let request = buildRequest(endpoint, method: GET, body: nil)
@@ -308,15 +410,18 @@ public class PIAdapter: NSObject {
             callback(response as NSDictionary)
         })
     }
+}
+
+// MARK: - Zone related functions
+extension PIAdapter {
     
     /**
-    END ORG RELATED FUNCTIONS
-    */
+    Public function to retrieve all zones in a floor.
     
-    /**
-        BEGIN ZONE RELATED FUNCTIONS
+    :param: site     PI Site code
+    :param: floor    PI Floor code
+    :param: callback Returns an array of PIZones upon task completion.
     */
-    
     public func getAllZones(site: String, floor: String, callback:([PIZone])->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
@@ -339,15 +444,18 @@ public class PIAdapter: NSObject {
             callback(zones)
         })
     }
+}
+
+// MARK: - Map related functions
+extension PIAdapter {
     
     /**
-        END ZONE RELATED FUNCTIONS
-    */
+    Public function to retrieve a floor's map image.
     
-    /**
-        BEGIN MAP RELATED FUNCTIONS
+    :param: site     PI Site code
+    :param: floor    PI Floor code
+    :param: callback Returns a UIImage of the map upon task completion.
     */
-    
     public func getMap(site: String, floor: String, callback:(UIImage)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
@@ -371,16 +479,16 @@ public class PIAdapter: NSObject {
         })
         
     }
+}
+
+// MARK: - Site related functions
+extension PIAdapter {
     
     /**
-        END MAP RELATED FUNCTIONS
-    */
+    Public function to get all sites within the org.
     
-    /**
-        BEGIN SITE RELATED FUNCTIONS
+    :param: callback Returns a dictionary with site code as the keys and site name as the values.
     */
-    
-    // TODO: Add PISite object that will also handle the address, etc.
     public func getAllSites(callback:([String: String])->()) {
         
         var endpoint =  _configURL + "/sites"
@@ -404,16 +512,17 @@ public class PIAdapter: NSObject {
             callback(sites)
         })
     }
+}
+
+// MARK: - Floor related functions
+extension PIAdapter {
     
     /**
-        END SITE RELATED FUNCTIONS
-    */
+    Public function to get all floors in a site.
     
-    /**
-        BEGIN FLOOR RELATED FUNCTIONS
+    :param: site     PI Site code
+    :param: callback Returns a dictionary with floor code as the keys and floor name as the values.
     */
-    
-    // TODO: Add PIFloor object that will also handle the z, pixelsToMeter, etc.
     public func getAllFloors(site: String, callback:([String: String])->()) {
         
         var endpoint =  _configURL + "/sites/" + site + "/floors"
@@ -437,25 +546,20 @@ public class PIAdapter: NSObject {
             callback(floors)
         })
     }
+}
+
+// MARK: - Utility functions
+extension PIAdapter {
     
     /**
-        END FLOOR RELATED FUNCTIONS
+    Private function to build an http/s request
+    
+    :param: endpoint The URL to connect to.
+    :param: method   The http method to use for the request.
+    :param: body     (Optional) The body of the request.
+    
+    :returns: A built NSURLRequest to execute.
     */
-    
-    /**
-        BEGIN ANALYTICS FUNCTIONS
-    */
-    
-    // TODO: Add functions to handle some analytics functions.
-    
-    /**
-        END ANALYTICS FUNCTIONS
-    */
-    
-    /**
-        BEGIN UTILS
-    */
-    
     private func buildRequest(endpoint:String, method:String, body: NSData?) -> NSURLRequest {
         
         if let url = NSURL(string: endpoint) {
@@ -479,6 +583,13 @@ public class PIAdapter: NSObject {
         
     }
     
+    /**
+    Private function to perform a URL request.
+    Will always massage response data into a dictionary.
+    
+    :param: request  The NSURLRequest to perform.
+    :param: callback Returns an NSDictionary of the response on task completion.
+    */
     private func performRequest(request:NSURLRequest, callback:(NSDictionary!)->()) {
         
         let session = NSURLSession.sharedSession()
@@ -519,6 +630,13 @@ public class PIAdapter: NSObject {
         task.resume()
     }
     
+    /**
+    Private function to convert a dictionary to a JSON object.
+    
+    :param: dictionary The dictionary to convert.
+    
+    :returns: An NSData object containing the raw JSON of the dictionary.
+    */
     private func dictionaryToJSON(dictionary: NSDictionary) -> NSData {
         var error: NSError?
         if let deviceJSON = NSJSONSerialization.dataWithJSONObject(dictionary, options: NSJSONWritingOptions.allZeros, error: &error) {
@@ -536,14 +654,15 @@ public class PIAdapter: NSObject {
         
     }
     
+    /**
+    Public function to print statements in the console when debug is enabled.
+    Also appends the TAG to the message.
+    
+    :param: message The message to print in the console.
+    */
     public func printDebug(message:String) {
         if _debug {
             println(TAG + message)
         }
     }
-    
-    /**
-        END UTILS
-    */
-    
 }
