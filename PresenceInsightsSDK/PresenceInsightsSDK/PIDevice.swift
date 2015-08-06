@@ -50,7 +50,7 @@ public class PIDevice: NSObject {
     
     public convenience init(dictionary: NSDictionary) {
         
-        self.init(name: nil, type: nil, data: nil, unencryptedData: nil, registered: false)
+        self.init(name: nil, type: nil, data: NSMutableDictionary(), unencryptedData: NSMutableDictionary(), registered: false)
         
         if let name = dictionary[JSON_NAME_KEY] as? String {
             self.name = name
