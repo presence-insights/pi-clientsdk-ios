@@ -99,6 +99,17 @@ extension PIAdapter {
         
         device.setRegistered(true)
         
+        assert(device.name != nil, "PIDevice name cannot be registered as nil.")
+        assert(device.type != nil, "PIDevice type cannot be registered as nil.")
+        
+        if device.data == nil {
+            device.data = NSMutableDictionary()
+        }
+        
+        if device.unencryptedData == nil {
+            device.unencryptedData = NSMutableDictionary()
+        }
+        
         let deviceData = dictionaryToJSON(device.toDictionary())
         
         let request = buildRequest(endpoint, method: POST, body: deviceData)
@@ -154,6 +165,8 @@ extension PIAdapter {
     :param: callback Returns a copy of the updated PIDevice upon task completion.
     */
     public func updateDevice(device: PIDevice, callback:(PIDevice)->()) {
+        
+        assert(device.isRegistered(), "Cannot update an unregistered device.")
         
         var endpoint = _configURL + "/devices?rawDescriptor=" + device.getDescriptor()
         getDevice(endpoint, callback: {deviceData in
