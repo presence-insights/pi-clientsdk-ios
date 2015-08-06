@@ -45,7 +45,7 @@ public class PIDevice: NSObject {
     }
     
     public convenience init(name: String) {
-        self.init(name: name, type: String(), data: NSMutableDictionary(), unencryptedData: NSMutableDictionary(), registered: true)
+        self.init(name: name, type: String(), data: NSMutableDictionary(), unencryptedData: NSMutableDictionary(), registered: false)
     }
     
     public convenience init(dictionary: NSDictionary) {
