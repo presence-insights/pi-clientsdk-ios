@@ -21,6 +21,7 @@ class PresenceInsightsSDKTests: XCTestCase {
         _adapter = PIAdapter(tenant: PI.Tenant, org: PI.Org, baseURL: PI.Hostname, username: PI.Username, password: PI.Password)
         _device = PIDevice(name: "test device")
         _device.setRegistrationType("External")
+        _device.setRegistered(true)
     }
     
     override func tearDown() {
@@ -105,7 +106,7 @@ class PresenceInsightsSDKTests: XCTestCase {
         var expectation = expectationWithDescription("Test updating a device")
         _device.name = "UpdatedTest"
         _adapter.updateDevice(_device, callback: { (result: PIDevice) -> () in
-            XCTAssert(result.name == self._device.name)
+            XCTAssert(result.name == "UpdatedTest")
             expectation.fulfill()
         })
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -114,13 +115,12 @@ class PresenceInsightsSDKTests: XCTestCase {
     func testUnregisterDevice() {
         var expectation = expectationWithDescription("Test unregistering a device")
         _adapter.unregisterDevice(_device, callback: { (result: PIDevice) -> () in
-            XCTAssertNil(result.data)
+            XCTAssertFalse(result.isRegistered())
             expectation.fulfill()
         })
         waitForExpectationsWithTimeout(15.0, handler: nil)
     }
-    
-    
+        
 //    func testPerformanceExample() {
 //        // This is an example of a performance test case.
 //        self.measureBlock() {

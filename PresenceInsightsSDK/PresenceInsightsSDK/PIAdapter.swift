@@ -166,8 +166,6 @@ extension PIAdapter {
     */
     public func updateDevice(device: PIDevice, callback:(PIDevice)->()) {
         
-        assert(device.isRegistered(), "Cannot update an unregistered device.")
-        
         var endpoint = _configURL + "/devices?rawDescriptor=" + device.getDescriptor()
         getDevice(endpoint, callback: {deviceData in
             endpoint = self._configURL + "/devices/" + (deviceData["@code"] as! String)
