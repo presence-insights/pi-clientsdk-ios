@@ -561,6 +561,30 @@ extension PIAdapter {
     }
 }
 
+// MARK: - Catch-all function
+extension PIAdapter {
+    
+    /**
+    Public function to perform a custom API request not covered elsewhere.
+    
+    :param: endpoint The URL substring that comes after the base URL. (/pi-config/v1/...)
+    :param: method   The HTTP Method to use. (GET, POST, PUT, etc.)
+    :param: body     Optional value if the method is a PUT or POST and needs to send data.
+    :param: callback Returns an NSDictionary of the response upon completion.
+    */
+    public func piRequest(endpoint: String, method: String, body: NSData?, callback: (NSDictionary)->()) {
+        
+        var url = _baseURL + endpoint
+        
+        let request = buildRequest(url, method: method, body: body)
+        performRequest(request, callback: {response in
+            callback(response)
+        })
+        
+    }
+    
+}
+
 // MARK: - Utility functions
 extension PIAdapter {
     

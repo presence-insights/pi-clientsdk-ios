@@ -155,14 +155,30 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK9PIAdapter")
 - (void)getAllZones:(NSString * __nonnull)site floor:(NSString * __nonnull)floor callback:(void (^ __nonnull)(NSArray * __nonnull))callback;
 @end
 
-@class PIOrg;
 
 @interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
 
-/// Public function to retrive the org from PI.
+/// Public function to get all sites within the org.
 ///
-/// \param callback Returns the raw dictionary from the Rest API upon task completion.
-- (void)getOrg:(void (^ __nonnull)(PIOrg * __nonnull))callback;
+/// \param callback Returns a dictionary with site code as the keys and site name as the values.
+- (void)getAllSites:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
+@end
+
+@class NSData;
+@class NSDictionary;
+
+@interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
+
+/// Public function to perform a custom API request not covered elsewhere.
+///
+/// \param endpoint The URL substring that comes after the base URL. (/pi-config/v1/...)
+///
+/// \param method The HTTP Method to use. (GET, POST, PUT, etc.)
+///
+/// \param body Optional value if the method is a PUT or POST and needs to send data.
+///
+/// \param callback Returns an NSDictionary of the response upon completion.
+- (void)piRequest:(NSString * __nonnull)endpoint method:(NSString * __nonnull)method body:(NSData * __nullable)body callback:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
 @end
 
 
@@ -176,13 +192,14 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK9PIAdapter")
 - (void)getAllFloors:(NSString * __nonnull)site callback:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
 @end
 
+@class PIOrg;
 
 @interface PIAdapter (SWIFT_EXTENSION(PresenceInsightsSDK))
 
-/// Public function to get all sites within the org.
+/// Public function to retrive the org from PI.
 ///
-/// \param callback Returns a dictionary with site code as the keys and site name as the values.
-- (void)getAllSites:(void (^ __nonnull)(NSDictionary * __nonnull))callback;
+/// \param callback Returns the raw dictionary from the Rest API upon task completion.
+- (void)getOrg:(void (^ __nonnull)(PIOrg * __nonnull))callback;
 @end
 
 @class PIBeacon;
@@ -280,7 +297,6 @@ SWIFT_CLASS("_TtC19PresenceInsightsSDK9PIAdapter")
 @end
 
 @class CLBeacon;
-@class NSDictionary;
 
 SWIFT_CLASS("_TtC19PresenceInsightsSDK8PIBeacon")
 @interface PIBeacon : NSObject
