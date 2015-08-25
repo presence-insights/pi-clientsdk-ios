@@ -66,7 +66,7 @@ public class PIBeacon: NSObject {
         self.init(name: "", description: "", proximityUUID: "", major: "", minor: "")
         
         self.name = dictionary[JSON_NAME_KEY] as! String
-        self.beaconDescription = dictionary[JSON_DESCRIPTION_KEY] as! String
+        self.beaconDescription = dictionary[JSON_DESCRIPTION_KEY] as? String
         self.proximityUUID = dictionary[JSON_UUID_KEY] as! String
         self.major = dictionary[JSON_MAJOR_KEY] as! String
         self.minor = dictionary[JSON_MINOR_KEY] as! String
