@@ -47,8 +47,11 @@ public class PIBeaconSensor: NSObject {
             
             if regions.count > 0 {
                 for r in regions {
-                    let region = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: r), identifier: r)
-                    self.startForRegion(region)
+                    if let region = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: r), identifier: r) {
+                        self.startForRegion(region)
+                    } else {
+                        self._piAdapter.printDebug("Failed to create region: \(r)")
+                    }
                 }
             } else {
                 self._piAdapter.printDebug("No Regions to monitor.")
