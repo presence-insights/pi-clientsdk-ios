@@ -27,7 +27,7 @@ public class PIBeacon: NSObject {
     // Beacon properties
     public var name: String!
     public var beaconDescription: String!
-    public var proximityUUID: String!
+    public var proximityUUID: NSUUID!
     public var major: String!
     public var minor: String!
     public var x: CGFloat!
@@ -35,8 +35,7 @@ public class PIBeacon: NSObject {
     public var site: String!
     public var floor: String!
     
-    public init(name: String, description: String, proximityUUID: String, major: String, minor: String) {
-        
+    public init(name: String, description: String, proximityUUID: NSUUID, major: String, minor: String) {
         self.name = name
         self.beaconDescription = description
         self.proximityUUID = proximityUUID
@@ -46,28 +45,26 @@ public class PIBeacon: NSObject {
         self.y = 0.0
         self.site = ""
         self.floor = ""
-        
     }
     
     public convenience init(name: String, description: String, beacon: CLBeacon) {
-        
-        let proximityUUID = beacon.proximityUUID.UUIDString
+        let proximityUUID = beacon.proximityUUID
         let major = beacon.major.stringValue
         let minor = beacon.minor.stringValue
         
         self.init(name: name, description: description, proximityUUID: proximityUUID, major: major, minor: minor)
-        
     }
     
     public convenience init(dictionary: NSDictionary) {
         
         // I prefer this method because if the dictionary isn't built correctly it will at least throw a nil error at runtime.
-        
-        self.init(name: "", description: "", proximityUUID: "", major: "", minor: "")
+        self.init(name: "", description: "", proximityUUID: NSUUID(), major: "", minor: "")
         
         self.name = dictionary[JSON_NAME_KEY] as! String
-        self.beaconDescription = dictionary[JSON_DESCRIPTION_KEY] as? String
-        self.proximityUUID = dictionary[JSON_UUID_KEY] as! String
+        if dictionary[JSON_DESCRIPTION_KEY] != nil {
+            self.beaconDescription = dictionary[JSON_DESCRIPTION_KEY] as! String
+        }
+        self.proximityUUID = NSUUID(UUIDString: dictionary[JSON_UUID_KEY] as! String)!
         self.major = dictionary[JSON_MAJOR_KEY] as! String
         self.minor = dictionary[JSON_MINOR_KEY] as! String
         self.x = dictionary[JSON_X_KEY] as! CGFloat
