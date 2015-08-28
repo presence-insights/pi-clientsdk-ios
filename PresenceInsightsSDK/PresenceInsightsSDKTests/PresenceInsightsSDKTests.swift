@@ -32,7 +32,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     // proximity uuids
     func testGetProximityUuids() {
         var expectation = expectationWithDescription("Test retrieving proximityUUIDs from org")
-        _adapter.getAllBeaconRegions { (result:[String]) -> () in                XCTAssertGreaterThan(result.count, 0)
+        _adapter.getAllBeaconRegions { (result:[String]) -> () in
+            XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)

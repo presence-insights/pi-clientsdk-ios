@@ -645,7 +645,7 @@ extension PIAdapter {
                         } else {
                             callback(json)
                         }
-                    } else if let json = NSJSONSerialization.JSONObjectWithData(responseData, options: NSJSONReadingOptions.MutableLeaves, error: &error) as? [[String: AnyObject]] {
+                    } else if let json = NSJSONSerialization.JSONObjectWithData(responseData, options: NSJSONReadingOptions.MutableLeaves, error: &error) as? [AnyObject] {
                         if (error != nil) {
                             let dataString = NSString(data: responseData, encoding: NSUTF8StringEncoding)
                             self.printDebug("Could not parse response. " + (dataString as! String) + "\(error)")
