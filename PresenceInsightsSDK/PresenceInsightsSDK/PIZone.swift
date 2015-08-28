@@ -41,7 +41,7 @@ public class PIZone: NSObject {
         self.init(name: name, x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
     }
     
-    public convenience init(dictionary: NSDictionary) {
+    public convenience init(dictionary: [String: AnyObject]) {
         
         self.init(name: "", x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
         
@@ -54,19 +54,19 @@ public class PIZone: NSObject {
         
     }
     
-    public func toDictionary() -> NSDictionary {
+    public func toDictionary() -> [String: AnyObject] {
         
-        let dictionary = NSMutableDictionary()
+        var dictionary: [String: AnyObject] = [:]
         
-        dictionary.setObject(name, forKey: JSON_NAME_KEY)
-        dictionary.setObject(x, forKey: JSON_X_KEY)
-        dictionary.setObject(y, forKey: JSON_Y_KEY)
-        dictionary.setObject(width, forKey: JSON_WIDTH_KEY)
-        dictionary.setObject(height, forKey: JSON_HEIGHT_KEY)
-        dictionary.setObject(tags, forKey: JSON_TAGS_KEY)
+        dictionary[JSON_NAME_KEY] = name
+        dictionary[JSON_X_KEY] = x
+        dictionary[JSON_Y_KEY] = y
+        dictionary[JSON_WIDTH_KEY] = width
+        dictionary[JSON_HEIGHT_KEY] = height
+        dictionary[JSON_TAGS_KEY] = tags
         
         return dictionary
-        
+
     }
     
 }

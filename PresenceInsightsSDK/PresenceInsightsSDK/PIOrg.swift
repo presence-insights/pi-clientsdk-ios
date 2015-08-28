@@ -31,7 +31,7 @@ public class PIOrg: NSObject {
         self.publicKey = publicKey
     }
     
-    public convenience init(dictionary: NSDictionary) {
+    public convenience init(dictionary: [String: AnyObject]) {
         
         self.init(name: "", description: "", registrationTypes: [], publicKey: "")
         
@@ -46,14 +46,14 @@ public class PIOrg: NSObject {
         
     }
     
-    public func toDictionary() -> NSDictionary {
+    public func toDictionary() -> [String: AnyObject] {
         
-        let dictionary = NSMutableDictionary()
+        var dictionary: [String: AnyObject] = [:]
         
-        dictionary.setObject(name, forKey: JSON_NAME_KEY)
-        dictionary.setObject(piDescription, forKey: JSON_DESCRIPTION_KEY)
-        dictionary.setObject(registrationTypes, forKey: JSON_REGISTRATION_TYPES_KEY)
-        dictionary.setObject(publicKey, forKey: JSON_PUBLIC_KEY_KEY)
+        dictionary[JSON_NAME_KEY] = name
+        dictionary[JSON_DESCRIPTION_KEY] = description
+        dictionary[JSON_REGISTRATION_TYPES_KEY] = registrationTypes
+        dictionary[JSON_PUBLIC_KEY_KEY] = publicKey
         
         return dictionary
         

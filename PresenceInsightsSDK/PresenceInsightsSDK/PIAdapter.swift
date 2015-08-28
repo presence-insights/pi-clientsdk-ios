@@ -103,11 +103,11 @@ extension PIAdapter {
         assert(device.type != nil, "PIDevice type cannot be registered as nil.")
         
         if device.data == nil {
-            device.data = NSMutableDictionary()
+            device.data = [:]
         }
         
         if device.unencryptedData == nil {
-            device.unencryptedData = NSMutableDictionary()
+            device.unencryptedData = [:]
         }
         
         let deviceData = dictionaryToJSON(device.toDictionary())
@@ -130,7 +130,7 @@ extension PIAdapter {
                     callback(newDevice)
                 })
                 // If device does exist:
-            } else if let headers = response["headers"] as? NSDictionary {
+            } else if let headers = response["headers"] as? [String: AnyObject] {
                 if let location = headers["Location"] as? String {
                     self.getDevice(location, callback: {deviceData in
                         self.updateDeviceDictionary(location, dictionary: deviceData, device: device, callback: {newDevice in
@@ -183,17 +183,17 @@ extension PIAdapter {
     :param: device     Local PIDevice used to update remote device.
     :param: callback   Returns the updated PIDevice object upon task completion.
     */
-    private func updateDeviceDictionary(endpoint: String, dictionary: NSDictionary, device: PIDevice, callback:(PIDevice)->()) {
+    private func updateDeviceDictionary(endpoint: String, dictionary: [String: AnyObject], device: PIDevice, callback:(PIDevice)->()) {
         
-        var newDevice = NSMutableDictionary(dictionary: dictionary)
+        var newDevice = dictionary
         
-        newDevice.setObject(device.isRegistered(), forKey: device.JSON_REGISTERED_KEY)
+        newDevice[device.JSON_REGISTERED_KEY] = device.isRegistered()
         
         if device.isRegistered() {
-            newDevice.setObject(device.name!, forKey: device.JSON_NAME_KEY)
-            newDevice.setObject(device.type!, forKey: device.JSON_TYPE_KEY)
-            newDevice.setObject(device.data!, forKey: device.JSON_DATA_KEY)
-            newDevice.setObject(device.unencryptedData!, forKey: device.JSON_UNENCRYPTED_DATA_KEY)
+            newDevice[device.JSON_NAME_KEY] = device.name
+            newDevice[device.JSON_TYPE_KEY] = device.type
+            newDevice[device.JSON_DATA_KEY] = device.data
+            newDevice[device.JSON_UNENCRYPTED_DATA_KEY] = device.unencryptedData
         }
         
         let deviceJSON = self.dictionaryToJSON(newDevice)
@@ -245,7 +245,7 @@ extension PIAdapter {
     :param: endpoint The Rest API endpoint of the device object.
     :param: callback Returns the dictionary object of the device upon task completion.
     */
-    private func getDevice(endpoint: String, callback: (NSDictionary)->()) {
+    private func getDevice(endpoint: String, callback: ([String: AnyObject])->()) {
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response in
@@ -253,9 +253,9 @@ extension PIAdapter {
             self.printDebug("Get Device Response: \(response)")
             
             var deviceData = response
-            if let rows = response["rows"] as? NSArray {
+            if let rows = response["rows"] as? [AnyObject] {
                 if rows.count > 0 {
-                    deviceData = rows[0] as! NSDictionary
+                    deviceData = rows[0] as! [String: AnyObject]
                 } else {
                     return
                 }
@@ -314,8 +314,8 @@ extension PIAdapter {
             self.printDebug("Get Devices Response: \(response)")
             
             var devices: [PIDevice] = []
-            if let rows = response["rows"] as? NSArray {
-                for row in rows as! [NSDictionary] {
+            if let rows = response["rows"] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
                     let device = PIDevice(dictionary: row)
                     devices.append(device)
                 }
@@ -369,8 +369,8 @@ extension PIAdapter {
             self.printDebug("Get Beacons Response: \(response)")
             
             var beacons: [PIBeacon] = []
-            if let rows = response["rows"] as? NSArray {
-                for row in rows as! [NSDictionary] {
+            if let rows = response["rows"] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
                     let beacon = PIBeacon(dictionary: row)
                     beacons.append(beacon)
                 }
@@ -385,10 +385,10 @@ extension PIAdapter {
     
     :param: beaconData Array containing all ranged beacons and the time they were detected.
     */
-    public func sendBeaconPayload(beaconData:NSArray) {
+    public func sendBeaconPayload(beaconData:[[String: AnyObject]]) {
         
         let endpoint = _baseURL + _beaconSegment + "tenants/" + _tenantCode + "/orgs/" + _orgCode
-        let notificationMessage = NSDictionary(object: beaconData, forKey: "bnm")
+        let notificationMessage =  ["bnm": beaconData]
         
         let notificationData = dictionaryToJSON(notificationMessage)
         
@@ -423,8 +423,8 @@ extension PIAdapter {
             self.printDebug("Get Zones Response: \(response)")
             
             var zones: [PIZone] = []
-            if let rows = response["rows"] as? NSArray {
-                for row in rows as! [NSDictionary] {
+            if let rows = response["rows"] as? [[String: AnyObject]] {
+                for row in rows {
                     let zone = PIZone(dictionary: row)
                     zones.append(zone)
                 }
@@ -512,8 +512,8 @@ extension PIAdapter {
             self.printDebug("Get Sites Response: \(response)")
             
             var sites: [String: String] = [:]
-            if let rows = response["rows"] as? NSArray {
-                for row in rows as! [NSDictionary] {
+            if let rows = response["rows"] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
                     if let site = row["@code"] as? String {
                         if let name = row["name"] as? String {
                             sites[site] = name
@@ -546,8 +546,8 @@ extension PIAdapter {
             self.printDebug("Get Floors Response: \(response)")
             
             var floors: [String: String] = [:]
-            if let rows = response["rows"] as? NSArray {
-                for row in rows as! [NSDictionary] {
+            if let rows = response["rows"] as? [[String: AnyObject]] {
+                for row in rows {
                     if let floor = row["@code"] as? String {
                         if let name = row["name"] as? String {
                             floors[floor] = name
@@ -570,9 +570,9 @@ extension PIAdapter {
     :param: endpoint The URL substring that comes after the base URL. (/pi-config/v1/...)
     :param: method   The HTTP Method to use. (GET, POST, PUT, etc.)
     :param: body     Optional value if the method is a PUT or POST and needs to send data.
-    :param: callback Returns an NSDictionary of the response upon completion.
+    :param: callback Returns an Dictionary of the response upon completion.
     */
-    public func piRequest(endpoint: String, method: String, body: NSData?, callback: (NSDictionary)->()) {
+    public func piRequest(endpoint: String, method: String, body: NSData?, callback: ([String: AnyObject])->()) {
         
         var url = _baseURL + endpoint
         
@@ -625,9 +625,9 @@ extension PIAdapter {
     Will always massage response data into a dictionary.
     
     :param: request  The NSURLRequest to perform.
-    :param: callback Returns an NSDictionary of the response on task completion.
+    :param: callback Returns an Dictionary of the response on task completion.
     */
-    private func performRequest(request:NSURLRequest, callback:(NSDictionary!)->()) {
+    private func performRequest(request:NSURLRequest, callback:([String: AnyObject]!)->()) {
         
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error in
@@ -638,23 +638,23 @@ extension PIAdapter {
                 if let responseData = data {
                     
                     var error: NSError?
-                    if let json = NSJSONSerialization.JSONObjectWithData(responseData, options: NSJSONReadingOptions.MutableLeaves, error: &error) as? NSDictionary {
+                    if let json = NSJSONSerialization.JSONObjectWithData(responseData, options: NSJSONReadingOptions.MutableLeaves, error: &error) as? [String: AnyObject] {
                         if (error != nil) {
                             let dataString = NSString(data: responseData, encoding: NSUTF8StringEncoding)
                             self.printDebug("Could not parse response. " + (dataString as! String) + "\(error)")
                         } else {
                             callback(json)
                         }
-                    } else if let json = NSJSONSerialization.JSONObjectWithData(responseData, options: NSJSONReadingOptions.MutableLeaves, error: &error) as? NSArray {
+                    } else if let json = NSJSONSerialization.JSONObjectWithData(responseData, options: NSJSONReadingOptions.MutableLeaves, error: &error) as? [[String: AnyObject]] {
                         if (error != nil) {
                             let dataString = NSString(data: responseData, encoding: NSUTF8StringEncoding)
                             self.printDebug("Could not parse response. " + (dataString as! String) + "\(error)")
                         } else {
-                            let returnVal = NSDictionary(object: json, forKey: "dataArray")
+                            let returnVal = ["dataArray": json]
                             callback(returnVal)
                         }
                     } else {
-                        let returnVal = NSDictionary(object: responseData, forKey: "rawData")
+                        let returnVal = ["rawData": responseData]
                         callback(returnVal)
                     }
                     
@@ -674,7 +674,7 @@ extension PIAdapter {
     
     :returns: An NSData object containing the raw JSON of the dictionary.
     */
-    private func dictionaryToJSON(dictionary: NSDictionary) -> NSData {
+    private func dictionaryToJSON(dictionary: [String: AnyObject]) -> NSData {
         var error: NSError?
         if let deviceJSON = NSJSONSerialization.dataWithJSONObject(dictionary, options: NSJSONWritingOptions.allZeros, error: &error) {
             if (error != nil) {

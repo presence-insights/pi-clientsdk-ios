@@ -142,21 +142,21 @@ public class PIBeaconSensor: NSObject {
     
     :returns: Dictionary of containing both the beacon data and the detected time.
     */
-    private func createDictionaryWith(beacon: CLBeacon, detectedTime: NSDate) -> NSDictionary {
-        var dictionary = NSMutableDictionary()
-        dictionary.setObject(UIDevice.currentDevice().identifierForVendor.UUIDString.lowercaseString, forKey: "descriptor")
-        dictionary.setObject(timeAsISO8601String(detectedTime), forKey: "detectedTime")
+    private func createDictionaryWith(beacon: CLBeacon, detectedTime: NSDate) -> [String: AnyObject] {
+        var dictionary = [String: AnyObject]()
+        dictionary["descriptor"] = UIDevice.currentDevice().identifierForVendor.UUIDString.lowercaseString
+        dictionary["detectedTime"] = timeAsISO8601String(detectedTime)
         
-        var data = NSMutableDictionary()
+        var data = [String: AnyObject]()
         
-        data.setObject( beacon.rssi, forKey:"rssi")
-        data.setObject( beacon.accuracy, forKey:"accuracy")
-        data.setObject( beacon.proximityUUID.UUIDString.lowercaseString, forKey:"proximityUUID")
-        data.setObject( beacon.major.stringValue, forKey:"major")
-        data.setObject( beacon.minor.stringValue, forKey:"minor")
-        data.setObject( proximityToString(beacon.proximity),  forKey:"proximity")
+        data["rssi"] = beacon.rssi
+        data["accuracy"] = beacon.accuracy
+        data["proximityUUID"] = beacon.proximityUUID.UUIDString.lowercaseString
+        data["major"] = beacon.major.stringValue
+        data["minor"] = beacon.minor.stringValue
+        data["proximity"] = proximityToString(beacon.proximity)
         
-        dictionary.setObject(data, forKey:"data")
+        dictionary["data"] = data
         
         return dictionary
     }
@@ -189,11 +189,11 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         
         if lastReport > PI_REPORT_INTERVAL {
             _lastDetected = detectedTime
-            var beaconData: [NSDictionary] = []
+            var beaconData: [[String: AnyObject]] = [[:]]
             for beacon in beacons as! [CLBeacon] {
                 beaconData.append(self.createDictionaryWith(beacon, detectedTime: detectedTime))
             }
-            _piAdapter.sendBeaconPayload(NSArray(array: beaconData))
+            _piAdapter.sendBeaconPayload(beaconData)
         }
         
         if let d = delegate {

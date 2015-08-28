@@ -55,7 +55,7 @@ public class PIBeacon: NSObject {
         self.init(name: name, description: description, proximityUUID: proximityUUID, major: major, minor: minor)
     }
     
-    public convenience init(dictionary: NSDictionary) {
+    public convenience init(dictionary: [String: AnyObject]) {
         
         // I prefer this method because if the dictionary isn't built correctly it will at least throw a nil error at runtime.
         self.init(name: "", description: "", proximityUUID: NSUUID(), major: "", minor: "")
@@ -90,19 +90,19 @@ public class PIBeacon: NSObject {
         */
     }
     
-    public func toDictionary() -> NSDictionary {
+    public func toDictionary() -> [String: AnyObject] {
         
-        let dictionary = NSMutableDictionary()
+        var dictionary: [String: AnyObject] = [:]
         
-        dictionary.setObject(name, forKey: JSON_NAME_KEY)
-        dictionary.setObject(beaconDescription, forKey: JSON_DESCRIPTION_KEY)
-        dictionary.setObject(proximityUUID, forKey: JSON_UUID_KEY)
-        dictionary.setObject(major, forKey: JSON_MAJOR_KEY)
-        dictionary.setObject(minor, forKey: JSON_MINOR_KEY)
-        dictionary.setObject(x, forKey: JSON_X_KEY)
-        dictionary.setObject(y, forKey: JSON_Y_KEY)
-        dictionary.setObject(site, forKey: JSON_SITE_KEY)
-        dictionary.setObject(floor, forKey: JSON_FLOOR_KEY)
+        dictionary[JSON_NAME_KEY] = name
+        dictionary[JSON_DESCRIPTION_KEY] = description
+        dictionary[JSON_UUID_KEY] = proximityUUID
+        dictionary[JSON_MAJOR_KEY] = major
+        dictionary[JSON_MINOR_KEY] = minor
+        dictionary[JSON_X_KEY] = x
+        dictionary[JSON_Y_KEY] = y
+        dictionary[JSON_SITE_KEY] = site
+        dictionary[JSON_FLOOR_KEY] = floor
         
         return dictionary
         

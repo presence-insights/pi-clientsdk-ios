@@ -29,10 +29,10 @@ public class PIDevice: NSObject {
     public var code: String?
     public var name: String?
     public var type: String?
-    public var data: NSMutableDictionary?
-    public var unencryptedData: NSMutableDictionary?
+    public var data: [String: String]?
+    public var unencryptedData: [String: String]?
     
-    public init(name: String?, type: String?, data: NSMutableDictionary?, unencryptedData: NSMutableDictionary?, registered: Bool) {
+    public init(name: String?, type: String?, data: [String: String]?, unencryptedData: [String: String]?, registered: Bool) {
         
         self.name = name
         self.type = type
@@ -45,12 +45,12 @@ public class PIDevice: NSObject {
     }
     
     public convenience init(name: String) {
-        self.init(name: name, type: String(), data: NSMutableDictionary(), unencryptedData: NSMutableDictionary(), registered: false)
+        self.init(name: name, type: String(), data: [:], unencryptedData: [:], registered: false)
     }
     
     public convenience init(dictionary: NSDictionary) {
         
-        self.init(name: nil, type: nil, data: NSMutableDictionary(), unencryptedData: NSMutableDictionary(), registered: false)
+        self.init(name: nil, type: nil, data: [:], unencryptedData: [:], registered: false)
         
         if let name = dictionary[JSON_NAME_KEY] as? String {
             self.name = name
@@ -58,11 +58,11 @@ public class PIDevice: NSObject {
         if let type =  dictionary[JSON_TYPE_KEY] as? String {
             self.type = type;
         }
-        if let dictionary = dictionary[JSON_DATA_KEY] as? NSDictionary {
-            self.data = NSMutableDictionary(dictionary: dictionary)
+        if let dictionary = dictionary[JSON_DATA_KEY] as? [String: String] {
+            self.data = dictionary
         }
-        if let dictionary = dictionary[JSON_UNENCRYPTED_DATA_KEY] as? NSDictionary {
-            self.unencryptedData = NSMutableDictionary(dictionary: dictionary)
+        if let dictionary = dictionary[JSON_UNENCRYPTED_DATA_KEY] as? [String: String] {
+            self.unencryptedData = dictionary
         }
         
         self._registered = dictionary[JSON_REGISTERED_KEY] as! Bool
@@ -74,20 +74,20 @@ public class PIDevice: NSObject {
     }
     
     public func setDataObject(object: String, key: String) {
-        if let deviceData = data {
-            deviceData.setObject(object, forKey: key)
+        if data == nil {
+            data![key] = object
         } else {
-            data = NSMutableDictionary()
-            data!.setObject(object, forKey: key)
+            data = [:]
+            data![key] = object
         }
     }
     
     public func setUnencryptedDataObject(object: String, key: String) {
-        if let deviceData = unencryptedData {
-            deviceData.setObject(object, forKey: key)
+        if unencryptedData != nil {
+            unencryptedData![key] = object
         } else {
-            unencryptedData = NSMutableDictionary()
-            unencryptedData!.setObject(object, forKey: key)
+            unencryptedData = [:]
+            unencryptedData![key] = object
         }
     }
     
@@ -111,27 +111,27 @@ public class PIDevice: NSObject {
         return _registered
     }
     
-    public func toDictionary() -> NSDictionary {
+    public func toDictionary() -> [String: AnyObject] {
         
-        let dictionary = NSMutableDictionary()
+        var dictionary: [String: AnyObject] = [:]
         
-        dictionary.setObject(_descriptor, forKey: JSON_DESCRIPTOR_KEY)
-        dictionary.setObject(_registered, forKey: JSON_REGISTERED_KEY)
+        dictionary[JSON_DESCRIPTOR_KEY] = _descriptor
+        dictionary[JSON_REGISTERED_KEY] = _registered
         
         if let n = name {
-            dictionary.setObject(n, forKey: JSON_NAME_KEY)
+            dictionary[JSON_NAME_KEY] = n
         }
         if let t = type {
-            dictionary.setObject(t, forKey: JSON_TYPE_KEY)
+            dictionary[JSON_TYPE_KEY] = t
         }
         if let d = data {
-            dictionary.setObject(d, forKey: JSON_DATA_KEY)
+            dictionary[JSON_DATA_KEY] = d
         }
         if let uD = unencryptedData {
-            dictionary.setObject(uD, forKey: JSON_UNENCRYPTED_DATA_KEY)
+            dictionary[JSON_UNENCRYPTED_DATA_KEY] = uD
         }
         if let c = code {
-            dictionary.setObject(c, forKey: JSON_CODE_KEY)
+            dictionary[JSON_CODE_KEY] = c
         }
         
         return dictionary
