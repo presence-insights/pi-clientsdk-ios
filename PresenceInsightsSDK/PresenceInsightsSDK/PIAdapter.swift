@@ -15,7 +15,7 @@ import UIKit
 // MARK: - PIAdapter object
 public class PIAdapter: NSObject {
     
-    private let TAG = "[MILPresenceInsightsSDK] "
+    private let TAG = "[PresenceInsightsSDK] "
     
     private let _configSegment = "/pi-config/v1/"
     private let _beaconSegment = "/conn-beacon/v1/"

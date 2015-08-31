@@ -41,14 +41,18 @@ public class PIBeaconSensor: NSObject {
     
     /**
     Public function to start sensing and ranging beacons.
+
+    :param: callback Returns result of starting the sensor as a boolean.
     */
-    public func start() {
+    public func start(callback:(Bool)->()) {
         _piAdapter.getAllBeaconRegions({regions in
+            var success = false
             
             if regions.count > 0 {
                 for r in regions {
                     if let region = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: r), identifier: r) {
                         self.startForRegion(region)
+                        success = true
                     } else {
                         self._piAdapter.printDebug("Failed to create region: \(r)")
                     }
@@ -56,7 +60,7 @@ public class PIBeaconSensor: NSObject {
             } else {
                 self._piAdapter.printDebug("No Regions to monitor.")
             }
-            
+            callback(success)
         })
     }
     
