@@ -23,15 +23,6 @@ import UIKit
 
 public class PIDevice: NSObject {
     
-    // Defined Values
-    let JSON_NAME_KEY = "name"
-    let JSON_TYPE_KEY = "registrationType"
-    let JSON_DESCRIPTOR_KEY = "descriptor"
-    let JSON_REGISTERED_KEY = "registered"
-    let JSON_CODE_KEY = "@code"
-    let JSON_DATA_KEY = "data"
-    let JSON_UNENCRYPTED_DATA_KEY = "unencryptedData"
-    
     // Values every device has.
     private var _descriptor: String!
     private var _registered: Bool!
@@ -63,22 +54,22 @@ public class PIDevice: NSObject {
         
         self.init(name: nil, type: nil, data: [:], unencryptedData: [:], registered: false)
         
-        if let name = dictionary[JSON_NAME_KEY] as? String {
+        if let name = dictionary[Device.JSON_NAME_KEY] as? String {
             self.name = name
         }
-        if let type =  dictionary[JSON_TYPE_KEY] as? String {
+        if let type =  dictionary[Device.JSON_TYPE_KEY] as? String {
             self.type = type;
         }
-        if let dictionary = dictionary[JSON_DATA_KEY] as? [String: String] {
+        if let dictionary = dictionary[Device.JSON_DATA_KEY] as? [String: String] {
             self.data = dictionary
         }
-        if let dictionary = dictionary[JSON_UNENCRYPTED_DATA_KEY] as? [String: String] {
+        if let dictionary = dictionary[Device.JSON_UNENCRYPTED_DATA_KEY] as? [String: String] {
             self.unencryptedData = dictionary
         }
         
-        self._registered = dictionary[JSON_REGISTERED_KEY] as! Bool
+        self._registered = dictionary[Device.JSON_REGISTERED_KEY] as! Bool
         
-        if let code = dictionary[JSON_CODE_KEY] as? String {
+        if let code = dictionary[Device.JSON_CODE_KEY] as? String {
             self.setDeviceCode(code)
         }
         
@@ -126,23 +117,23 @@ public class PIDevice: NSObject {
         
         var dictionary: [String: AnyObject] = [:]
         
-        dictionary[JSON_DESCRIPTOR_KEY] = _descriptor
-        dictionary[JSON_REGISTERED_KEY] = _registered
+        dictionary[Device.JSON_DESCRIPTOR_KEY] = _descriptor
+        dictionary[Device.JSON_REGISTERED_KEY] = _registered
         
         if let n = name {
-            dictionary[JSON_NAME_KEY] = n
+            dictionary[Device.JSON_NAME_KEY] = n
         }
         if let t = type {
-            dictionary[JSON_TYPE_KEY] = t
+            dictionary[Device.JSON_TYPE_KEY] = t
         }
         if let d = data {
-            dictionary[JSON_DATA_KEY] = d
+            dictionary[Device.JSON_DATA_KEY] = d
         }
         if let uD = unencryptedData {
-            dictionary[JSON_UNENCRYPTED_DATA_KEY] = uD
+            dictionary[Device.JSON_UNENCRYPTED_DATA_KEY] = uD
         }
         if let c = code {
-            dictionary[JSON_CODE_KEY] = c
+            dictionary[Device.JSON_CODE_KEY] = c
         }
         
         return dictionary

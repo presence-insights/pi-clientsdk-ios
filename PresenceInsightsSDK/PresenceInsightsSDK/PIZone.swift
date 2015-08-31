@@ -23,14 +23,6 @@ import UIKit
 
 public class PIZone: NSObject {
     
-    // Defined Values
-    let JSON_NAME_KEY = "name"
-    let JSON_X_KEY = "x"
-    let JSON_Y_KEY = "y"
-    let JSON_WIDTH_KEY = "width"
-    let JSON_HEIGHT_KEY = "height"
-    let JSON_TAGS_KEY = "tags"
-    
     // Zone properties
     public var name: String!
     public var x: CGFloat!
@@ -56,12 +48,12 @@ public class PIZone: NSObject {
         
         self.init(name: "", x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
         
-        self.name = dictionary[JSON_NAME_KEY] as! String
-        self.x = dictionary[JSON_X_KEY] as! CGFloat
-        self.y = dictionary[JSON_Y_KEY] as! CGFloat
-        self.width = dictionary[JSON_WIDTH_KEY] as! CGFloat
-        self.height = dictionary[JSON_HEIGHT_KEY] as! CGFloat
-        self.tags = dictionary[JSON_TAGS_KEY] as! [String]
+        self.name = dictionary[Zone.JSON_NAME_KEY] as! String
+        self.x = dictionary[Zone.JSON_X_KEY] as! CGFloat
+        self.y = dictionary[Zone.JSON_Y_KEY] as! CGFloat
+        self.width = dictionary[Zone.JSON_WIDTH_KEY] as! CGFloat
+        self.height = dictionary[Zone.JSON_HEIGHT_KEY] as! CGFloat
+        self.tags = dictionary[Zone.JSON_TAGS_KEY] as! [String]
         
     }
     
@@ -69,12 +61,12 @@ public class PIZone: NSObject {
         
         var dictionary: [String: AnyObject] = [:]
         
-        dictionary[JSON_NAME_KEY] = name
-        dictionary[JSON_X_KEY] = x
-        dictionary[JSON_Y_KEY] = y
-        dictionary[JSON_WIDTH_KEY] = width
-        dictionary[JSON_HEIGHT_KEY] = height
-        dictionary[JSON_TAGS_KEY] = tags
+        dictionary[Zone.JSON_NAME_KEY] = name
+        dictionary[Zone.JSON_X_KEY] = x
+        dictionary[Zone.JSON_Y_KEY] = y
+        dictionary[Zone.JSON_WIDTH_KEY] = width
+        dictionary[Zone.JSON_HEIGHT_KEY] = height
+        dictionary[Zone.JSON_TAGS_KEY] = tags
         
         return dictionary
 

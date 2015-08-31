@@ -22,6 +22,7 @@
 
 /* Begin PBXBuildFile section */
 		5111182C1B71420B009E0876 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5111182B1B71420B009E0876 /* Constants.swift */; };
+		518CDCB31B94B1E500DC0385 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518CDCB21B94B1E500DC0385 /* Constants.swift */; };
 		D44A40A81B57FC6D0022C5CB /* PresenceInsightsSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = D44A40A71B57FC6D0022C5CB /* PresenceInsightsSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D44A40AE1B57FC6D0022C5CB /* PresenceInsightsSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */; };
 		D44A40B51B57FC6D0022C5CB /* PresenceInsightsSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44A40B41B57FC6D0022C5CB /* PresenceInsightsSDKTests.swift */; };
@@ -46,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		5111182B1B71420B009E0876 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		518CDCB21B94B1E500DC0385 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PresenceInsightsSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D44A40A61B57FC6D0022C5CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D44A40A71B57FC6D0022C5CB /* PresenceInsightsSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PresenceInsightsSDK.h; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				D44A40A71B57FC6D0022C5CB /* PresenceInsightsSDK.h */,
+				518CDCB21B94B1E500DC0385 /* Constants.swift */,
 				D44A40C31B57FCD50022C5CB /* PIAdapter.swift */,
 				D44A40C51B57FCDF0022C5CB /* PIBeaconSensor.swift */,
 				D44A40C71B57FCE70022C5CB /* PIDevice.swift */,
@@ -272,6 +275,7 @@
 				D44A40C61B57FCDF0022C5CB /* PIBeaconSensor.swift in Sources */,
 				D44A40CA1B57FCEF0022C5CB /* PIBeacon.swift in Sources */,
 				D44F977D1B66B77B00E357F4 /* PIZone.swift in Sources */,
+				518CDCB31B94B1E500DC0385 /* Constants.swift in Sources */,
 				D44A40C41B57FCD50022C5CB /* PIAdapter.swift in Sources */,
 				D4E672E51B7294CE00D431A9 /* PIOrg.swift in Sources */,
 			);

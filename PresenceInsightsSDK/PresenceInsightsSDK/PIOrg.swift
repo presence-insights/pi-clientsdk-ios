@@ -23,12 +23,6 @@ import UIKit
 
 public class PIOrg: NSObject {
     
-    // Defined Values
-    let JSON_NAME_KEY = "name"
-    let JSON_DESCRIPTION_KEY = "description"
-    let JSON_REGISTRATION_TYPES_KEY = "registrationTypes"
-    let JSON_PUBLIC_KEY_KEY = "publicKey"
-    
     // Org properties
     public var name: String!
     public var piDescription: String!
@@ -46,10 +40,10 @@ public class PIOrg: NSObject {
         
         self.init(name: "", description: "", registrationTypes: [], publicKey: "")
         
-        self.name = dictionary[JSON_NAME_KEY] as! String
-        self.piDescription = dictionary[JSON_DESCRIPTION_KEY] as! String
-        self.registrationTypes = dictionary[JSON_REGISTRATION_TYPES_KEY] as! [String]
-        if let publicKey = dictionary[JSON_PUBLIC_KEY_KEY] as? String {
+        self.name = dictionary[Org.JSON_NAME_KEY] as! String
+        self.piDescription = dictionary[Org.JSON_DESCRIPTION_KEY] as! String
+        self.registrationTypes = dictionary[Org.JSON_REGISTRATION_TYPES_KEY] as! [String]
+        if let publicKey = dictionary[Org.JSON_PUBLIC_KEY_KEY] as? String {
             self.publicKey = publicKey
         } else {
             self.publicKey = ""
@@ -61,10 +55,10 @@ public class PIOrg: NSObject {
         
         var dictionary: [String: AnyObject] = [:]
         
-        dictionary[JSON_NAME_KEY] = name
-        dictionary[JSON_DESCRIPTION_KEY] = description
-        dictionary[JSON_REGISTRATION_TYPES_KEY] = registrationTypes
-        dictionary[JSON_PUBLIC_KEY_KEY] = publicKey
+        dictionary[Org.JSON_NAME_KEY] = name
+        dictionary[Org.JSON_DESCRIPTION_KEY] = description
+        dictionary[Org.JSON_REGISTRATION_TYPES_KEY] = registrationTypes
+        dictionary[Org.JSON_PUBLIC_KEY_KEY] = publicKey
         
         return dictionary
         

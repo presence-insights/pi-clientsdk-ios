@@ -198,13 +198,13 @@ extension PIAdapter {
         
         var newDevice = dictionary
         
-        newDevice[device.JSON_REGISTERED_KEY] = device.isRegistered()
+        newDevice[Device.JSON_REGISTERED_KEY] = device.isRegistered()
         
         if device.isRegistered() {
-            newDevice[device.JSON_NAME_KEY] = device.name
-            newDevice[device.JSON_TYPE_KEY] = device.type
-            newDevice[device.JSON_DATA_KEY] = device.data
-            newDevice[device.JSON_UNENCRYPTED_DATA_KEY] = device.unencryptedData
+            newDevice[Device.JSON_NAME_KEY] = device.name
+            newDevice[Device.JSON_TYPE_KEY] = device.type
+            newDevice[Device.JSON_DATA_KEY] = device.data
+            newDevice[Device.JSON_UNENCRYPTED_DATA_KEY] = device.unencryptedData
         }
         
         let deviceJSON = self.dictionaryToJSON(newDevice)

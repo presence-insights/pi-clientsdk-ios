@@ -24,17 +24,6 @@ import CoreLocation
 
 public class PIBeacon: NSObject {
     
-    // Defined Values
-    let JSON_NAME_KEY = "name"
-    let JSON_DESCRIPTION_KEY = "description"
-    let JSON_UUID_KEY = "proximityUUID"
-    let JSON_MAJOR_KEY = "major"
-    let JSON_MINOR_KEY = "minor"
-    let JSON_X_KEY = "x"
-    let JSON_Y_KEY = "y"
-    let JSON_SITE_KEY = "@site"
-    let JSON_FLOOR_KEY = "@floor"
-    
     // Beacon properties
     public var name: String!
     public var beaconDescription: String!
@@ -71,19 +60,19 @@ public class PIBeacon: NSObject {
         // I prefer this method because if the dictionary isn't built correctly it will at least throw a nil error at runtime.
         self.init(name: "", description: "", proximityUUID: NSUUID(), major: "", minor: "")
         
-        self.name = dictionary[JSON_NAME_KEY] as! String
-        if let beaconDescription = dictionary[JSON_DESCRIPTION_KEY] as? String {
+        self.name = dictionary[Beacon.JSON_NAME_KEY] as! String
+        if let beaconDescription = dictionary[Beacon.JSON_DESCRIPTION_KEY] as? String {
             self.beaconDescription = beaconDescription;
         }
-        if let uuid = NSUUID(UUIDString: dictionary[JSON_UUID_KEY] as! String) {
+        if let uuid = NSUUID(UUIDString: dictionary[Beacon.JSON_UUID_KEY] as! String) {
             self.proximityUUID = uuid
         }
-        self.major = dictionary[JSON_MAJOR_KEY] as! String
-        self.minor = dictionary[JSON_MINOR_KEY] as! String
-        self.x = dictionary[JSON_X_KEY] as! CGFloat
-        self.y = dictionary[JSON_Y_KEY] as! CGFloat
-        self.site = dictionary[JSON_SITE_KEY] as! String
-        self.floor = dictionary[JSON_FLOOR_KEY] as! String
+        self.major = dictionary[Beacon.JSON_MAJOR_KEY] as! String
+        self.minor = dictionary[Beacon.JSON_MINOR_KEY] as! String
+        self.x = dictionary[Beacon.JSON_X_KEY] as! CGFloat
+        self.y = dictionary[Beacon.JSON_Y_KEY] as! CGFloat
+        self.site = dictionary[Beacon.JSON_SITE_KEY] as! String
+        self.floor = dictionary[Beacon.JSON_FLOOR_KEY] as! String
         
         // This is a way to do it with nil checking, but it won't throw an error and will still init (just empty not nil).
         /**
@@ -105,15 +94,15 @@ public class PIBeacon: NSObject {
         
         var dictionary: [String: AnyObject] = [:]
         
-        dictionary[JSON_NAME_KEY] = name
-        dictionary[JSON_DESCRIPTION_KEY] = description
-        dictionary[JSON_UUID_KEY] = proximityUUID
-        dictionary[JSON_MAJOR_KEY] = major
-        dictionary[JSON_MINOR_KEY] = minor
-        dictionary[JSON_X_KEY] = x
-        dictionary[JSON_Y_KEY] = y
-        dictionary[JSON_SITE_KEY] = site
-        dictionary[JSON_FLOOR_KEY] = floor
+        dictionary[Beacon.JSON_NAME_KEY] = name
+        dictionary[Beacon.JSON_DESCRIPTION_KEY] = description
+        dictionary[Beacon.JSON_UUID_KEY] = proximityUUID
+        dictionary[Beacon.JSON_MAJOR_KEY] = major
+        dictionary[Beacon.JSON_MINOR_KEY] = minor
+        dictionary[Beacon.JSON_X_KEY] = x
+        dictionary[Beacon.JSON_Y_KEY] = y
+        dictionary[Beacon.JSON_SITE_KEY] = site
+        dictionary[Beacon.JSON_FLOOR_KEY] = floor
         
         return dictionary
         
