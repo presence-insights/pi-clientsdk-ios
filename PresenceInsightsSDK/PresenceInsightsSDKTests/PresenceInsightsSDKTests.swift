@@ -99,7 +99,7 @@ class PresenceInsightsSDKTests: XCTestCase {
             XCTAssertNotNil(result)
             expectation.fulfill()
         }
-        waitForExpectationsWithTimeout(15.0, handler: nil)
+        waitForExpectationsWithTimeout(30.0, handler: nil)
     }
     // register device
     func testRegisterDevice() {
