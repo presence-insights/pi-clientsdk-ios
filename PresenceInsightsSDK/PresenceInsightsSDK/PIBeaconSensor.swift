@@ -204,7 +204,7 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         
         if lastReport > PI_REPORT_INTERVAL {
             _lastDetected = detectedTime
-            var beaconData: [[String: AnyObject]] = [[:]]
+            var beaconData: [[String: AnyObject]] = []
             for beacon in beacons as! [CLBeacon] {
                 beaconData.append(self.createDictionaryWith(beacon, detectedTime: detectedTime))
             }
