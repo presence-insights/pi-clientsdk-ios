@@ -58,6 +58,7 @@ piBeaconSensor.start()
 ```
 
 *Note:* To use PI Beacon, you need to add keys to plist. Set the Value to the message you want to prompt when requesting to use NSLocation
+
 * NSLocationWhenInUseUsageDescription (Type: String)
 
 sample code for NSLocation Authorization: 
