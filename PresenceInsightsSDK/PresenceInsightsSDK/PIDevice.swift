@@ -24,8 +24,8 @@ import UIKit
 public class PIDevice: NSObject {
     
     // Values every device has.
-    private var _descriptor: String!
-    private var _registered: Bool!
+    public var descriptor: String!
+    public var registered: Bool = false
     
     // Optional values only registered devices have.
     public var code: String?
@@ -41,8 +41,8 @@ public class PIDevice: NSObject {
         self.data = data
         self.unencryptedData = unencryptedData
         
-        _registered = registered
-        _descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
+        self.registered = registered
+        self.descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
         
     }
     
@@ -67,15 +67,15 @@ public class PIDevice: NSObject {
             self.unencryptedData = dictionary
         }
         
-        self._registered = dictionary[Device.JSON_REGISTERED_KEY] as! Bool
+        self.registered = dictionary[Device.JSON_REGISTERED_KEY] as! Bool
         
         if let code = dictionary[Device.JSON_CODE_KEY] as? String {
-            self.setDeviceCode(code)
+            self.code = code
         }
         
     }
     
-    public func setDataObject(object: String, key: String) {
+    public func addToDataObject(object: String, key: String) {
         if data == nil {
             data![key] = object
         } else {
@@ -84,7 +84,7 @@ public class PIDevice: NSObject {
         }
     }
     
-    public func setUnencryptedDataObject(object: String, key: String) {
+    public func addToUnencryptedDataObject(object: String, key: String) {
         if unencryptedData != nil {
             unencryptedData![key] = object
         } else {
@@ -93,32 +93,12 @@ public class PIDevice: NSObject {
         }
     }
     
-    public func setRegistered(registered: Bool) {
-        _registered = registered
-    }
-    
-    public func setRegistrationType(type: String) {
-        self.type = type;
-    }
-    
-    public func setDeviceCode(code: String) {
-        self.code = code
-    }
-    
-    public func getDescriptor() -> String {
-        return _descriptor
-    }
-    
-    public func isRegistered() -> Bool {
-        return _registered
-    }
-    
     public func toDictionary() -> [String: AnyObject] {
         
         var dictionary: [String: AnyObject] = [:]
         
-        dictionary[Device.JSON_DESCRIPTOR_KEY] = _descriptor
-        dictionary[Device.JSON_REGISTERED_KEY] = _registered
+        dictionary[Device.JSON_DESCRIPTOR_KEY] = descriptor
+        dictionary[Device.JSON_REGISTERED_KEY] = registered
         
         if let n = name {
             dictionary[Device.JSON_NAME_KEY] = n

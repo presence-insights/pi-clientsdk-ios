@@ -74,20 +74,6 @@ public class PIBeacon: NSObject {
         self.site = dictionary[Beacon.JSON_SITE_KEY] as! String
         self.floor = dictionary[Beacon.JSON_FLOOR_KEY] as! String
         
-        // This is a way to do it with nil checking, but it won't throw an error and will still init (just empty not nil).
-        /**
-        if let name = dictionary["name"] as? String,
-        let description = dictionary["description"] as? String,
-        let proximityUUID = dictionary["proximityUUID"] as? String,
-        let major = dictionary["major"] as? UInt,
-        let minor = dictionary["minor"] as? UInt {
-        
-        self.init(name: name, description: description, proximityUUID: proximityUUID, major: major, minor: minor)
-        
-        }
-        
-        self.init(name: "", description: "", proximityUUID: "", major: 0, minor: 0)
-        */
     }
     
     public func toDictionary() -> [String: AnyObject] {

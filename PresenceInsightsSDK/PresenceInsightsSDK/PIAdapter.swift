@@ -108,7 +108,7 @@ extension PIAdapter {
         
         let endpoint = _configURL + "/devices"
         
-        device.setRegistered(true)
+        device.registered = true
         
         assert(device.name != nil, "PIDevice name cannot be registered as nil.")
         assert(device.type != nil, "PIDevice type cannot be registered as nil.")
@@ -162,7 +162,7 @@ extension PIAdapter {
     */
     public func unregisterDevice(device: PIDevice, callback:(PIDevice)->()) {
         
-        device.setRegistered(false)
+        device.registered = false
         updateDevice(device, callback: {newDevice in
             callback(newDevice)
         })
@@ -177,7 +177,7 @@ extension PIAdapter {
     */
     public func updateDevice(device: PIDevice, callback:(PIDevice)->()) {
         
-        var endpoint = _configURL + "/devices?rawDescriptor=" + device.getDescriptor()
+        var endpoint = _configURL + "/devices?rawDescriptor=" + device.descriptor
         getDevice(endpoint, callback: {deviceData in
             endpoint = self._configURL + "/devices/" + (deviceData["@code"] as! String)
             self.updateDeviceDictionary(endpoint, dictionary: deviceData, device: device, callback: {newDevice in
@@ -198,9 +198,9 @@ extension PIAdapter {
         
         var newDevice = dictionary
         
-        newDevice[Device.JSON_REGISTERED_KEY] = device.isRegistered()
+        newDevice[Device.JSON_REGISTERED_KEY] = device.registered
         
-        if device.isRegistered() {
+        if device.registered {
             newDevice[Device.JSON_NAME_KEY] = device.name
             newDevice[Device.JSON_TYPE_KEY] = device.type
             newDevice[Device.JSON_DATA_KEY] = device.data

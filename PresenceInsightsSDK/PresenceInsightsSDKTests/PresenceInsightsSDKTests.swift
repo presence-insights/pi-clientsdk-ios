@@ -28,8 +28,8 @@ class PresenceInsightsSDKTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         _adapter = PIAdapter(tenant: PI.Tenant, org: PI.Org, baseURL: PI.Hostname, username: PI.Username, password: PI.Password)
         _device = PIDevice(name: "test device")
-        _device.setRegistrationType("External")
-        _device.setRegistered(true)
+        _device.type = "External"
+        _device.registered = true
     }
     
     override func tearDown() {
@@ -124,7 +124,7 @@ class PresenceInsightsSDKTests: XCTestCase {
     func testUnregisterDevice() {
         var expectation = expectationWithDescription("Test unregistering a device")
         _adapter.unregisterDevice(_device, callback: { (result: PIDevice) -> () in
-            XCTAssertFalse(result.isRegistered())
+            XCTAssertFalse(result.registered)
             expectation.fulfill()
         })
         waitForExpectationsWithTimeout(15.0, handler: nil)
