@@ -21,6 +21,7 @@
 
 import UIKit
 
+// MARK: - PIZone object
 public class PIZone: NSObject {
     
     // Zone properties
@@ -31,6 +32,16 @@ public class PIZone: NSObject {
     public var height: CGFloat!
     public var tags: [String]!
     
+    /**
+    Default object initializer.
+
+    :param: name    Zone name
+    :param: x       x coordinate of zone
+    :param: y       y coordinate of zone
+    :param: width   width of the zone
+    :param: height  height of the zone
+    :param: tags    useful identifying keywords for the zone
+    */
     public init(name: String, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, tags: [String]) {
         self.name = name
         self.x = x
@@ -40,10 +51,24 @@ public class PIZone: NSObject {
         self.tags = tags
     }
     
+    /**
+    Convenience initializer which sets the zone name, and sets defaults for the remaining properties.
+
+    :param: name Zone name
+
+    :returns: An initialized PIZone.
+    */
     public convenience init(name: String) {
         self.init(name: name, x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
     }
     
+    /**
+    Convenience initializer that uses a dictionary to populate the objects properties.
+
+    :param: dictionary PIZone represented as a dictionary
+
+    :returns: An initialized PIZone.
+    */
     public convenience init(dictionary: [String: AnyObject]) {
         
         self.init(name: "", x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
@@ -57,6 +82,11 @@ public class PIZone: NSObject {
         
     }
     
+    /**
+    Helper function that provides the PIZone object as a dictionary
+
+    :returns: dictionary representation of PIZone
+    */
     public func toDictionary() -> [String: AnyObject] {
         
         var dictionary: [String: AnyObject] = [:]

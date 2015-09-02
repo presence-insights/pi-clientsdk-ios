@@ -21,6 +21,7 @@
 
 import UIKit
 
+// MARK: - PIOrg object
 public class PIOrg: NSObject {
     
     // Org properties
@@ -29,6 +30,14 @@ public class PIOrg: NSObject {
     public var registrationTypes: [String]!
     public var publicKey: String!
     
+    /**
+    Default object initializer.
+
+    :param: name                Org name
+    :param: description         Org description
+    :param: registrationTypes   List of the organizations registration types
+    :param: publicKey           public key used by the organization
+    */
     public init(name: String, description: String, registrationTypes: [String], publicKey: String) {
         self.name = name
         self.piDescription = description
@@ -36,6 +45,13 @@ public class PIOrg: NSObject {
         self.publicKey = publicKey
     }
     
+    /**
+    Convenience initializer that uses a dictionary to populate the objects properties.
+
+    :param: dictionary PIOrg represented as a dictionary
+
+    :returns: An initialized PIOrg.
+    */
     public convenience init(dictionary: [String: AnyObject]) {
         
         self.init(name: "", description: "", registrationTypes: [], publicKey: "")
@@ -51,6 +67,11 @@ public class PIOrg: NSObject {
         
     }
     
+    /**
+    Helper function that provides the PIOrg object as a dictionary
+
+    :returns: a dictionary representation of PIOrg
+    */
     public func toDictionary() -> [String: AnyObject] {
         
         var dictionary: [String: AnyObject] = [:]

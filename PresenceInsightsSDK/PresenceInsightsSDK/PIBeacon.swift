@@ -22,6 +22,7 @@
 import UIKit
 import CoreLocation
 
+// MARK: - PIBeacon object
 public class PIBeacon: NSObject {
     
     // Beacon properties
@@ -35,6 +36,15 @@ public class PIBeacon: NSObject {
     public var site: String!
     public var floor: String!
     
+    /**
+    Default object initializer.
+
+    :param: name            Beacon name
+    :param: description     Beacon description
+    :param: proximityUUID   Universally unique identifier for the beacon
+    :param: major           Unique identifier within the proximity UUID space
+    :param: minor           Unique identifier within the major space
+    */
     public init(name: String, description: String, proximityUUID: NSUUID, major: String, minor: String) {
         self.name = name
         self.beaconDescription = description
@@ -47,6 +57,15 @@ public class PIBeacon: NSObject {
         self.floor = ""
     }
     
+    /**
+    Convenience initializer which sets the beacons name, description, and uses a CLBeacon object to populate the proximityUUID, major, and minor properties.
+
+    :param: name        Beacon name
+    :param: description Beacon description
+    :param: beacon      CLBeacon object
+
+    :returns: An initialized PIBeacon.
+    */
     public convenience init(name: String, description: String, beacon: CLBeacon) {
         let proximityUUID = beacon.proximityUUID
         let major = beacon.major.stringValue
@@ -55,6 +74,13 @@ public class PIBeacon: NSObject {
         self.init(name: name, description: description, proximityUUID: proximityUUID, major: major, minor: minor)
     }
     
+    /**
+    Convenience initializer that uses a dictionary to populate the objects properties.
+
+    :param: dictionary PIBeacon represented as a dictionary
+
+    :returns: An initialized PIBeacon.
+    */
     public convenience init(dictionary: [String: AnyObject]) {
         
         // I prefer this method because if the dictionary isn't built correctly it will at least throw a nil error at runtime.
@@ -76,6 +102,11 @@ public class PIBeacon: NSObject {
         
     }
     
+    /**
+    Helper function that provides the PIBeacon object as a dictionary
+
+    :returns: a dictionary representation of PIBeacon
+    */
     public func toDictionary() -> [String: AnyObject] {
         
         var dictionary: [String: AnyObject] = [:]
