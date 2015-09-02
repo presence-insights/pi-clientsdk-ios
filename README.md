@@ -5,13 +5,13 @@ easy integration of the IBM [Presence Insights](https://console.ng.bluemix.net/c
 service available on [Bluemix](https://console.ng.bluemix.net/).
 
 ##Building
-To build the framework: 
+To build the framework:
+
 1. Open the PresenceInsightsSDK.xcodeproj.
 2. Run the PresenceInsightsSDK-Univeral target.
 3. Pull the built framework from the *iphoneuniversal* directory in the *Output* Folder.
 
-*Note:* This is only required if you want to make changes to the framework. An already built version of 
-the framework can be found in the *iphoneuniversal* directory in the *Output* Folder
+*Note:* You need to build this framework before being able to use pi-swift-sdk
 
 ##Linking
 To use the framework simply drag the PresenceInsightsSDK.framework file into your projects *Embedded 
@@ -55,6 +55,23 @@ Next you'll want to start sensing for beacons:
 >```
 var piBeaconSensor = PIBeaconSensor(adapter: piAdapter)
 piBeaconSensor.start()
+```
+
+*Note:* To use PI Beacon, you need to add keys to plist. Set the Value to the message you want to prompt when requesting to use NSLocation
+* NSLocationWhenInUseUsageDescription (Type: String)
+
+sample code for NSLocation Authorization: 
+>```
+extension <Your class name>: CLLocationMangerDelegate {
+	//You can put this inside viewDidLoad()
+	func(){
+		let locationManger = CLLocationManager()
+		location.delegate = self
+		if (CLLocationManager.authorizationStatus() != CLAuthorizationStatus.AuthorizedWhenInUse){
+			locationManager.requestWhenInUseAuthorization()
+		}
+	}
+}
 ```
 
 And that's really all there is to getting the app to start sending the device location back to your 
