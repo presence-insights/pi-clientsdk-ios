@@ -54,7 +54,7 @@ Next you'll want to start sensing for beacons:
 
 >```
 var piBeaconSensor = PIBeaconSensor(adapter: piAdapter)
-piBeaconSensor.start()
+piBeaconSensor.start( callback: (Bool) -> () )
 ```
 
 *Note:* To use PI Beacon, you need to add keys to plist. Set the Value to the message you want to prompt when requesting to use NSLocation
