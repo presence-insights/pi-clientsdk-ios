@@ -92,10 +92,16 @@ var device = PIDevice(name: <your device name>)
 device.type = PIDeviceType.<External or Internal>
 ```
 
-To add custom data to a PIDevice:
+To add encrypted data to a PIDevice:
 
 >```
 device.setDataObject(<Custom Data Object>, key: <Custom Key>)
+```
+
+To add unencrypted data to a PIDevice
+
+>```
+device.setUnecryptedDataObject(<Custom Data Object>, key: <Custom Key>)
 ```
 
 To register the PIDevice in PI:
