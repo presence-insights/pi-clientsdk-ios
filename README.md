@@ -54,7 +54,7 @@ Next you'll want to start sensing for beacons:
 
 >```
 var piBeaconSensor = PIBeaconSensor(adapter: piAdapter)
-piBeaconSensor.start()
+piBeaconSensor.start( callback: (Bool) -> () )
 ```
 
 *Note:* To use PI Beacon, you need to add keys to plist. Set the Value to the message you want to prompt when requesting to use NSLocation
@@ -92,10 +92,16 @@ var device = PIDevice(name: <your device name>)
 device.type = PIDeviceType.<External or Internal>
 ```
 
-To add custom data to a PIDevice:
+To add encrypted data to a PIDevice:
 
 >```
-device.setDataObject(<Custom Data Object>, key: <Custom Key>)
+device.addToDataObject(<Custom Data Object>, key: <Custom Key>)
+```
+
+To add unencrypted data to a PIDevice
+
+>```
+device.addToUnencryptedDataObject(<Custom Data Object>, key: <Custom Key>)
 ```
 
 To register the PIDevice in PI:
