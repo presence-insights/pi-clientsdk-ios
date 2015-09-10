@@ -27,6 +27,7 @@ public class PIDevice: NSObject {
     // Values every device has.
     public var descriptor: String!
     public var registered: Bool = false
+    public var blacklist: Bool = false
     
     // Optional values only registered devices have.
     public var code: String?
@@ -44,7 +45,7 @@ public class PIDevice: NSObject {
     :param: unencryptedData Data about device (unencrytped)
     :param: registered      Device registered with PI
     */
-    public init(name: String?, type: String?, data: [String: String]?, unencryptedData: [String: String]?, registered: Bool) {
+    public init(name: String?, type: String?, data: [String: String]?, unencryptedData: [String: String]?, registered: Bool, blacklist: Bool) {
         
         self.name = name
         self.type = type
@@ -52,6 +53,7 @@ public class PIDevice: NSObject {
         self.unencryptedData = unencryptedData
         
         self.registered = registered
+        self.blacklist = blacklist
         self.descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
         
     }
@@ -64,7 +66,7 @@ public class PIDevice: NSObject {
     :returns: An initialized PIDevice.
     */
     public convenience init(name: String) {
-        self.init(name: name, type: String(), data: [:], unencryptedData: [:], registered: false)
+        self.init(name: name, type: String(), data: [:], unencryptedData: [:], registered: false, blacklist: false)
     }
     
     /**
@@ -76,7 +78,7 @@ public class PIDevice: NSObject {
     */
     public convenience init(dictionary: [String: AnyObject]) {
         
-        self.init(name: nil, type: nil, data: [:], unencryptedData: [:], registered: false)
+        self.init(name: nil, type: nil, data: [:], unencryptedData: [:], registered: false, blacklist: false)
         
         if let name = dictionary[Device.JSON_NAME_KEY] as? String {
             self.name = name
@@ -92,6 +94,7 @@ public class PIDevice: NSObject {
         }
         
         self.registered = dictionary[Device.JSON_REGISTERED_KEY] as! Bool
+        self.blacklist = dictionary[Device.JSON_BLACKLIST_KEY] as! Bool
         
         if let code = dictionary[Device.JSON_CODE_KEY] as? String {
             self.code = code
@@ -140,6 +143,7 @@ public class PIDevice: NSObject {
         
         dictionary[Device.JSON_DESCRIPTOR_KEY] = descriptor
         dictionary[Device.JSON_REGISTERED_KEY] = registered
+        dictionary[Device.JSON_BLACKLIST_KEY] = blacklist
         
         if let n = name {
             dictionary[Device.JSON_NAME_KEY] = n

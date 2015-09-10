@@ -30,6 +30,8 @@ class PresenceInsightsSDKTests: XCTestCase {
         _device = PIDevice(name: "test device")
         _device.type = "External"
         _device.registered = true
+        _device.blacklist = false
+        _adapter.enableLogging()
     }
     
     override func tearDown() {

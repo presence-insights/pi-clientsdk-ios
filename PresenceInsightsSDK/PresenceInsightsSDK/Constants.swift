@@ -24,6 +24,7 @@ struct Device {
     static let JSON_TYPE_KEY = "registrationType"
     static let JSON_DESCRIPTOR_KEY = "descriptor"
     static let JSON_REGISTERED_KEY = "registered"
+    static let JSON_BLACKLIST_KEY = "blacklist"
     static let JSON_CODE_KEY = "@code"
     static let JSON_DATA_KEY = "data"
     static let JSON_UNENCRYPTED_DATA_KEY = "unencryptedData"
