@@ -57,23 +57,9 @@ var piBeaconSensor = PIBeaconSensor(adapter: piAdapter)
 piBeaconSensor.start()
 ```
 
-*Note:* To use PI Beacon, you need to add keys to plist. Set the Value to the message you want to prompt when requesting to use NSLocation
+*Note:* To use PI Beacon Sensing, you need to modify the Info.plist. Add the following key and set the value to the message you want displayed:
 
-* NSLocationWhenInUseUsageDescription (Type: String)
-
-sample code for NSLocation Authorization: 
->```
-extension <Your class name>: CLLocationMangerDelegate {
-	//You can put this inside viewDidLoad()
-	func(){
-		let locationManger = CLLocationManager()
-		location.delegate = self
-		if (CLLocationManager.authorizationStatus() != CLAuthorizationStatus.AuthorizedWhenInUse){
-			locationManager.requestWhenInUseAuthorization()
-		}
-	}
-}
-```
+* NSLocationAlwaysUsageDescription
 
 And that's really all there is to getting the app to start sending the device location back to your 
 Presence Insights instance.
