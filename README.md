@@ -9,9 +9,9 @@ To build the framework:
 
 1. Open the PresenceInsightsSDK.xcodeproj.
 2. Run the PresenceInsightsSDK-Univeral target.
-3. Pull the built framework from the *iphoneuniversal* directory in the *Output* Folder.
+3. Pull the built framework from the *Output* Folder.
 
-*Note:* You need to build this framework before being able to use pi-swift-sdk
+*Note:* You need to build this framework before being able to use it.
 
 ##Linking
 To use the framework simply drag the PresenceInsightsSDK.framework file into your projects *Embedded 
@@ -54,7 +54,7 @@ Next you'll want to start sensing for beacons:
 
 >```
 var piBeaconSensor = PIBeaconSensor(adapter: piAdapter)
-piBeaconSensor.start( callback: (Bool) -> () )
+piBeaconSensor.start()
 ```
 
 *Note:* To use PI Beacon, you need to add keys to plist. Set the Value to the message you want to prompt when requesting to use NSLocation
@@ -107,7 +107,7 @@ device.addToUnencryptedDataObject(<Custom Data Object>, key: <Custom Key>)
 To register the PIDevice in PI:
 
 >```		
-piAdapter.registerDevice(device, callback: {newDevice in
+piAdapter.registerDevice(device, callback: {newDevice, error in
 	// newDevice is of type PIDevice.
 	// Do whatever you want with your newDevice here.    
 })
@@ -116,7 +116,7 @@ piAdapter.registerDevice(device, callback: {newDevice in
 To update the PIDevice on PI:
 
 >```		
-piAdapter.updateDevice(device, callback: {newDevice in
+piAdapter.updateDevice(device, callback: {newDevice, error in
 	// newDevice is of type PIDevice.
 	// Do whatever you want with your newDevice here.    
 })
@@ -125,7 +125,7 @@ piAdapter.updateDevice(device, callback: {newDevice in
 To unregister the PIDevice from PI:
 
 >```
-piAdapter.unregisterDevice(device, callback: {newDevice in
+piAdapter.unregisterDevice(device, callback: {newDevice, error in
 	// newDevice is of type PIDevice.
 	// Do whatever you want with your newDevice here.    
 })
@@ -134,7 +134,7 @@ piAdapter.unregisterDevice(device, callback: {newDevice in
 To get a list of all devices registered in PI:
 
 >```
-piAdapter.getRegisteredDevices({devices in
+piAdapter.getRegisteredDevices({devices, error in
 	// devices is of type [PIDevice]
 	// Do whatever you want with the devices array here.
 })
@@ -143,14 +143,14 @@ piAdapter.getRegisteredDevices({devices in
 To get a specific device from PI:
 
 >```
-piAdapter.getDeviceByCode(<device code>, callback: {device in
+piAdapter.getDeviceByCode(<device code>, callback: {device, error in
 	// device is of type PIDevice.
 	// Do whatever you want with your device here.    
 })
 ```
 or
 >```
-piAdapter.getDeviceByDescriptor(<device UUID>, callback: {device in
+piAdapter.getDeviceByDescriptor(<device UUID>, callback: {device, error in
 	// device is of type PIDevice.
 	// Do whatever you want with your device here.    
 })
@@ -161,7 +161,7 @@ piAdapter.getDeviceByDescriptor(<device UUID>, callback: {device in
 To get all beacon proximity UUIDs:
 
 >```
-piAdapter.getAllBeaconRegions({uuids in
+piAdapter.getAllBeaconRegions({uuids, error in
 	// uuids is of type [String]
 	// Do whatever you want with the beacon UUIDs here.
 })
@@ -170,7 +170,7 @@ piAdapter.getAllBeaconRegions({uuids in
 To get all beacons for a site and floor:
 
 >```
-piAdapter.getAllBeacons(<site code>, floor: <floor code>, callback: {beacons in
+piAdapter.getAllBeacons(<site code>, floor: <floor code>, callback: {beacons, error in
 	// beacons is of type [PIBeacon]
 	// Do whatever you want with your beacons here.
 })
