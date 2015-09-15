@@ -41,8 +41,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     
     // proximity uuids
     func testGetProximityUuids() {
-        var expectation = expectationWithDescription("Test retrieving proximityUUIDs from org")
-        _adapter.getAllBeaconRegions { (result:[String]) -> () in
+        let expectation = expectationWithDescription("Test retrieving proximityUUIDs from org")
+        _adapter.getAllBeaconRegions { (result:[String], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }
@@ -50,8 +50,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // org
     func testGetOrg() {
-        var expectation = expectationWithDescription("Test retrieving the org")
-        _adapter.getOrg { (result: PIOrg) -> () in
+        let expectation = expectationWithDescription("Test retrieving the org")
+        _adapter.getOrg { (result: PIOrg, error) -> () in
             XCTAssertNotNil(result, "Should not be nil")
             expectation.fulfill()
         }
@@ -60,8 +60,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     
     // all sites
     func testGetAllSites() {
-        var expectation = expectationWithDescription("Test retrieving all the sites in the org")
-        _adapter.getAllSites { (result: [String : String]) -> () in
+        let expectation = expectationWithDescription("Test retrieving all the sites in the org")
+        _adapter.getAllSites { (result: [String : String], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }
@@ -69,8 +69,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // all floors
     func testGetAllFloors() {
-        var expectation = expectationWithDescription("Test retrieving all the floors in the site")
-        _adapter.getAllFloors(PI.Site) { (result: [String : String]) -> () in
+        let expectation = expectationWithDescription("Test retrieving all the floors in the site")
+        _adapter.getAllFloors(PI.Site) { (result: [String : String], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }
@@ -78,8 +78,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // all beacons
     func testGetAllBeacons() {
-        var expectation = expectationWithDescription("Test retrieving all the beacons on a floor")
-        _adapter.getAllBeacons(PI.Site, floor: PI.Floor) { (result: [PIBeacon]) -> () in
+        let expectation = expectationWithDescription("Test retrieving all the beacons on a floor")
+        _adapter.getAllBeacons(PI.Site, floor: PI.Floor) { (result: [PIBeacon], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }
@@ -87,8 +87,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // all zones
     func testGetAllZones() {
-        var expectation = expectationWithDescription("Test retrieving all the zones on a floor")
-        _adapter.getAllZones(PI.Site, floor: PI.Floor) { (result: [PIZone]) -> () in
+        let expectation = expectationWithDescription("Test retrieving all the zones on a floor")
+        _adapter.getAllZones(PI.Site, floor: PI.Floor) { (result: [PIZone], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }
@@ -96,8 +96,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // get map
     func testGetMap() {
-        var expectation = expectationWithDescription("Test retrieving the floor map")
-        _adapter.getMap(PI.Site, floor: PI.Floor) { (result: UIImage) -> () in
+        let expectation = expectationWithDescription("Test retrieving the floor map")
+        _adapter.getMap(PI.Site, floor: PI.Floor) { (result: UIImage, error) -> () in
             XCTAssertNotNil(result)
             expectation.fulfill()
         }
@@ -105,8 +105,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // register device
     func testRegisterDevice() {
-        var expectation = expectationWithDescription("Test registering a device")
-        _adapter.registerDevice(_device, callback: { (result: PIDevice) -> () in
+        let expectation = expectationWithDescription("Test registering a device")
+        _adapter.registerDevice(_device, callback: { (result: PIDevice, error) -> () in
             XCTAssertNotNil(result)
             expectation.fulfill()
         })
@@ -114,9 +114,9 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // update device by changing name
     func testUpdateDevice() {
-        var expectation = expectationWithDescription("Test updating a device")
+        let expectation = expectationWithDescription("Test updating a device")
         _device.name = "UpdatedTest"
-        _adapter.updateDevice(_device, callback: { (result: PIDevice) -> () in
+        _adapter.updateDevice(_device, callback: { (result: PIDevice, error) -> () in
             XCTAssert(result.name == "UpdatedTest")
             expectation.fulfill()
         })
@@ -124,8 +124,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     }
     // unregister device
     func testUnregisterDevice() {
-        var expectation = expectationWithDescription("Test unregistering a device")
-        _adapter.unregisterDevice(_device, callback: { (result: PIDevice) -> () in
+        let expectation = expectationWithDescription("Test unregistering a device")
+        _adapter.unregisterDevice(_device, callback: { (result: PIDevice, error) -> () in
             XCTAssertFalse(result.registered)
             expectation.fulfill()
         })

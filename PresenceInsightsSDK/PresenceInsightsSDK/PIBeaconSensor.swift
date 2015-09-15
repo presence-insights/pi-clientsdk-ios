@@ -55,15 +55,19 @@ public class PIBeaconSensor: NSObject {
 
     - parameter callback: Returns result of starting the sensor as a boolean.
     */
-    public func start(callback:(Bool)->()) {
-        _piAdapter.getAllBeaconRegions({regions in
-            var success = false
+    public func start(callback:(NSError!)->()) {
+        _piAdapter.getAllBeaconRegions({regions, error in
+            
+            guard error == nil else {
+                callback(error)
+                return
+            }
             
             if regions.count > 0 {
                 for r in regions {
-                    if let region = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: r), identifier: r) {
+                    if let uuid = NSUUID(UUIDString: r) {
+                        let region = CLBeaconRegion(proximityUUID: uuid, identifier: r)
                         self.startForRegion(region)
-                        success = true
                     } else {
                         self._piAdapter.printDebug("Failed to create region: \(r)")
                     }
@@ -71,7 +75,18 @@ public class PIBeaconSensor: NSObject {
             } else {
                 self._piAdapter.printDebug("No Regions to monitor.")
             }
-            callback(success)
+            callback(nil)
+        })
+    }
+    
+    /**
+    Convenience function to start sensing and ranging beacons.
+    
+    - parameter callback: Returns result of starting the sensor as a boolean.
+    */
+    public func start() {
+        start({error in
+            self._piAdapter.printDebug("Failed to start beacon sensing: \(error)")
         })
     }
     
@@ -128,8 +143,6 @@ public class PIBeaconSensor: NSObject {
             return "Near"
         case CLProximity.Unknown:
             return "Unknown"
-        default:
-            return ""
         }
     }
     
@@ -159,7 +172,7 @@ public class PIBeaconSensor: NSObject {
     */
     private func createDictionaryWith(beacon: CLBeacon, detectedTime: NSDate) -> [String: AnyObject] {
         var dictionary = [String: AnyObject]()
-        dictionary["descriptor"] = UIDevice.currentDevice().identifierForVendor.UUIDString.lowercaseString
+        dictionary["descriptor"] = UIDevice.currentDevice().identifierForVendor?.UUIDString.lowercaseString
         dictionary["detectedTime"] = timeAsISO8601String(detectedTime)
         
         var data = [String: AnyObject]()
