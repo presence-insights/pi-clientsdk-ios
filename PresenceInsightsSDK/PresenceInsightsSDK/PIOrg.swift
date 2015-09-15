@@ -33,10 +33,10 @@ public class PIOrg: NSObject {
     /**
     Default object initializer.
 
-    :param: name                Org name
-    :param: description         Org description
-    :param: registrationTypes   List of the organizations registration types
-    :param: publicKey           public key used by the organization
+    - parameter name:                Org name
+    - parameter description:         Org description
+    - parameter registrationTypes:   List of the organizations registration types
+    - parameter publicKey:           public key used by the organization
     */
     public init(name: String, description: String, registrationTypes: [String], publicKey: String) {
         self.name = name
@@ -46,11 +46,20 @@ public class PIOrg: NSObject {
     }
     
     /**
+    Convenience initializer to init an empty Object.
+    
+    - returns: An initialized PIOrg.
+    */
+    public convenience override init() {
+        self.init(name: "", description: "", registrationTypes: [], publicKey: "")
+    }
+    
+    /**
     Convenience initializer that uses a dictionary to populate the objects properties.
 
-    :param: dictionary PIOrg represented as a dictionary
+    - parameter dictionary: PIOrg represented as a dictionary
 
-    :returns: An initialized PIOrg.
+    - returns: An initialized PIOrg.
     */
     public convenience init(dictionary: [String: AnyObject]) {
         
@@ -72,7 +81,7 @@ public class PIOrg: NSObject {
     /**
     Helper function that provides the PIOrg object as a dictionary
 
-    :returns: a dictionary representation of PIOrg
+    - returns: a dictionary representation of PIOrg
     */
     public func toDictionary() -> [String: AnyObject] {
         
