@@ -765,13 +765,10 @@ extension PIAdapter {
                         let returnVal = [ "dataArray" : json]
                         callback(returnVal, nil)
                         return
-                    } else {
-                        let returnVal = [ "rawData" : data]
-                        callback(returnVal, nil)
                     }
                 } catch let error {
-                    let dataString = NSString(data: data, encoding: NSUTF8StringEncoding)
-                    self.printDebug("Could not parse response. " + (dataString as! String) + "\(error)")
+                    let returnVal = [ "rawData": data, "error": error as NSError]
+                    callback(returnVal, nil)
                 }
     
             } else {

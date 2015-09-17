@@ -27,7 +27,6 @@ public class PIDevice: NSObject {
     // Values every device has.
     public var descriptor: String!
     public var registered: Bool = false
-    public var blacklist: Bool = false
     
     // Optional values only registered devices have.
     public var code: String?
@@ -35,6 +34,7 @@ public class PIDevice: NSObject {
     public var type: String?
     public var data: [String: AnyObject]?
     public var unencryptedData: [String: AnyObject]?
+    public var blacklist: Bool?
     
     /**
     Default object initializer.
@@ -101,9 +101,11 @@ public class PIDevice: NSObject {
         if let dictionary = dictionary[Device.JSON_UNENCRYPTED_DATA_KEY] as? [String: String] {
             self.unencryptedData = dictionary
         }
+        if let blacklist = dictionary[Device.JSON_BLACKLIST_KEY] as? Bool {
+            self.blacklist = blacklist
+        }
         
         self.registered = dictionary[Device.JSON_REGISTERED_KEY] as! Bool
-        self.blacklist = dictionary[Device.JSON_BLACKLIST_KEY] as! Bool
         
         if let code = dictionary[Device.JSON_CODE_KEY] as? String {
             self.code = code
