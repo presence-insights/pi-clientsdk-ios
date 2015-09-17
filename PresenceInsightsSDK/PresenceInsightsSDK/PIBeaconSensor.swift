@@ -53,17 +53,21 @@ public class PIBeaconSensor: NSObject {
     /**
     Public function to start sensing and ranging beacons.
 
-    :param: callback Returns result of starting the sensor as a boolean.
+    - parameter callback: Returns result of starting the sensor as a boolean.
     */
-    public func start(callback:(Bool)->()) {
-        _piAdapter.getAllBeaconRegions({regions in
-            var success = false
+    public func start(callback:(NSError!)->()) {
+        _piAdapter.getAllBeaconRegions({regions, error in
+            
+            guard error == nil else {
+                callback(error)
+                return
+            }
             
             if regions.count > 0 {
                 for r in regions {
-                    if let region = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: r), identifier: r) {
+                    if let uuid = NSUUID(UUIDString: r) {
+                        let region = CLBeaconRegion(proximityUUID: uuid, identifier: r)
                         self.startForRegion(region)
-                        success = true
                     } else {
                         self._piAdapter.printDebug("Failed to create region: \(r)")
                     }
@@ -71,7 +75,18 @@ public class PIBeaconSensor: NSObject {
             } else {
                 self._piAdapter.printDebug("No Regions to monitor.")
             }
-            callback(success)
+            callback(nil)
+        })
+    }
+    
+    /**
+    Convenience function to start sensing and ranging beacons.
+    
+    - parameter callback: Returns result of starting the sensor as a boolean.
+    */
+    public func start() {
+        start({error in
+            self._piAdapter.printDebug("Failed to start beacon sensing: \(error)")
         })
     }
     
@@ -92,7 +107,7 @@ public class PIBeaconSensor: NSObject {
     /**
     Public function to start sensing and ranging beacons in a specific region.
     
-    :param: region The region to look for.
+    - parameter region: The region to look for.
     */
     public func startForRegion(region: CLBeaconRegion) {
         
@@ -105,7 +120,7 @@ public class PIBeaconSensor: NSObject {
     /**
     Public function to set the frequency to report to PI.
     
-    :param: interval The time interval between sending a beacon payload to PI. (milliseconds)
+    - parameter interval: The time interval between sending a beacon payload to PI. (milliseconds)
     */
     public func setReportInterval(interval: NSTimeInterval) {
         PI_REPORT_INTERVAL = interval
@@ -114,9 +129,9 @@ public class PIBeaconSensor: NSObject {
     /**
     Private function to convert a CLProximity to a String.
     
-    :param: proximity CLProximity to convert.
+    - parameter proximity: CLProximity to convert.
     
-    :returns: String value of CLProximity.
+    - returns: String value of CLProximity.
     */
     private func proximityToString(proximity: CLProximity) -> String {
         switch (proximity) {
@@ -128,21 +143,19 @@ public class PIBeaconSensor: NSObject {
             return "Near"
         case CLProximity.Unknown:
             return "Unknown"
-        default:
-            return ""
         }
     }
     
     /**
     Private function to convert an NSDate to an ISO8601 time string.
     
-    :param: detectedTime NSDate to convert.
+    - parameter detectedTime: NSDate to convert.
     
-    :returns: ISO8601 formatted time string.
+    - returns: ISO8601 formatted time string.
     */
     private func timeAsISO8601String(detectedTime: NSDate) -> String {
-        var dateFormatter = NSDateFormatter()
-        var enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
+        let dateFormatter = NSDateFormatter()
+        let enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
         dateFormatter.locale = enUSPOSIXLocale
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         
@@ -152,14 +165,14 @@ public class PIBeaconSensor: NSObject {
     /**
     Private function to append the detected time to the beacon that was detected.
     
-    :param: beacon       The detected beacon.
-    :param: detectedTime The time the beacon was detected.
+    - parameter beacon:       The detected beacon.
+    - parameter detectedTime: The time the beacon was detected.
     
-    :returns: Dictionary of containing both the beacon data and the detected time.
+    - returns: Dictionary of containing both the beacon data and the detected time.
     */
     private func createDictionaryWith(beacon: CLBeacon, detectedTime: NSDate) -> [String: AnyObject] {
         var dictionary = [String: AnyObject]()
-        dictionary["descriptor"] = UIDevice.currentDevice().identifierForVendor.UUIDString.lowercaseString
+        dictionary["descriptor"] = UIDevice.currentDevice().identifierForVendor?.UUIDString.lowercaseString
         dictionary["detectedTime"] = timeAsISO8601String(detectedTime)
         
         var data = [String: AnyObject]()
@@ -181,17 +194,17 @@ public class PIBeaconSensor: NSObject {
 // MARK: - CLLocationManagerDelegate functions
 extension PIBeaconSensor: CLLocationManagerDelegate {
     
-    public func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
+    public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         _piAdapter.printDebug("Did Enter Region: " + region.description)
         
     }
     
-    public func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
+    public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         _piAdapter.printDebug("Did Exit Region: " + region.description)
         
     }
     
-    public func locationManager(manager: CLLocationManager!, didRangeBeacons beacons: [AnyObject]!, inRegion region: CLBeaconRegion!) {
+    public func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         _piAdapter.printDebug("Did Range Beacons In Region: " + region.description)
         
         let detectedTime = NSDate()
@@ -205,35 +218,35 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         if lastReport > PI_REPORT_INTERVAL {
             _lastDetected = detectedTime
             var beaconData: [[String: AnyObject]] = []
-            for beacon in beacons as! [CLBeacon] {
+            for beacon in beacons {
                 beaconData.append(self.createDictionaryWith(beacon, detectedTime: detectedTime))
             }
             _piAdapter.sendBeaconPayload(beaconData)
         }
         
         if let d = delegate {
-            d.didRangeBeacons(beacons as! [CLBeacon])
+            d.didRangeBeacons(beacons )
         }
         
     }
     
-    public func locationManager(manager: CLLocationManager!, didStartMonitoringForRegion region: CLRegion!) {
+    public func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
         if let r = region as? CLBeaconRegion {
             _piAdapter.printDebug("Started monitoring region: " + r.proximityUUID.UUIDString)
         }
     }
     
-    public func locationManager(manager: CLLocationManager!, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
+    public func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
         if let r = region as? CLBeaconRegion {
             _piAdapter.printDebug("Failed to monitor for region: " + r.proximityUUID.UUIDString + " Error: \(error)")
         }
     }
     
-    public func locationManager(manager: CLLocationManager!, rangingBeaconsDidFailForRegion region: CLBeaconRegion!, withError error: NSError!) {
+    public func locationManager(manager: CLLocationManager, rangingBeaconsDidFailForRegion region: CLBeaconRegion, withError error: NSError) {
         _piAdapter.printDebug("Failed to range beacons in region: " + region.proximityUUID.UUIDString + " Error: \(error)")
     }
     
-    public func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+    public func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         _piAdapter.printDebug("Location Manager failed with error: \(error)")
     }
     

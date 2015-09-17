@@ -39,11 +39,11 @@ public class PIBeacon: NSObject {
     /**
     Default object initializer.
 
-    :param: name            Beacon name
-    :param: description     Beacon description
-    :param: proximityUUID   Universally unique identifier for the beacon
-    :param: major           Unique identifier within the proximity UUID space
-    :param: minor           Unique identifier within the major space
+    - parameter name:            Beacon name
+    - parameter description:     Beacon description
+    - parameter proximityUUID:   Universally unique identifier for the beacon
+    - parameter major:           Unique identifier within the proximity UUID space
+    - parameter minor:           Unique identifier within the major space
     */
     public init(name: String, description: String, proximityUUID: NSUUID, major: String, minor: String) {
         self.name = name
@@ -58,13 +58,22 @@ public class PIBeacon: NSObject {
     }
     
     /**
+    Convenience initializer to init an empty Object.
+    
+    - returns: An initialized PIBeacon.
+    */
+    public convenience override init() {
+        self.init(name: "", description: "", proximityUUID: NSUUID(), major: "", minor: "")
+    }
+    
+    /**
     Convenience initializer which sets the beacons name, description, and uses a CLBeacon object to populate the proximityUUID, major, and minor properties.
 
-    :param: name        Beacon name
-    :param: description Beacon description
-    :param: beacon      CLBeacon object
+    - parameter name:        Beacon name
+    - parameter description: Beacon description
+    - parameter beacon:      CLBeacon object
 
-    :returns: An initialized PIBeacon.
+    - returns: An initialized PIBeacon.
     */
     public convenience init(name: String, description: String, beacon: CLBeacon) {
         let proximityUUID = beacon.proximityUUID
@@ -77,9 +86,9 @@ public class PIBeacon: NSObject {
     /**
     Convenience initializer that uses a dictionary to populate the objects properties.
 
-    :param: dictionary PIBeacon represented as a dictionary
+    - parameter dictionary: PIBeacon represented as a dictionary
 
-    :returns: An initialized PIBeacon.
+    - returns: An initialized PIBeacon.
     */
     public convenience init(dictionary: [String: AnyObject]) {
         
@@ -105,7 +114,7 @@ public class PIBeacon: NSObject {
     /**
     Helper function that provides the PIBeacon object as a dictionary
 
-    :returns: a dictionary representation of PIBeacon
+    - returns: a dictionary representation of PIBeacon
     */
     public func toDictionary() -> [String: AnyObject] {
         
