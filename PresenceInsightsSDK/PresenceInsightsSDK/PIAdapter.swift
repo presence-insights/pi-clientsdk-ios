@@ -26,7 +26,7 @@ public class PIAdapter: NSObject {
     
     private let TAG = "[PresenceInsightsSDK] "
     
-    private let _configSegment = "/pi-config/v1/"
+    private let _configSegment = "/pi-config/v2/"
     private let _beaconSegment = "/conn-beacon/v1/"
     private let _analyticsSegment = "/analytics/v1/"
     private let _httpContentTypeHeader = "Content-Type"
@@ -447,7 +447,7 @@ extension PIAdapter {
             self.printDebug("Get Beacons Response: \(response)")
             
             var beacons: [PIBeacon] = []
-            if let rows = response["rows"] as? [AnyObject] {
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
                 for row in rows as! [[String: AnyObject]] {
                     let beacon = PIBeacon(dictionary: row)
                     beacons.append(beacon)

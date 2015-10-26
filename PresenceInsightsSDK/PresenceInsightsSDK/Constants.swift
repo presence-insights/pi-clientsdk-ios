@@ -57,3 +57,11 @@ struct Beacon {
     static let JSON_SITE_KEY = "@site"
     static let JSON_FLOOR_KEY = "@floor"
 }
+
+struct GeoJSON {
+    static let FEATURES_KEY = "features"
+    static let GEOMETRY_KEY = "geometry"
+    static let PROPERTIES_KEY = "properties"
+    static let TYPE_KEY = "type"
+    static let COORDINATES_KEY = "coordinates"
+}
