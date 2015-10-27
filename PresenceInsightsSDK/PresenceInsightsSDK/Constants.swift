@@ -39,10 +39,7 @@ struct Org {
 
 struct Zone {
     static let JSON_NAME_KEY = "name"
-    static let JSON_X_KEY = "x"
-    static let JSON_Y_KEY = "y"
-    static let JSON_WIDTH_KEY = "width"
-    static let JSON_HEIGHT_KEY = "height"
+    static let JSON_POLYGON_KEY = "polygon"
     static let JSON_TAGS_KEY = "tags"
 }
 

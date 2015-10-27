@@ -509,9 +509,9 @@ extension PIAdapter {
             
             self.printDebug("Get Zones Response: \(response)")
             
-            var zones: [PIZone] = []
-            if let rows = response["rows"] as? [[String: AnyObject]] {
-                for row in rows {
+            var zones = [PIZone]()
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
                     let zone = PIZone(dictionary: row)
                     zones.append(zone)
                 }
