@@ -85,6 +85,15 @@ class PresenceInsightsSDKTests: XCTestCase {
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)
     }
+    // all sensors
+    func testGetAllSensors() {
+        let expectation = expectationWithDescription("Test retrieving all the sensors on a floor")
+        _adapter.getAllSensors(PI.Site, floor: PI.Floor) { (result: [PISensor], error) -> () in
+            XCTAssertGreaterThan(result.count, 0)
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(15.0, handler: nil)
+    }
     // all zones
     func testGetAllZones() {
         let expectation = expectationWithDescription("Test retrieving all the zones on a floor")

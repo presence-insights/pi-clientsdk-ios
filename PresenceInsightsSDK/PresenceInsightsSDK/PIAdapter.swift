@@ -631,6 +631,43 @@ extension PIAdapter {
 
 // MARK: - Floor related functions
 extension PIAdapter {
+
+    /**
+    Public function to get all floors in a site.
+
+    - parameter site:     PI Site code
+    - parameter floor:     PI Floor code
+    - parameter callback: Returns a dictionary with floor code as the keys and floor name as the values.
+    */
+    public func getAllSensors(site: String, floor: String, callback:([PISensor], NSError!)->()) {
+
+        let endpoint = String(format: "%@/sites/%@/floors/%@/sensors", arguments: [_configURL, site, floor])
+
+        let request = buildRequest(endpoint, method: GET, body: nil)
+        performRequest(request, callback: {response, error in
+
+            guard error == nil else {
+                callback([PISensor](), error)
+                return
+            }
+
+            self.printDebug("Get Floors Response: \(response)")
+
+            var sensors = [PISensor]()
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
+                    let sensor = PISensor(dictionary: row)
+                    sensors.append(sensor)
+                }
+            }
+
+            callback(sensors, nil)
+        })
+    }
+}
+
+// MARK: - Floor related functions
+extension PIAdapter {
     
     /**
     Public function to get all floors in a site.

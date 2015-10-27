@@ -43,6 +43,16 @@ struct Floor {
     static let JSON_Z_KEY = "z"
 }
 
+struct Sensor {
+    static let JSON_NAME_KEY = "name"
+    static let JSON_DESCRIPTION_KEY = "description"
+    static let JSON_THRESHOLD_KEY = "threshold"
+    static let JSON_X_KEY = "x"
+    static let JSON_Y_KEY = "y"
+    static let JSON_SITE_KEY = "@site"
+    static let JSON_FLOOR_KEY = "@floor"
+}
+
 struct Zone {
     static let JSON_NAME_KEY = "name"
     static let JSON_POLYGON_KEY = "polygon"
