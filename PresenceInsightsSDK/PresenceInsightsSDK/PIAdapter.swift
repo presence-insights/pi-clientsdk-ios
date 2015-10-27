@@ -638,7 +638,7 @@ extension PIAdapter {
     - parameter site:     PI Site code
     - parameter callback: Returns a dictionary with floor code as the keys and floor name as the values.
     */
-    public func getAllFloors(site: String, callback:([String: String], NSError!)->()) {
+    public func getAllFloors(site: String, callback:([PIFloor], NSError!)->()) {
         
         let endpoint =  _configURL + "/sites/" + site + "/floors"
         
@@ -646,20 +646,17 @@ extension PIAdapter {
         performRequest(request, callback: {response, error in
             
             guard error == nil else {
-                callback([:], error)
+                callback([PIFloor](), error)
                 return
             }
             
             self.printDebug("Get Floors Response: \(response)")
             
-            var floors: [String: String] = [:]
-            if let rows = response["rows"] as? [[String: AnyObject]] {
-                for row in rows {
-                    if let floor = row["@code"] as? String {
-                        if let name = row["name"] as? String {
-                            floors[floor] = name
-                        }
-                    }
+            var floors = [PIFloor]()
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
+                    let floor = PIFloor(dictionary: row)
+                    floors.append(floor)
                 }
             }
             

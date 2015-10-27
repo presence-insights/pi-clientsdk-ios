@@ -1,6 +1,6 @@
 /**
 *   PresenceInsightsSDK
-*   PIZone.swift
+*   PIOrg.swift
 *
 *   Object to contain all zone information.
 *

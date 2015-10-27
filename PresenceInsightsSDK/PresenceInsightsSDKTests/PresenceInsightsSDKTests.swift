@@ -70,7 +70,7 @@ class PresenceInsightsSDKTests: XCTestCase {
     // all floors
     func testGetAllFloors() {
         let expectation = expectationWithDescription("Test retrieving all the floors in the site")
-        _adapter.getAllFloors(PI.Site) { (result: [String : String], error) -> () in
+        _adapter.getAllFloors(PI.Site) { (result: [PIFloor], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }

@@ -37,6 +37,12 @@ struct Org {
     static let JSON_PUBLIC_KEY_KEY = "publicKey"
 }
 
+struct Floor {
+    static let JSON_NAME_KEY = "name"
+    static let JSON_BARRIERS_KEY = "barriers"
+    static let JSON_Z_KEY = "z"
+}
+
 struct Zone {
     static let JSON_NAME_KEY = "name"
     static let JSON_POLYGON_KEY = "polygon"
