@@ -26,7 +26,8 @@ public class PIAdapter: NSObject {
     
     private let TAG = "[PresenceInsightsSDK] "
     
-    private let _configSegment = "/pi-config/v2/"
+    private let _configSegment = "/pi-config/v1/"
+    private let _configSegment_v2 = "/pi-config/v2/"
     private let _beaconSegment = "/conn-beacon/v1/"
     private let _analyticsSegment = "/analytics/v1/"
     private let _httpContentTypeHeader = "Content-Type"
@@ -38,6 +39,7 @@ public class PIAdapter: NSObject {
     
     private var _baseURL: String!
     private var _configURL: String!
+    private var _configURL_v2: String!
     private var _tenantCode: String!
     private var _orgCode: String!
     private var _authorization: String!
@@ -61,6 +63,7 @@ public class PIAdapter: NSObject {
         _orgCode = org
         _baseURL = baseURL
         _configURL = _baseURL + _configSegment + "tenants/" + _tenantCode + "/orgs/" + _orgCode
+        _configURL_v2 = _baseURL + _configSegment_v2 + "tenants/" + _tenantCode + "/orgs/" + _orgCode
         
         let authorizationString = username + ":" + password
         _authorization = "Basic " + (authorizationString.dataUsingEncoding(NSASCIIStringEncoding)?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding76CharacterLineLength))!
@@ -433,7 +436,7 @@ extension PIAdapter {
     public func getAllBeacons(site: String, floor: String, callback:([PIBeacon], NSError!)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
-        var endpoint =  _configURL + "/sites/" + site
+        var endpoint =  _configURL_v2 + "/sites/" + site
         endpoint += "/floors/" + floor + "/beacons"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
@@ -496,7 +499,7 @@ extension PIAdapter {
     public func getAllZones(site: String, floor: String, callback:([PIZone], NSError!)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
-        var endpoint =  _configURL + "/sites/" + site
+        var endpoint =  _configURL_v2 + "/sites/" + site
         endpoint += "/floors/" + floor + "/zones"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
@@ -641,7 +644,7 @@ extension PIAdapter {
     */
     public func getAllSensors(site: String, floor: String, callback:([PISensor], NSError!)->()) {
 
-        let endpoint = String(format: "%@/sites/%@/floors/%@/sensors", arguments: [_configURL, site, floor])
+        let endpoint = String(format: "%@/sites/%@/floors/%@/sensors", arguments: [_configURL_v2, site, floor])
 
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
@@ -677,7 +680,7 @@ extension PIAdapter {
     */
     public func getAllFloors(site: String, callback:([PIFloor], NSError!)->()) {
         
-        let endpoint =  _configURL + "/sites/" + site + "/floors"
+        let endpoint =  _configURL_v2 + "/sites/" + site + "/floors"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
