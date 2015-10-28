@@ -4,6 +4,8 @@ This repository contains the source for the PresenceInsightsSDK, an iOS SDK that
 easy integration of the IBM [Presence Insights](https://console.ng.bluemix.net/catalog/presence-insights/) 
 service available on [Bluemix](https://console.ng.bluemix.net/).
 
+This SDK supports iOS 8+.
+
 ##Building
 To build the framework:
 
@@ -15,8 +17,8 @@ To build the framework:
 
 ##Linking
 To use the framework simply drag the PresenceInsightsSDK.framework file into your projects *Embedded 
-Binaries* section of the *General* tab on your project target. This should automatically add the framework
-to all other necessary locations. Then to use it in your code add:
+Binaries* section of the *General* tab on your project target. Select "Copy items if needed". This should 
+automatically add the framework to all other necessary locations. Then to use it in your code add:
 
 In swift:
 
@@ -43,6 +45,7 @@ The first thing you need to do is initialize an adapter:
 >```
 var piAdapter = PIAdapter(tenant: <tenant>,
             				 org: <org>,
+                             baseURL: "https://presenceinsights.ng.bluemix.net"
             				 username: <username>,
 							 password: <password>)
 ```
@@ -75,7 +78,7 @@ To create a PIDevice:
 
 >```
 var device = PIDevice(name: <your device name>)
-device.type = PIDeviceType.<External or Internal>
+device.type = "External" // these values can be found under Settings of your org in the UI
 ```
 
 To add encrypted data to a PIDevice:
@@ -182,3 +185,13 @@ piBeaconSensor.stop()
 
 There are some other little things you can do with this SDK (mostly different ways to initialize or 
 modify objects), but these basics should be enough to get you started. Have fun!
+
+###Troubleshooting
+
+*   First things first, if things are not working, enable debugging to see all the inner workings in the console.
+
+        adapter.enableLogging() // adapter is an instance of PIAdapter
+
+*   I started the beacon sensor, but it is not picking up any beacons. There are a couple reasons why this may be happening.
+        1.  The beacons are not configured correctly in the PI UI. Ensure that the Proximity UUID is set correctly. We retrieve that to create a region to range for beacons.
+        2.  The codes (username, password, tenant, org) used in creating the PIAdapter may have been entered incorrectly.
