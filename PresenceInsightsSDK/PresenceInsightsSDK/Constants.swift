@@ -37,12 +37,25 @@ struct Org {
     static let JSON_PUBLIC_KEY_KEY = "publicKey"
 }
 
-struct Zone {
+struct Floor {
     static let JSON_NAME_KEY = "name"
+    static let JSON_BARRIERS_KEY = "barriers"
+    static let JSON_Z_KEY = "z"
+}
+
+struct Sensor {
+    static let JSON_NAME_KEY = "name"
+    static let JSON_DESCRIPTION_KEY = "description"
+    static let JSON_THRESHOLD_KEY = "threshold"
     static let JSON_X_KEY = "x"
     static let JSON_Y_KEY = "y"
-    static let JSON_WIDTH_KEY = "width"
-    static let JSON_HEIGHT_KEY = "height"
+    static let JSON_SITE_KEY = "@site"
+    static let JSON_FLOOR_KEY = "@floor"
+}
+
+struct Zone {
+    static let JSON_NAME_KEY = "name"
+    static let JSON_POLYGON_KEY = "polygon"
     static let JSON_TAGS_KEY = "tags"
 }
 
@@ -56,4 +69,12 @@ struct Beacon {
     static let JSON_Y_KEY = "y"
     static let JSON_SITE_KEY = "@site"
     static let JSON_FLOOR_KEY = "@floor"
+}
+
+struct GeoJSON {
+    static let FEATURES_KEY = "features"
+    static let GEOMETRY_KEY = "geometry"
+    static let PROPERTIES_KEY = "properties"
+    static let TYPE_KEY = "type"
+    static let COORDINATES_KEY = "coordinates"
 }
