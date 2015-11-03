@@ -36,7 +36,7 @@ public class PIBeaconSensor: NSObject {
     
     private var _piAdapter: PIAdapter!
     private var _locationManager: CLLocationManager!
-    private var _monitoredRegions: [CLBeaconRegion] = []
+    private var _regionManager: RegionManager!
     private var _lastDetected: NSDate!
     
     public init(adapter: PIAdapter) {
@@ -47,7 +47,7 @@ public class PIBeaconSensor: NSObject {
         _locationManager = CLLocationManager()
         _locationManager.delegate = self
         _locationManager.requestAlwaysAuthorization()
-        
+        _regionManager = RegionManager()
     }
     
     /**
@@ -64,14 +64,7 @@ public class PIBeaconSensor: NSObject {
             }
             
             if regions.count > 0 {
-                for r in regions {
-                    if let uuid = NSUUID(UUIDString: r) {
-                        let region = CLBeaconRegion(proximityUUID: uuid, identifier: r)
-                        self.startForRegion(region)
-                    } else {
-                        self._piAdapter.printDebug("Failed to create region: \(r)")
-                    }
-                }
+                self._regionManager.addUuidRegions(regions)
             } else {
                 self._piAdapter.printDebug("No Regions to monitor.")
             }
@@ -94,27 +87,8 @@ public class PIBeaconSensor: NSObject {
     Public function to stop beacon sensing and ranging.
     */
     public func stop() {
-        if _monitoredRegions.count > 0 {
-            for region in _monitoredRegions {
-                self._locationManager.stopMonitoringForRegion(region)
-                self._locationManager.stopRangingBeaconsInRegion(region)
-            }
-            self._monitoredRegions = []
-            _piAdapter.printDebug("Stopped monitoring regions.")
-        }
-    }
-    
-    /**
-    Public function to start sensing and ranging beacons in a specific region.
-    
-    - parameter region: The region to look for.
-    */
-    public func startForRegion(region: CLBeaconRegion) {
-        
-        self._locationManager.startMonitoringForRegion(region)
-        self._locationManager.startRangingBeaconsInRegion(region)
-        self._monitoredRegions.append(region)
-        
+        _piAdapter.printDebug("Stopped monitoring regions.")
+        _regionManager.removeAllRegions()
     }
     
     /**
@@ -228,6 +202,8 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
             d.didRangeBeacons(beacons )
         }
         
+        _regionManager.addBeaconRegions(beacons)
+        _regionManager.didRangeInRegion(region)
     }
     
     public func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
