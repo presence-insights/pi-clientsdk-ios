@@ -29,6 +29,7 @@ public class PIAdapter: NSObject {
     private let _configSegment = "/pi-config/v1/"
     private let _beaconSegment = "/conn-beacon/v1/"
     private let _analyticsSegment = "/analytics/v1/"
+    private let _deviceSegment = "/actr-reg/v1/"
     private let _httpContentTypeHeader = "Content-Type"
     private let _httpAuthorizationHeader = "Authorization"
     private let _contentTypeJSON = "application/json"
@@ -38,6 +39,7 @@ public class PIAdapter: NSObject {
     
     private var _baseURL: String!
     private var _configURL: String!
+    private var _deviceURL: String!
     private var _tenantCode: String!
     private var _orgCode: String!
     private var _authorization: String!
@@ -61,6 +63,7 @@ public class PIAdapter: NSObject {
         _orgCode = org
         _baseURL = baseURL
         _configURL = _baseURL + _configSegment + "tenants/" + _tenantCode + "/orgs/" + _orgCode
+        _deviceURL = _baseURL + _deviceSegment + "tenants/" + _tenantCode + "/orgs/" + _orgCode
         
         let authorizationString = username + ":" + password
         _authorization = "Basic " + (authorizationString.dataUsingEncoding(NSASCIIStringEncoding)?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding76CharacterLineLength))!
@@ -111,7 +114,7 @@ extension PIAdapter {
             return
         }
         
-        let endpoint = _configURL + "/devices"
+        let endpoint = _deviceURL + "/devices"
         
         device.registered = true
         
@@ -196,13 +199,13 @@ extension PIAdapter {
     */
     public func updateDevice(device: PIDevice, callback:(PIDevice, NSError!)->()) {
         
-        var endpoint = _configURL + "/devices?rawDescriptor=" + device.descriptor
+        var endpoint = _deviceURL + "/devices?rawDescriptor=" + device.descriptor
         getDevice(endpoint, callback: {deviceData, error in
             guard error == nil else {
                 callback(PIDevice(), error)
                 return
             }
-            endpoint = self._configURL + "/devices/" + (deviceData["@code"] as! String)
+            endpoint = self._deviceURL + "/devices/" + (deviceData["@code"] as! String)
             self.updateDeviceDictionary(endpoint, dictionary: deviceData, device: device, callback: {newDevice, error in
                 guard error == nil else {
                     callback(PIDevice(), error)
@@ -258,7 +261,7 @@ extension PIAdapter {
     */
     public func getDeviceByCode(code: String, callback:(PIDevice, NSError!)->()) {
         
-        let endpoint = _configURL + "/devices/" + code
+        let endpoint = _deviceURL + "/devices/" + code
         getDevice(endpoint, callback: {deviceData, error in
             guard error == nil else {
                 callback(PIDevice(), error)
@@ -277,7 +280,7 @@ extension PIAdapter {
     */
     public func getDeviceByDescriptor(descriptor: String, callback:(PIDevice, NSError!)->()) {
         
-        let endpoint = _configURL + "/devices?rawDescriptor=" + descriptor
+        let endpoint = _deviceURL + "/devices?rawDescriptor=" + descriptor
         getDevice(endpoint, callback: {deviceData, error in
             guard error == nil else {
                 callback(PIDevice(), error)
@@ -331,7 +334,7 @@ extension PIAdapter {
     */
     public func getAllDevices(callback:([PIDevice], NSError!)->()) {
         
-        let endpoint = _configURL + "/devices?pageSize=100"
+        let endpoint = _deviceURL + "/devices?pageSize=100"
         
         getDevices(endpoint, callback: {devices, error in
             guard error == nil else {
@@ -352,7 +355,7 @@ extension PIAdapter {
     */
     public func getRegisteredDevices(callback:([PIDevice], NSError!)->()) {
         
-        let endpoint = _configURL + "/devices?pageSize=100&registered=true"
+        let endpoint = _deviceURL + "/devices?pageSize=100&registered=true"
         
         getDevices(endpoint, callback: {devices, error in
             guard error == nil else {
