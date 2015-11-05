@@ -22,6 +22,8 @@
 
 /* Begin PBXBuildFile section */
 		5111182C1B71420B009E0876 /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5111182B1B71420B009E0876 /* TestConstants.swift */; };
+		5133DB031BDFB456007F13D4 /* PIFloor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB021BDFB456007F13D4 /* PIFloor.swift */; settings = {ASSET_TAGS = (); }; };
+		5133DB051BDFBBC8007F13D4 /* PISensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB041BDFBBC8007F13D4 /* PISensor.swift */; settings = {ASSET_TAGS = (); }; };
 		518CDCB31B94B1E500DC0385 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518CDCB21B94B1E500DC0385 /* Constants.swift */; };
 		D44A40A81B57FC6D0022C5CB /* PresenceInsightsSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = D44A40A71B57FC6D0022C5CB /* PresenceInsightsSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D44A40AE1B57FC6D0022C5CB /* PresenceInsightsSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */; };
@@ -47,6 +49,8 @@
 
 /* Begin PBXFileReference section */
 		5111182B1B71420B009E0876 /* TestConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
+		5133DB021BDFB456007F13D4 /* PIFloor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIFloor.swift; sourceTree = "<group>"; };
+		5133DB041BDFBBC8007F13D4 /* PISensor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PISensor.swift; sourceTree = "<group>"; };
 		518CDCB21B94B1E500DC0385 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PresenceInsightsSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D44A40A61B57FC6D0022C5CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -110,7 +114,9 @@
 				D44A40C51B57FCDF0022C5CB /* PIBeaconSensor.swift */,
 				D44A40C71B57FCE70022C5CB /* PIDevice.swift */,
 				D44A40C91B57FCEF0022C5CB /* PIBeacon.swift */,
+				5133DB021BDFB456007F13D4 /* PIFloor.swift */,
 				D4E672E41B7294CE00D431A9 /* PIOrg.swift */,
+				5133DB041BDFBBC8007F13D4 /* PISensor.swift */,
 				D44F977C1B66B77B00E357F4 /* PIZone.swift */,
 				D44A40CB1B57FE570022C5CB /* CoreLocation.framework */,
 				D44A40A51B57FC6D0022C5CB /* Supporting Files */,
@@ -274,8 +280,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D44A40C81B57FCE70022C5CB /* PIDevice.swift in Sources */,
+				5133DB051BDFBBC8007F13D4 /* PISensor.swift in Sources */,
 				D44A40C61B57FCDF0022C5CB /* PIBeaconSensor.swift in Sources */,
 				D44A40CA1B57FCEF0022C5CB /* PIBeacon.swift in Sources */,
+				5133DB031BDFB456007F13D4 /* PIFloor.swift in Sources */,
 				D44F977D1B66B77B00E357F4 /* PIZone.swift in Sources */,
 				518CDCB31B94B1E500DC0385 /* Constants.swift in Sources */,
 				D44A40C41B57FCD50022C5CB /* PIAdapter.swift in Sources */,

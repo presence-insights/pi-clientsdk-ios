@@ -27,6 +27,7 @@ public class PIAdapter: NSObject {
     private let TAG = "[PresenceInsightsSDK] "
     
     private let _configSegment = "/pi-config/v1/"
+    private let _configSegment_v2 = "/pi-config/v2/"
     private let _beaconSegment = "/conn-beacon/v1/"
     private let _analyticsSegment = "/analytics/v1/"
     private let _deviceSegment = "/actr-reg/v1/"
@@ -40,6 +41,7 @@ public class PIAdapter: NSObject {
     private var _baseURL: String!
     private var _configURL: String!
     private var _deviceURL: String!
+    private var _configURL_v2: String!
     private var _tenantCode: String!
     private var _orgCode: String!
     private var _authorization: String!
@@ -64,6 +66,7 @@ public class PIAdapter: NSObject {
         _baseURL = baseURL
         _configURL = _baseURL + _configSegment + "tenants/" + _tenantCode + "/orgs/" + _orgCode
         _deviceURL = _baseURL + _deviceSegment + "tenants/" + _tenantCode + "/orgs/" + _orgCode
+        _configURL_v2 = _baseURL + _configSegment_v2 + "tenants/" + _tenantCode + "/orgs/" + _orgCode
         
         let authorizationString = username + ":" + password
         _authorization = "Basic " + (authorizationString.dataUsingEncoding(NSASCIIStringEncoding)?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding76CharacterLineLength))!
@@ -436,7 +439,7 @@ extension PIAdapter {
     public func getAllBeacons(site: String, floor: String, callback:([PIBeacon], NSError!)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
-        var endpoint =  _configURL + "/sites/" + site
+        var endpoint =  _configURL_v2 + "/sites/" + site
         endpoint += "/floors/" + floor + "/beacons"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
@@ -450,7 +453,7 @@ extension PIAdapter {
             self.printDebug("Get Beacons Response: \(response)")
             
             var beacons: [PIBeacon] = []
-            if let rows = response["rows"] as? [AnyObject] {
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
                 for row in rows as! [[String: AnyObject]] {
                     let beacon = PIBeacon(dictionary: row)
                     beacons.append(beacon)
@@ -499,7 +502,7 @@ extension PIAdapter {
     public func getAllZones(site: String, floor: String, callback:([PIZone], NSError!)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
-        var endpoint =  _configURL + "/sites/" + site
+        var endpoint =  _configURL_v2 + "/sites/" + site
         endpoint += "/floors/" + floor + "/zones"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
@@ -512,9 +515,9 @@ extension PIAdapter {
             
             self.printDebug("Get Zones Response: \(response)")
             
-            var zones: [PIZone] = []
-            if let rows = response["rows"] as? [[String: AnyObject]] {
-                for row in rows {
+            var zones = [PIZone]()
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
                     let zone = PIZone(dictionary: row)
                     zones.append(zone)
                 }
@@ -634,6 +637,43 @@ extension PIAdapter {
 
 // MARK: - Floor related functions
 extension PIAdapter {
+
+    /**
+    Public function to get all floors in a site.
+
+    - parameter site:     PI Site code
+    - parameter floor:     PI Floor code
+    - parameter callback: Returns a dictionary with floor code as the keys and floor name as the values.
+    */
+    public func getAllSensors(site: String, floor: String, callback:([PISensor], NSError!)->()) {
+
+        let endpoint = String(format: "%@/sites/%@/floors/%@/sensors", arguments: [_configURL_v2, site, floor])
+
+        let request = buildRequest(endpoint, method: GET, body: nil)
+        performRequest(request, callback: {response, error in
+
+            guard error == nil else {
+                callback([PISensor](), error)
+                return
+            }
+
+            self.printDebug("Get Floors Response: \(response)")
+
+            var sensors = [PISensor]()
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
+                    let sensor = PISensor(dictionary: row)
+                    sensors.append(sensor)
+                }
+            }
+
+            callback(sensors, nil)
+        })
+    }
+}
+
+// MARK: - Floor related functions
+extension PIAdapter {
     
     /**
     Public function to get all floors in a site.
@@ -641,28 +681,25 @@ extension PIAdapter {
     - parameter site:     PI Site code
     - parameter callback: Returns a dictionary with floor code as the keys and floor name as the values.
     */
-    public func getAllFloors(site: String, callback:([String: String], NSError!)->()) {
+    public func getAllFloors(site: String, callback:([PIFloor], NSError!)->()) {
         
-        let endpoint =  _configURL + "/sites/" + site + "/floors"
+        let endpoint =  _configURL_v2 + "/sites/" + site + "/floors"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
             guard error == nil else {
-                callback([:], error)
+                callback([PIFloor](), error)
                 return
             }
             
             self.printDebug("Get Floors Response: \(response)")
             
-            var floors: [String: String] = [:]
-            if let rows = response["rows"] as? [[String: AnyObject]] {
-                for row in rows {
-                    if let floor = row["@code"] as? String {
-                        if let name = row["name"] as? String {
-                            floors[floor] = name
-                        }
-                    }
+            var floors = [PIFloor]()
+            if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
+                for row in rows as! [[String: AnyObject]] {
+                    let floor = PIFloor(dictionary: row)
+                    floors.append(floor)
                 }
             }
             

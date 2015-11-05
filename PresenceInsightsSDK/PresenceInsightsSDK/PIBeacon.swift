@@ -95,20 +95,26 @@ public class PIBeacon: NSObject {
         // I prefer this method because if the dictionary isn't built correctly it will at least throw a nil error at runtime.
         self.init(name: "", description: "", proximityUUID: NSUUID(), major: "", minor: "")
         
-        self.name = dictionary[Beacon.JSON_NAME_KEY] as! String
-        if let beaconDescription = dictionary[Beacon.JSON_DESCRIPTION_KEY] as? String {
+        // retrieve dictionaries from feature object
+        let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as! [String: AnyObject]
+        let properties = dictionary[GeoJSON.PROPERTIES_KEY] as! [String: AnyObject]
+        
+        self.name = properties[Beacon.JSON_NAME_KEY] as! String
+        if let beaconDescription = properties[Beacon.JSON_DESCRIPTION_KEY] as? String {
             self.beaconDescription = beaconDescription;
         }
-        if let uuid = NSUUID(UUIDString: dictionary[Beacon.JSON_UUID_KEY] as! String) {
+        if let uuid = NSUUID(UUIDString: properties[Beacon.JSON_UUID_KEY] as! String) {
             self.proximityUUID = uuid
         }
-        self.major = dictionary[Beacon.JSON_MAJOR_KEY] as! String
-        self.minor = dictionary[Beacon.JSON_MINOR_KEY] as! String
-        self.x = dictionary[Beacon.JSON_X_KEY] as! CGFloat
-        self.y = dictionary[Beacon.JSON_Y_KEY] as! CGFloat
-        self.site = dictionary[Beacon.JSON_SITE_KEY] as! String
-        self.floor = dictionary[Beacon.JSON_FLOOR_KEY] as! String
+        self.major = properties[Beacon.JSON_MAJOR_KEY] as! String
+        self.minor = properties[Beacon.JSON_MINOR_KEY] as! String
+        self.site = properties[Beacon.JSON_SITE_KEY] as! String
+        self.floor = properties[Beacon.JSON_FLOOR_KEY] as! String
         
+        let coords = geometry[GeoJSON.COORDINATES_KEY] as! [CGFloat]
+        
+        self.x = coords[0]
+        self.y = coords[1]
     }
     
     /**
