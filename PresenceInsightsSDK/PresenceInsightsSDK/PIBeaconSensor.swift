@@ -25,6 +25,8 @@ import CoreLocation
 // MARK: - Delegate protocol.
 public protocol PIBeaconSensorDelegate {
     func didRangeBeacons(beacons:[CLBeacon])
+    func didEnterRegion(region: CLRegion)
+    func didExitRegion(region: CLRegion)
 }
 
 // MARK: - PIBeaconSensor object
@@ -48,6 +50,10 @@ public class PIBeaconSensor: NSObject {
         _locationManager.delegate = self
         _locationManager.requestAlwaysAuthorization()
         
+        // to enable ranging in the background
+        _locationManager.startUpdatingLocation()
+        // we are only interested in beacons, so this accuracy will not require Wifi or GPS, which will save battery
+        _locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
     }
     
     /**
@@ -111,6 +117,8 @@ public class PIBeaconSensor: NSObject {
     */
     public func startForRegion(region: CLBeaconRegion) {
         
+        region.notifyEntryStateOnDisplay = true
+
         self._locationManager.startMonitoringForRegion(region)
         self._locationManager.startRangingBeaconsInRegion(region)
         self._monitoredRegions.append(region)
@@ -196,12 +204,16 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
     
     public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         _piAdapter.printDebug("Did Enter Region: " + region.description)
-        
+        if let d = delegate {
+            d.didEnterRegion(region)
+        }
     }
     
     public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         _piAdapter.printDebug("Did Exit Region: " + region.description)
-        
+        if let d = delegate {
+            d.didExitRegion(region)
+        }
     }
     
     public func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
@@ -225,7 +237,7 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         }
         
         if let d = delegate {
-            d.didRangeBeacons(beacons )
+            d.didRangeBeacons(beacons)
         }
         
     }
