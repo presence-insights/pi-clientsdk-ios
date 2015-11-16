@@ -13,7 +13,7 @@ internal class RegionManager {
     private var _locationManager: CLLocationManager = CLLocationManager()
     private var _beaconRegions: [CLBeaconRegion] = []
     private var _uuidRegions: [CLBeaconRegion] = []
-    private var _maxRegions: Int = 10
+    private var _maxRegions: Int = 20
     private var _numRegions: Int {
         get {
             return _beaconRegions.count + _uuidRegions.count
@@ -22,16 +22,23 @@ internal class RegionManager {
     private var _didFindUuidRegion: Bool = false
     
     init() {
+        let regions = _locationManager.monitoredRegions
+        for region: CLBeaconRegion in regions {
+            if region.major == nil {
+                // this will be a uuid region
+                _uuidRegions.append(region)
+            } else {
+                _beaconRegions.append(region)
+            }
+        }
     }
     
     func addUuidRegions(uuids: [String]) {
         for u in uuids {
             if let uuid = NSUUID(UUIDString: u) {
                 let region = CLBeaconRegion(proximityUUID: uuid, identifier: u)
-                self._locationManager.startRangingBeaconsInRegion(region)
+                self._locationManager.startMonitoringForRegion(region)
                 self._uuidRegions.append(region)
-            } else {
-                //self._piAdapter.printDebug("Failed to create region: \(r)")
             }
         }
     }
@@ -84,15 +91,18 @@ internal class RegionManager {
     }
     
     func removeAllRegions() {
-        // stop ranging in uuid regions
-        for region in _uuidRegions {
-            self._locationManager.stopRangingBeaconsInRegion(region)
+        // stop ranging
+        for region: CLBeaconRegion in self._locationManager.rangedRegions {
+            _locationManager.stopRangingBeaconsInRegion(region)
         }
+
+        // stop monitoring
+        for region: CLBeaconRegion in self._locationManager.monitoredRegions {
+            _locationManager.stopMonitoringForRegion(region)
+        }
+
+        // clear region arrays
         _uuidRegions = []
-        // stop monitoring in beacon regions
-        for region in _beaconRegions {
-            self._locationManager.stopMonitoringForRegion(region)
-        }
         _beaconRegions = []
     }
     
