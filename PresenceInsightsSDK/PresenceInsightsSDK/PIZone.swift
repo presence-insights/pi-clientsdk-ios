@@ -26,28 +26,19 @@ public class PIZone: NSObject {
     
     // Zone properties
     public var name: String!
-    public var x: CGFloat!
-    public var y: CGFloat!
-    public var width: CGFloat!
-    public var height: CGFloat!
+    public var polygon: [[CGPoint]]!
     public var tags: [String]!
     
     /**
     Default object initializer.
 
     - parameter name:    Zone name
-    - parameter x:       x coordinate of zone
-    - parameter y:       y coordinate of zone
-    - parameter width:   width of the zone
-    - parameter height:  height of the zone
+    - parameter polygon: a collection of points that encapsulates the zone
     - parameter tags:    useful identifying keywords for the zone
     */
-    public init(name: String, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, tags: [String]) {
+    public init(name: String, polygon: [[CGPoint]], tags: [String]) {
         self.name = name
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+        self.polygon = polygon
         self.tags = tags
     }
     
@@ -57,7 +48,7 @@ public class PIZone: NSObject {
     - returns: An initialized PIOrg.
     */
     public convenience override init() {
-        self.init(name: "", x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
+        self.init(name: "", polygon: [[CGPoint]](), tags: [])
     }
     
     /**
@@ -68,7 +59,7 @@ public class PIZone: NSObject {
     - returns: An initialized PIZone.
     */
     public convenience init(name: String) {
-        self.init(name: name, x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
+        self.init(name: name, polygon: [[CGPoint]](), tags: [])
     }
     
     /**
@@ -79,16 +70,15 @@ public class PIZone: NSObject {
     - returns: An initialized PIZone.
     */
     public convenience init(dictionary: [String: AnyObject]) {
+        self.init(name: "", polygon: [[CGPoint]](), tags: [])
         
-        self.init(name: "", x: 0.0, y: 0.0, width: 0.0, height: 0.0, tags: [])
+        // retrieve dictionaries from feature object
+        let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as! [String: AnyObject]
+        let properties = dictionary[GeoJSON.PROPERTIES_KEY] as! [String: AnyObject]
         
-        self.name = dictionary[Zone.JSON_NAME_KEY] as! String
-        self.x = dictionary[Zone.JSON_X_KEY] as! CGFloat
-        self.y = dictionary[Zone.JSON_Y_KEY] as! CGFloat
-        self.width = dictionary[Zone.JSON_WIDTH_KEY] as! CGFloat
-        self.height = dictionary[Zone.JSON_HEIGHT_KEY] as! CGFloat
-        self.tags = dictionary[Zone.JSON_TAGS_KEY] as! [String]
-        
+        self.name = properties[Zone.JSON_NAME_KEY] as! String
+        self.tags = properties[Zone.JSON_TAGS_KEY] as! [String]
+        self.polygon = self.convertGeoJsonPayload(geometry[GeoJSON.COORDINATES_KEY] as! [[[CGFloat]]])
     }
     
     /**
@@ -96,19 +86,28 @@ public class PIZone: NSObject {
 
     - returns: dictionary representation of PIZone
     */
-    public func toDictionary() -> [String: AnyObject] {
+    public func toDictionary() -> [String: Any] {
         
-        var dictionary: [String: AnyObject] = [:]
+        var dictionary: [String: Any] = [:]
         
         dictionary[Zone.JSON_NAME_KEY] = name
-        dictionary[Zone.JSON_X_KEY] = x
-        dictionary[Zone.JSON_Y_KEY] = y
-        dictionary[Zone.JSON_WIDTH_KEY] = width
-        dictionary[Zone.JSON_HEIGHT_KEY] = height
+        dictionary[Zone.JSON_POLYGON_KEY] = polygon
         dictionary[Zone.JSON_TAGS_KEY] = tags
         
         return dictionary
 
     }
     
+    func convertGeoJsonPayload(payload: [[[CGFloat]]]) -> [[CGPoint]]{
+        var returnPayload = [[CGPoint]]()
+        for polygonObj in payload {
+            var pointArray = [CGPoint]()
+            for points in polygonObj {
+                pointArray.append(CGPoint(x: points.first!, y: points.last!))
+            }
+            returnPayload.append(pointArray)
+        }
+        return returnPayload
+    }
+
 }

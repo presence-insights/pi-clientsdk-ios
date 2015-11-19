@@ -70,7 +70,7 @@ class PresenceInsightsSDKTests: XCTestCase {
     // all floors
     func testGetAllFloors() {
         let expectation = expectationWithDescription("Test retrieving all the floors in the site")
-        _adapter.getAllFloors(PI.Site) { (result: [String : String], error) -> () in
+        _adapter.getAllFloors(PI.Site) { (result: [PIFloor], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }
@@ -80,6 +80,15 @@ class PresenceInsightsSDKTests: XCTestCase {
     func testGetAllBeacons() {
         let expectation = expectationWithDescription("Test retrieving all the beacons on a floor")
         _adapter.getAllBeacons(PI.Site, floor: PI.Floor) { (result: [PIBeacon], error) -> () in
+            XCTAssertGreaterThan(result.count, 0)
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(15.0, handler: nil)
+    }
+    // all sensors
+    func testGetAllSensors() {
+        let expectation = expectationWithDescription("Test retrieving all the sensors on a floor")
+        _adapter.getAllSensors(PI.Site, floor: PI.Floor) { (result: [PISensor], error) -> () in
             XCTAssertGreaterThan(result.count, 0)
             expectation.fulfill()
         }

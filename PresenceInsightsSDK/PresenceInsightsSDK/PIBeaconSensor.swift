@@ -25,6 +25,8 @@ import CoreLocation
 // MARK: - Delegate protocol.
 public protocol PIBeaconSensorDelegate {
     func didRangeBeacons(beacons:[CLBeacon])
+    func didEnterRegion(region: CLRegion)
+    func didExitRegion(region: CLRegion)
 }
 
 // MARK: - PIBeaconSensor object
@@ -47,7 +49,7 @@ public class PIBeaconSensor: NSObject {
         _locationManager = CLLocationManager()
         _locationManager.delegate = self
         _locationManager.requestAlwaysAuthorization()
-        _regionManager = RegionManager()
+        _regionManager = RegionManager(locationManager: _locationManager)
     }
     
     /**
@@ -64,6 +66,7 @@ public class PIBeaconSensor: NSObject {
             }
             
             if regions.count > 0 {
+                self._regionManager.start()
                 self._regionManager.addUuidRegions(regions)
             } else {
                 self._piAdapter.printDebug("No Regions to monitor.")
@@ -87,9 +90,10 @@ public class PIBeaconSensor: NSObject {
     Public function to stop beacon sensing and ranging.
     */
     public func stop() {
-        _piAdapter.printDebug("Stopped monitoring regions.")
-        _regionManager.removeAllRegions()
+        _piAdapter.printDebug("Stopped sensing for beacons.")
+        _regionManager.stop()
     }
+    
     
     /**
     Public function to set the frequency to report to PI.
@@ -168,14 +172,24 @@ public class PIBeaconSensor: NSObject {
 // MARK: - CLLocationManagerDelegate functions
 extension PIBeaconSensor: CLLocationManagerDelegate {
     
+    public func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
+        _regionManager.didDetermineState(state, region: region)
+    }
+
     public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         _piAdapter.printDebug("Did Enter Region: " + region.description)
-        
+        _regionManager.didEnterRegion(region)
+        if let d = delegate {
+            d.didEnterRegion(region)
+        }
     }
     
     public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         _piAdapter.printDebug("Did Exit Region: " + region.description)
-        
+        _regionManager.didExitRegion(region)
+        if let d = delegate {
+            d.didExitRegion(region)
+        }
     }
     
     public func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
@@ -199,11 +213,10 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         }
         
         if let d = delegate {
-            d.didRangeBeacons(beacons )
+            d.didRangeBeacons(beacons)
         }
         
         _regionManager.addBeaconRegions(beacons)
-        _regionManager.didRangeInRegion(region)
     }
     
     public func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
