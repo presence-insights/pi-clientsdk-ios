@@ -203,12 +203,15 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         }
         
         if lastReport > PI_REPORT_INTERVAL {
-            _lastDetected = detectedTime
-            var beaconData: [[String: AnyObject]] = []
-            for beacon in beacons {
-                beaconData.append(self.createDictionaryWith(beacon, detectedTime: detectedTime))
+            // array is ordered by accuracy, but if there are beacons with unknown accuracy (-1.0m) they will be at the front of the array
+            let filteredBeacons = beacons.filter({ $0.accuracy > 0 })
+            // if all beacons in the list are of unknown distance we still send the first one
+            if (filteredBeacons.isEmpty) {
+                _piAdapter.sendBeaconPayload([self.createDictionaryWith(beacons.first!, detectedTime: detectedTime)])
+            } else {
+                _piAdapter.sendBeaconPayload([self.createDictionaryWith(filteredBeacons.first!, detectedTime: detectedTime)])
             }
-            _piAdapter.sendBeaconPayload(beaconData)
+            _lastDetected = detectedTime
         }
         
         if let d = delegate {
