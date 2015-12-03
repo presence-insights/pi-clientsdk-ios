@@ -194,6 +194,10 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
     public func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         _piAdapter.printDebug("Did Range Beacons In Region: " + region.description)
         
+        if (beacons.isEmpty) {
+            return
+        }
+        
         let detectedTime = NSDate()
         let lastReport: NSTimeInterval!
         if (_lastDetected != nil) {
