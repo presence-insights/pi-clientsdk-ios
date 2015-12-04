@@ -32,12 +32,10 @@ internal class RegionManager {
     }
     
     init(locationManager: CLLocationManager) {
-        print("Initializing RegionManger...")
         _locationManager = locationManager
 
         let regions = _locationManager.monitoredRegions
         for region: CLRegion in regions {
-            print("monitored region: " + region.identifier)
             if NSUUID(UUIDString: region.identifier) == nil {
                 _beaconRegions.append(createBeaconRegionFromCLRegion(region))
             } else {
@@ -93,10 +91,8 @@ internal class RegionManager {
     }
     
     func didEnterRegion(region: CLRegion) {
-        print("didEnterRegion of RegionManager with Region: " + region.identifier)
         for uuidRegion in _uuidRegions {
             if uuidRegion.identifier.lowercaseString == region.identifier.lowercaseString {
-                print("found a matching uuid region! lets start ranging!")
                 _locationManager.startRangingBeaconsInRegion(uuidRegion)
                 break
             }
@@ -104,18 +100,14 @@ internal class RegionManager {
     }
     
     func didDetermineState(state: CLRegionState, region: CLRegion) {
-        print("did determine state of region " + region.identifier)
-        print("we are " + (state.rawValue == CLRegionState.Inside.rawValue ? "Inside" : "Outside") + " that region")
         if state.rawValue == CLRegionState.Inside.rawValue {
             didEnterRegion(region)
         }
     }
 
     func didExitRegion(region: CLRegion){
-        print("did exit region")
         for uuidRegion in _uuidRegions {
             if uuidRegion.identifier.lowercaseString == region.identifier.lowercaseString {
-                print("found a matching uuid region! lets start ranging!")
                 _locationManager.stopRangingBeaconsInRegion(uuidRegion)
                 for beaconRegion in _beaconRegions {
                     _locationManager.stopMonitoringForRegion(beaconRegion)
@@ -147,7 +139,6 @@ internal class RegionManager {
         let components = region.identifier.componentsSeparatedByString(";")
         var beaconRegion: CLBeaconRegion
         
-        print("components of region id: \(components)")
         // beacon region (id = uuid;major;minor)
         if (components.count > 1) {
             beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: components[0])!, major: CUnsignedShort(components[1])!, minor: CUnsignedShort(components[2])!, identifier: region.identifier)
