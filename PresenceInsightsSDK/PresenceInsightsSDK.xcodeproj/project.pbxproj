@@ -22,9 +22,9 @@
 
 /* Begin PBXBuildFile section */
 		5111182C1B71420B009E0876 /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5111182B1B71420B009E0876 /* TestConstants.swift */; };
-		5133DB071BE7D999007F13D4 /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB061BE7D999007F13D4 /* RegionManager.swift */; settings = {ASSET_TAGS = (); }; };
-		5133DB031BDFB456007F13D4 /* PIFloor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB021BDFB456007F13D4 /* PIFloor.swift */; settings = {ASSET_TAGS = (); }; };
-		5133DB051BDFBBC8007F13D4 /* PISensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB041BDFBBC8007F13D4 /* PISensor.swift */; settings = {ASSET_TAGS = (); }; };
+		5133DB031BDFB456007F13D4 /* PIFloor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB021BDFB456007F13D4 /* PIFloor.swift */; };
+		5133DB051BDFBBC8007F13D4 /* PISensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB041BDFBBC8007F13D4 /* PISensor.swift */; };
+		5133DB071BE7D999007F13D4 /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133DB061BE7D999007F13D4 /* RegionManager.swift */; };
 		518CDCB31B94B1E500DC0385 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518CDCB21B94B1E500DC0385 /* Constants.swift */; };
 		D44A40A81B57FC6D0022C5CB /* PresenceInsightsSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = D44A40A71B57FC6D0022C5CB /* PresenceInsightsSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D44A40AE1B57FC6D0022C5CB /* PresenceInsightsSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */; };
@@ -50,9 +50,9 @@
 
 /* Begin PBXFileReference section */
 		5111182B1B71420B009E0876 /* TestConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
-		5133DB061BE7D999007F13D4 /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
 		5133DB021BDFB456007F13D4 /* PIFloor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIFloor.swift; sourceTree = "<group>"; };
 		5133DB041BDFBBC8007F13D4 /* PISensor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PISensor.swift; sourceTree = "<group>"; };
+		5133DB061BE7D999007F13D4 /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
 		518CDCB21B94B1E500DC0385 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D44A40A21B57FC6D0022C5CB /* PresenceInsightsSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PresenceInsightsSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D44A40A61B57FC6D0022C5CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
