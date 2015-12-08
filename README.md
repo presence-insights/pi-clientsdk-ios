@@ -1,23 +1,36 @@
 # PresenceInsightsSDK
 
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
 This repository contains the source for the PresenceInsightsSDK, an iOS SDK that allows for 
 easy integration of the IBM [Presence Insights](https://console.ng.bluemix.net/catalog/presence-insights/) 
 service available on [Bluemix](https://console.ng.bluemix.net/).
 
 This SDK supports iOS 8+.
 
-##Building
-To build the framework:
+##Getting Started
 
-1. Open the PresenceInsightsSDK.xcodeproj.
-2. Run the PresenceInsightsSDK-Univeral target.
-3. Pull the built framework from the *Output* Folder.
+###Building
+
+If you're using [Carthage](https://github.com/Carthage/Carthage), add the following to your `Cartfile`:
+
+>```
+github "presence-insights/pi-clientsdk-ios"
+```
+
+Then get the `PresenceInsightsSDK.framework`  from your `Carthage/Build/iOS` directory.
+
+Or, to build the framework in xcode:
+
+1. Open the `PresenceInsightsSDK.xcodeproj`.
+2. Run the `PresenceInsightsSDK-Univeral` target.
+3. Pull the built framework from the `Output` Folder.
 
 *Note:* You need to build this framework before being able to use it.
 
-##Linking
+###Linking
 To use the framework simply drag the PresenceInsightsSDK.framework file into your projects *Embedded 
-Binaries* section of the *General* tab on your project target. Select "Copy items if needed". This should 
+Binaries* section of the *General* tab on your project target. If you did not use Carthage, select "Copy items if needed". This should 
 automatically add the framework to all other necessary locations. Then to use it in your code add:
 
 In swift:
