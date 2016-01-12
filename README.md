@@ -242,10 +242,12 @@ There are some other little things you can do with this SDK (mostly different wa
 Troubleshooting
 --------------------
 
-*   First things first, if things are not working, enable debugging to see all the inner workings in the console.
+*   First things first, if things are not working, enable debugging to see all the inner workings in LogCat.
 
-`adapter.enableLogging() // adapter is an instance of PIAdapter`
+        adapter.enableLogging() // adapter is an instance of PIAdapter
 
 *   I started the beacon sensor, but it is not picking up any beacons. There are a couple reasons why this may be happening.
-1.  The beacons are not configured correctly in the PI UI. Ensure that the Proximity UUID is set correctly. We retrieve that to create a region to range for beacons.
-2.  The codes (username, password, tenant, org) used in creating the PIAdapter may have been entered incorrectly.
+    1.  The beacons are not configured correctly in the PI UI. Ensure that the Proximity UUID is set correctly. We retrieve that to create a region to range for beacons.
+    2.  The codes (username, password, tenant, org) used in creating the PIAdapter may have been entered incorrectly.
+
+*    How can I send location events when the application is in the background or not open?
