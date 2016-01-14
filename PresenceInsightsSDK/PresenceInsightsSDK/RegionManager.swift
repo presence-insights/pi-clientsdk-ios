@@ -21,7 +21,7 @@ import Foundation
 import CoreLocation
 
 internal class RegionManager {
-    private var _locationManager: CLLocationManager
+    private let _locationManager: CLLocationManager
     private var _beaconRegions: [CLBeaconRegion] = []
     private var _uuidRegions: [CLBeaconRegion] = []
     private var _maxRegions: Int = 20
@@ -90,7 +90,7 @@ internal class RegionManager {
         _locationManager.startMonitoringForRegion(region)
     }
     
-    func didEnterRegion(region: CLRegion) {
+    func didEnterRegion(region: CLBeaconRegion) {
         for uuidRegion in _uuidRegions {
             if uuidRegion.identifier.lowercaseString == region.identifier.lowercaseString {
                 _locationManager.startRangingBeaconsInRegion(uuidRegion)
@@ -100,12 +100,12 @@ internal class RegionManager {
     }
     
     func didDetermineState(state: CLRegionState, region: CLRegion) {
-        if state.rawValue == CLRegionState.Inside.rawValue {
-            didEnterRegion(region)
+        if let region_ = region as? CLBeaconRegion where state.rawValue == CLRegionState.Inside.rawValue {
+            didEnterRegion(region_)
         }
     }
 
-    func didExitRegion(region: CLRegion){
+    func didExitRegion(region: CLBeaconRegion){
         for uuidRegion in _uuidRegions {
             if uuidRegion.identifier.lowercaseString == region.identifier.lowercaseString {
                 _locationManager.stopRangingBeaconsInRegion(uuidRegion)
@@ -126,7 +126,7 @@ internal class RegionManager {
         }
 
         // stop monitoring
-        for region: CLRegion in self._locationManager.monitoredRegions {
+        for case let region as CLBeaconRegion in self._locationManager.monitoredRegions {
             _locationManager.stopMonitoringForRegion(region)
         }
 

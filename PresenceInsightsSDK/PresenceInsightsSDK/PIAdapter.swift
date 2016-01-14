@@ -35,12 +35,12 @@ public class PIAdapter: NSObject {
     private let POST = "POST"
     private let PUT = "PUT"
     
-    private var _baseURL: String!
-    private var _configURL: String!
-    private var _configURL_v2: String!
-    private var _tenantCode: String!
-    private var _orgCode: String!
-    private var _authorization: String!
+    private let _baseURL: String
+    private let _configURL: String
+    private let _configURL_v2: String
+    private let _tenantCode: String
+    private let _orgCode: String
+    private let _authorization: String
     
     private var _debug: Bool = false
     
@@ -103,14 +103,16 @@ extension PIAdapter {
     - parameter device:   PIDevice to be registered.
     - parameter callback: Returns a copy of the registered PIDevice upon task completion.
     */
-    public func registerDevice(device: PIDevice, callback:(PIDevice, NSError!)->()) {
+    public func registerDevice(device: PIDevice, callback:(PIDevice?, NSError?)->()) {
         
         guard device.name != nil && device.type != nil else {
             let errorDetails = [NSLocalizedFailureReasonErrorKey: "PIDevice type or name cannot be registered as nil."]
             let error = NSError(domain: "PresenceInsightsSDK", code: 0, userInfo: errorDetails)
-            callback( PIDevice(), error)
+            callback(nil, error)
             return
         }
+        
+        var device = device
         
         let endpoint = _configURL + "/devices"
         
@@ -131,7 +133,7 @@ extension PIAdapter {
             
             self.printDebug("Register Response: \(response)")
             
-            guard error == nil else {
+            guard let response = response where error == nil else {
                 callback(PIDevice(), error)
                 return
             }
@@ -141,7 +143,7 @@ extension PIAdapter {
                 // This is a safeguard to ensure that all fields are uploaded appropriatly
                 self.updateDevice(device, callback: {newDevice, error in
                     
-                    guard error == nil else {
+                    guard let newDevice = newDevice where error == nil else {
                         callback(PIDevice(), error)
                         return
                     }
@@ -149,11 +151,12 @@ extension PIAdapter {
                     callback(newDevice, nil)
                 })
                 // If device does exist:
-            } else if let headers = response["headers"] as? [String: AnyObject] {
-                if let location = headers["Location"] as? String {
+            } else if
+                let headers = response["headers"] as? [String: AnyObject],
+                let location = headers["Location"] as? String {
                     self.getDevice(location, callback: {deviceData, error in
-                        guard error == nil else {
-                            callback(PIDevice(), error)
+                        guard let deviceData = deviceData where error == nil else {
+                            callback(nil, error)
                             return
                         }
                         self.updateDeviceDictionary(location, dictionary: deviceData, device: device, callback: {newDevice, error in
@@ -164,7 +167,9 @@ extension PIAdapter {
                             callback(newDevice, nil)
                         })
                     })
-                }
+            } else {
+                // TODO : NSError
+                callback(nil,nil)
             }
         })
     }
@@ -176,12 +181,13 @@ extension PIAdapter {
     - parameter device:   PIDevice to unregister.
     - parameter callback: Returns a copy of the unregistered PIDevice upon task completion.
     */
-    public func unregisterDevice(device: PIDevice, callback:(PIDevice, NSError!)->()) {
+    public func unregisterDevice(device: PIDevice, callback:(PIDevice?, NSError?)->()) {
         
-        device.registered = false
-        updateDevice(device, callback: {newDevice, error in
-            guard error == nil else {
-                callback(PIDevice(), error)
+        var device_ = device
+        device_.registered = false
+        updateDevice(device_, callback: {newDevice, error in
+            guard let newDevice = newDevice where error == nil else {
+                callback(nil, error)
                 return
             }
             callback(newDevice, nil)
@@ -195,21 +201,28 @@ extension PIAdapter {
     - parameter device:   PIDevice to be updated.
     - parameter callback: Returns a copy of the updated PIDevice upon task completion.
     */
-    public func updateDevice(device: PIDevice, callback:(PIDevice, NSError!)->()) {
+    public func updateDevice(device: PIDevice, callback:(PIDevice?, NSError?)->() ) {
         
-        var endpoint = _configURL + "/devices?rawDescriptor=" + device.descriptor
+        guard let descriptor = device.descriptor else {
+            // TODO: NSError or throw exception
+            callback(nil,nil)
+            return
+        }
+        
+        let endpoint = _configURL + "/devices?rawDescriptor=" + descriptor
         getDevice(endpoint, callback: {deviceData, error in
-            guard error == nil else {
-                callback(PIDevice(), error)
+            guard let deviceData = deviceData where error == nil else {
+                callback(nil, error)
                 return
             }
-            endpoint = self._configURL + "/devices/" + (deviceData["@code"] as! String)
+            guard let code = deviceData["@code"] as? String else {
+                // TODO: NSError or throw exception
+                callback(nil,nil)
+                return
+            }
+            let endpoint = self._configURL + "/devices/" + code
             self.updateDeviceDictionary(endpoint, dictionary: deviceData, device: device, callback: {newDevice, error in
-                guard error == nil else {
-                    callback(PIDevice(), error)
-                    return
-                }
-                callback(newDevice, nil)
+                callback(newDevice, error)
             })
         })
     }
@@ -222,7 +235,7 @@ extension PIAdapter {
     - parameter device:     Local PIDevice used to update remote device.
     - parameter callback:   Returns the updated PIDevice object upon task completion.
     */
-    private func updateDeviceDictionary(endpoint: String, dictionary: [String: AnyObject], device: PIDevice, callback:(PIDevice, NSError!)->()) {
+    private func updateDeviceDictionary(endpoint: String, dictionary: [String: AnyObject], device: PIDevice, callback:(PIDevice?, NSError?)->()) {
         
         var newDevice = dictionary
         
@@ -239,13 +252,17 @@ extension PIAdapter {
         
         let request = self.buildRequest(endpoint, method: self.PUT, body: deviceJSON)
         self.performRequest(request, callback: {response, error in
-            guard error == nil else {
-                callback(PIDevice(), error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             self.printDebug("Update Response: \(response)")
+            // TODO: check if this test is at the right place
             if let _ = response["@code"] as? String {
                 callback(PIDevice(dictionary: response), nil)
+            } else {
+                // TODO: Create an NSError or throw an exception
+                callback(nil, nil)
             }
         })
         
@@ -257,12 +274,12 @@ extension PIAdapter {
     - parameter code:     The device's code.
     - parameter callback: Returns the PIDevice upon task completion.
     */
-    public func getDeviceByCode(code: String, callback:(PIDevice, NSError!)->()) {
+    public func getDeviceByCode(code: String, callback:(PIDevice?, NSError?)->()) {
         
         let endpoint = _configURL + "/devices/" + code
         getDevice(endpoint, callback: {deviceData, error in
-            guard error == nil else {
-                callback(PIDevice(), error)
+            guard let deviceData = deviceData where error == nil else {
+                callback(nil, error)
                 return
             }
             let device = PIDevice(dictionary: deviceData)
@@ -276,12 +293,12 @@ extension PIAdapter {
     - parameter descriptor: The unhashed device descriptor. (Usually the UUID)
     - parameter callback:   Returns the PIDevice upon task completion.
     */
-    public func getDeviceByDescriptor(descriptor: String, callback:(PIDevice, NSError!)->()) {
+    public func getDeviceByDescriptor(descriptor: String, callback:(PIDevice?, NSError?)->()) {
         
         let endpoint = _configURL + "/devices?rawDescriptor=" + descriptor
         getDevice(endpoint, callback: {deviceData, error in
-            guard error == nil else {
-                callback(PIDevice(), error)
+            guard let deviceData = deviceData where error == nil else {
+                callback(nil, error)
                 return
             }
             let device = PIDevice(dictionary: deviceData)
@@ -296,13 +313,13 @@ extension PIAdapter {
     - parameter endpoint: The Rest API endpoint of the device object.
     - parameter callback: Returns the dictionary object of the device upon task completion.
     */
-    private func getDevice(endpoint: String, callback: ([String: AnyObject], NSError!)->()) {
+    private func getDevice(endpoint: String, callback: ([String: AnyObject]?, NSError?)->()) {
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback([:], error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -330,13 +347,13 @@ extension PIAdapter {
     
     - parameter callback: Returns an array of PIDevices upon task completion.
     */
-    public func getAllDevices(callback:([PIDevice], NSError!)->()) {
+    public func getAllDevices(callback:([PIDevice]?, NSError?)->()) {
         
         let endpoint = _configURL + "/devices?pageSize=100"
         
         getDevices(endpoint, callback: {devices, error in
-            guard error == nil else {
-                callback([], error)
+            guard let devices = devices where error == nil else {
+                callback(nil, error)
                 return
             }
             callback(devices, nil)
@@ -351,13 +368,13 @@ extension PIAdapter {
     
     - parameter callback: Returns an array of PIDevices upon task completion.
     */
-    public func getRegisteredDevices(callback:([PIDevice], NSError!)->()) {
+    public func getRegisteredDevices(callback:([PIDevice]?, NSError?)->()) {
         
         let endpoint = _configURL + "/devices?pageSize=100&registered=true"
         
         getDevices(endpoint, callback: {devices, error in
-            guard error == nil else {
-                callback([], error)
+            guard let devices = devices where error == nil else {
+                callback(nil, error)
                 return
             }
             callback(devices, nil)
@@ -370,13 +387,13 @@ extension PIAdapter {
     - parameter endpoint: The Rest API endpoint of the devices.
     - parameter callback: Returns an array of PIDevices upon task completion.
     */
-    private func getDevices(endpoint: String, callback:([PIDevice], NSError!)->()) {
+    private func getDevices(endpoint: String, callback:([PIDevice]?, NSError?)->()) {
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback([], error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -384,7 +401,7 @@ extension PIAdapter {
             
             var devices: [PIDevice] = []
             if let rows = response["rows"] as? [AnyObject] {
-                for row in rows as! [[String: AnyObject]] {
+                for case let row as [String: AnyObject] in rows {
                     let device = PIDevice(dictionary: row)
                     devices.append(device)
                 }
@@ -403,15 +420,15 @@ extension PIAdapter {
     
     - parameter callback: Returns a String array of all beacon proximity UUIDs upon task completion.
     */
-    public func getAllBeaconRegions(callback:([String], NSError!) -> ()) {
+    public func getAllBeaconRegions(callback:([String]?, NSError?) -> ()) {
         
         let endpoint = _configURL + "/views/proximityUUID"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback([], error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -419,6 +436,9 @@ extension PIAdapter {
             
             if let regions = response["dataArray"] as? [String] {
                 callback(regions, nil)
+            } else {
+                // TODO: NSError or throw exception
+                callback(nil, nil)
             }
         })
         
@@ -431,7 +451,7 @@ extension PIAdapter {
     - parameter floor:    PI Floor code
     - parameter callback: Returns an array of PIBeacons upon task completion.
     */
-    public func getAllBeacons(site: String, floor: String, callback:([PIBeacon], NSError!)->()) {
+    public func getAllBeacons(site: String, floor: String, callback:([PIBeacon]?, NSError?)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
         var endpoint =  _configURL_v2 + "/sites/" + site
@@ -440,8 +460,8 @@ extension PIAdapter {
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback([], error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -449,9 +469,10 @@ extension PIAdapter {
             
             var beacons: [PIBeacon] = []
             if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
-                for row in rows as! [[String: AnyObject]] {
-                    let beacon = PIBeacon(dictionary: row)
-                    beacons.append(beacon)
+                for case let row as [String: AnyObject] in rows {
+                    if let beacon = PIBeacon(dictionary: row) {
+                        beacons.append(beacon)
+                    }
                 }
             }
             
@@ -475,7 +496,7 @@ extension PIAdapter {
         
         let request = buildRequest(endpoint, method: POST, body: notificationData)
         performRequest(request, callback: {response, error in
-            guard error == nil else {
+            guard let response = response where error == nil else {
                 self.printDebug("Could not send beacon payload: \(error)")
                 return
             }
@@ -494,7 +515,7 @@ extension PIAdapter {
     - parameter floor:    PI Floor code
     - parameter callback: Returns an array of PIZones upon task completion.
     */
-    public func getAllZones(site: String, floor: String, callback:([PIZone], NSError!)->()) {
+    public func getAllZones(site: String, floor: String, callback:([PIZone]?, NSError?)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
         var endpoint =  _configURL_v2 + "/sites/" + site
@@ -503,8 +524,8 @@ extension PIAdapter {
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback([], error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -512,7 +533,7 @@ extension PIAdapter {
             
             var zones = [PIZone]()
             if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
-                for row in rows as! [[String: AnyObject]] {
+                for case let row as [String: AnyObject] in rows {
                     let zone = PIZone(dictionary: row)
                     zones.append(zone)
                 }
@@ -533,7 +554,7 @@ extension PIAdapter {
     - parameter floor:    PI Floor code
     - parameter callback: Returns a UIImage of the map upon task completion.
     */
-    public func getMap(site: String, floor: String, callback:(UIImage, NSError!)->()) {
+    public func getMap(site: String, floor: String, callback:(UIImage?, NSError?)->()) {
         
         // Swift cannot handle this complex of an expression without breaking it down.
         var endpoint =  _configURL + "/sites/" + site
@@ -542,8 +563,8 @@ extension PIAdapter {
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback(UIImage(), error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -554,9 +575,13 @@ extension PIAdapter {
                     callback(image, nil)
                 } else {
                     self.printDebug("Invalid Image: \(data)")
+                    // TODO: NSError or throw exception
+                    callback(nil, nil)
                 }
             } else {
                 self.printDebug("Invalid Data")
+                // TODO: NSError or throw exception
+                callback(nil, nil)
             }
         })
         
@@ -571,15 +596,15 @@ extension PIAdapter {
     
     - parameter callback: Returns the raw dictionary from the Rest API upon task completion.
     */
-    public func getOrg(callback:(PIOrg, NSError!)->()) {
+    public func getOrg(callback:(PIOrg?, NSError?)->()) {
         
         let endpoint =  _configURL
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback(PIOrg(), error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -600,14 +625,14 @@ extension PIAdapter {
     
     - parameter callback: Returns a dictionary with site code as the keys and site name as the values.
     */
-    public func getAllSites(callback:([String: String], NSError!)->()) {
+    public func getAllSites(callback:([String: String]?, NSError?)->()) {
         
         let endpoint =  _configURL + "/sites"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
+            guard let response = response where error == nil else {
                 callback([:], error)
                 return
             }
@@ -616,11 +641,11 @@ extension PIAdapter {
             
             var sites: [String: String] = [:]
             if let rows = response["rows"] as? [AnyObject] {
-                for row in rows as! [[String: AnyObject]] {
-                    if let site = row["@code"] as? String {
-                        if let name = row["name"] as? String {
+                for case let row as [String: AnyObject] in rows {
+                    if
+                        let site = row["@code"] as? String,
+                        let name = row["name"] as? String  {
                             sites[site] = name
-                        }
                     }
                 }
             }
@@ -640,15 +665,15 @@ extension PIAdapter {
     - parameter floor:     PI Floor code
     - parameter callback: Returns a dictionary with floor code as the keys and floor name as the values.
     */
-    public func getAllSensors(site: String, floor: String, callback:([PISensor], NSError!)->()) {
+    public func getAllSensors(site: String, floor: String, callback:([PISensor]?, NSError?)->()) {
 
         let endpoint = String(format: "%@/sites/%@/floors/%@/sensors", arguments: [_configURL_v2, site, floor])
 
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
 
-            guard error == nil else {
-                callback([PISensor](), error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
 
@@ -656,7 +681,7 @@ extension PIAdapter {
 
             var sensors = [PISensor]()
             if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
-                for row in rows as! [[String: AnyObject]] {
+                for case let row as [String: AnyObject] in rows {
                     let sensor = PISensor(dictionary: row)
                     sensors.append(sensor)
                 }
@@ -676,15 +701,15 @@ extension PIAdapter {
     - parameter site:     PI Site code
     - parameter callback: Returns a dictionary with floor code as the keys and floor name as the values.
     */
-    public func getAllFloors(site: String, callback:([PIFloor], NSError!)->()) {
+    public func getAllFloors(site: String, callback:([PIFloor]?, NSError?)->()) {
         
         let endpoint =  _configURL_v2 + "/sites/" + site + "/floors"
         
         let request = buildRequest(endpoint, method: GET, body: nil)
         performRequest(request, callback: {response, error in
             
-            guard error == nil else {
-                callback([PIFloor](), error)
+            guard let response = response where error == nil else {
+                callback(nil, error)
                 return
             }
             
@@ -692,7 +717,7 @@ extension PIAdapter {
             
             var floors = [PIFloor]()
             if let rows = response[GeoJSON.FEATURES_KEY] as? [AnyObject] {
-                for row in rows as! [[String: AnyObject]] {
+                for case let row as [String: AnyObject] in rows {
                     let floor = PIFloor(dictionary: row)
                     floors.append(floor)
                 }
@@ -714,14 +739,14 @@ extension PIAdapter {
     - parameter body:     Optional value if the method is a PUT or POST and needs to send data.
     - parameter callback: Returns an Dictionary of the response upon completion.
     */
-    public func piRequest(endpoint: String, method: String, body: NSData?, callback: ([String: AnyObject], NSError!)->()) {
+    public func piRequest(endpoint: String, method: String, body: NSData?, callback: ([String: AnyObject]?, NSError?)->()){
         
         let url = _baseURL + endpoint
         
         let request = buildRequest(url, method: method, body: body)
         performRequest(request, callback: {response, error in
             guard error == nil else {
-                callback([:], error)
+                callback(nil, error)
                 return
             }
             callback(response, nil)
@@ -745,24 +770,23 @@ extension PIAdapter {
     */
     private func buildRequest(endpoint:String, method:String, body: NSData?) -> NSURLRequest {
         
-        if let url = NSURL(string: endpoint) {
-            
-            let request = NSMutableURLRequest(URL: url)
-            
-            request.HTTPMethod = method
-            request.addValue(_authorization, forHTTPHeaderField: _httpAuthorizationHeader)
-            request.addValue(_contentTypeJSON, forHTTPHeaderField: _httpContentTypeHeader)
-            
-            if let bodyData = body {
-                request.HTTPBody = bodyData
-            }
-            
-            return request
-        } else {
+        guard let url = NSURL(string: endpoint) else {
             printDebug("Invalid URL: \(endpoint)")
+            // TODO: Should we throw ??
+            fatalError("Shouldn't be there ")
         }
         
-        return NSURLRequest()
+        let request = NSMutableURLRequest(URL: url)
+        
+        request.HTTPMethod = method
+        request.addValue(_authorization, forHTTPHeaderField: _httpAuthorizationHeader)
+        request.addValue(_contentTypeJSON, forHTTPHeaderField: _httpContentTypeHeader)
+        
+        if let bodyData = body {
+            request.HTTPBody = bodyData
+        }
+        
+        return request
         
     }
     
@@ -773,7 +797,7 @@ extension PIAdapter {
     - parameter request:  The NSURLRequest to perform.
     - parameter callback: Returns an Dictionary of the response on task completion.
     */
-    private func performRequest(request:NSURLRequest, callback:([String: AnyObject]!, NSError!)->()) {
+    private func performRequest(request:NSURLRequest, callback:([String: AnyObject]?, NSError?)->()) {
         
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error in
