@@ -1,0 +1,31 @@
+/* 
+  Localizable.strings
+  PIOutdoorSample
+
+  Created by slizeray on 30/11/15.
+  Copyright © 2015 IBM. All rights reserved.
+*/
+
+
+"OK" = "OK";
+"Cancel" = "Cancel";
+
+"Alert.Location.Title" = "Location Access Disabled";
+"Alert.Location.Message" = "In order to show your position, please open this app's settings and set location access to 'While Using the App'.";
+"Alert.Location.OpenAction" = "Open Settings";
+
+"Alert.Monitoring.Title" = "Geofencing Disabled";
+"Alert.Monitoring.Message" = "For Geofencing, please open this app's settings and set location access to 'Always'.";
+"Alert.Monitoring.OpenAction" = "Open Settings";
+
+"Alert.NoMonitoring.Title" = "Region Monitoring Not Available";
+"Alert.NoMonitoring.Message" = "Your device does not support region monitoring";
+
+"Alert.BackgroundRefresh.Title" = "Background App Refresh is not available";
+"Alert.BackgroundRefresh.Message" = "We can't notify when you enter or exit a region while the App is in background";
+
+"Region.Notification.Enter %@"= "You are entering region %@";
+"Region.Notification.Exit %@"= "You are exiting region %@";
+"Region.Notification.Inside %@" = "You are inside region %@";
+
+"Alert.LocalNotification.Title" = "Notification";
