@@ -31,6 +31,14 @@ github "presence-insights/pi-clientsdk-ios"
 
 Then get the `PresenceInsightsSDK.framework`  from your `Carthage/Build/iOS` directory.
 
+If you're using [CocoaPods](https://cocoapods.org/), add the following to your `Podfile`:
+
+```
+use_frameworks!
+
+pod 'PresenceInsightsSDK'
+```
+
 Or, to build the framework in xcode:
 
 1. Open the `PresenceInsightsSDK.xcodeproj`.
