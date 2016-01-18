@@ -1,8 +1,7 @@
 license = <<EOT
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the Presence Insights Client iOS Framework License (the "License");
+you may not use this file except in compliance with the License. You may find
+a copy of the license in the license.txt file in this package.
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -12,7 +11,7 @@ EOT
 
 Pod::Spec.new do |s|
   s.name         = "PresenceInsightsSDK"
-  s.version      = "1.0.0"
+  s.version      = "1.2.0"
   s.summary      = "IBM Presence Insights SDK for iOS."
   s.description  = <<-DESC
                     Presence Insights SDK enables users to communicate with
@@ -20,7 +19,7 @@ Pod::Spec.new do |s|
                     obtaining configuration data.
                    DESC
   s.homepage     = "http://presenceinsights.ibmcloud.com"
-  s.license      = {:type => 'Apache', :text => license}
+  s.license      = {:type => 'Presence Insights Client iOS Framework License', :text => license}
   s.author       = { "IBM Corp." => "support@ibm.com" }
   s.source       = { :git => "https://github.com/presence-insights/pi-clientsdk-ios.git", :tag => s.version.to_s }
 
@@ -32,7 +31,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'standard' do |sp|
     sp.source_files = 'PresenceInsightsSDK/**/*.{swift}'
-    sp.exclude_files = 'PresenceInsightsSDK/PresenceInsightsSDKTests/*.{swift}'
+    sp.exclude_files = 'PresenceInsightsSDKTests/*.{swift}'
 
     sp.frameworks = 'CoreLocation'
   end
