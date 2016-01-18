@@ -242,7 +242,7 @@ There are some other little things you can do with this SDK (mostly different wa
 Troubleshooting
 --------------------
 
-*   First things first, if things are not working, enable debugging to see all the inner workings in LogCat.
+*   First things first, if things are not working, enable debugging to see all the inner workings in the console.
 
         adapter.enableLogging() // adapter is an instance of PIAdapter
 
