@@ -29,3 +29,8 @@
 "Region.Notification.Inside %@" = "You are inside region %@";
 
 "Alert.LocalNotification.Title" = "Notification";
+
+
+"More.Section.Settings" = "Settings";
+
+"More.Settings.Privacy" = "Privacy";

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Kjz-Zk-pPV">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="2hy-6U-Uf7">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Kjz-Zk-pPV" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="more" id="mSc-TM-M1O"/>
+                    <toolbarItems/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="F93-lm-Oci">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="4d4-0V-rMx" kind="relationship" relationship="rootViewController" id="qab-eS-7wX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DuV-u7-rwY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="118" y="353"/>
+        </scene>
+        <!--More-->
+        <scene sceneID="Rkn-vf-Wzg">
+            <objects>
+                <tableViewController id="4d4-0V-rMx" customClass="MoreController" customModule="PIOutdoorSample" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="Xkh-BC-ei3">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <connections>
+                            <outlet property="dataSource" destination="4d4-0V-rMx" id="fhA-x3-2bU"/>
+                            <outlet property="delegate" destination="4d4-0V-rMx" id="X3p-7g-XRM"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="More" id="MK7-sH-nGZ"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="H7R-iV-Ly4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="795" y="348"/>
+        </scene>
+    </scenes>
+</document>

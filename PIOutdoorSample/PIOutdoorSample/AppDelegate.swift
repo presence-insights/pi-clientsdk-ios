@@ -23,7 +23,7 @@ import UIKit
 import PIOutdoorSDK
 import CoreLocation
 
-let slackToken:String? = nil
+let slackToken:String? = "xoxb-16384356389-QhQvfBrIrUgne6CLza7fRkx5"
 
 let piGeofencingManager = PIGeofencingManager(tenant: "tenant", org: "org", baseURL: "host", username: "username", password: "password")
 
@@ -257,6 +257,10 @@ extension AppDelegate:PIGeofencingManagerDelegate {
     
     
     private func sendSlackMessage(event:String,geofence: PIGeofence?) {
+        
+        guard Settings.privacy == false else {
+            return
+        }
         
         guard let slackToken = slackToken else {
             return

@@ -15,6 +15,7 @@ xcodeproj 'PIOutdoorSDK.xcodeproj'
 end
 
 target 'PIOutdoorSample' do
+pod 'ZipArchive'
 xcodeproj 'PIOutdoorSample/PIOutdoorSample.xcodeproj'
 end
 

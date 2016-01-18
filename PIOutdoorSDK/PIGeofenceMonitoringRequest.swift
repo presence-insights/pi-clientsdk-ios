@@ -51,12 +51,12 @@ public class PIGeofenceMonitoringRequest:Request {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 switch operation.result! {
                 case .OK(let data):
-                    do {
-                        let json = try NSJSONSerialization.JSONObjectWithData(data!,options:[])
-                        response.result = .OK(json)
-                    } catch {
-                        fatalError()
+                    guard let data = data else {
+                        response.result = .OK(nil)
+                        break
                     }
+                    let json = try? NSJSONSerialization.JSONObjectWithData(data,options:[])
+                    response.result = .OK(json)
                 case .Cancelled:
                     response.result = .Cancelled
                 case let .HTTPStatus(status,data):

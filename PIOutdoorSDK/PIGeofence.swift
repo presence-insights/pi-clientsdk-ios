@@ -2,7 +2,6 @@
  *  PIOutdoorSDK
  *  PIGeofence.swift
  *
- *  Performs all communication to the PI Rest API.
  *
  *  © Copyright 2016 IBM Corp.
  *
@@ -21,8 +20,16 @@ import Foundation
 import CoreData
 
 
-public class PIGeofence: NSManagedObject {
+public final class PIGeofence: ManagedObject {
 
 // Insert code here to add functionality to your managed object subclass
 
+}
+
+
+extension PIGeofence: ManagedObjectType {
+    public static var entityName: String {
+        return "PIGeofence"
+    }
+    
 }

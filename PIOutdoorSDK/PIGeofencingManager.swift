@@ -35,6 +35,7 @@ public enum PIOutdoorError:ErrorType {
     case GeoJsonNoFeature
     
     case WrongFences(Int)
+    case HTTPStatus(Int,AnyObject?)
 }
 
 
@@ -59,7 +60,7 @@ public protocol PIGeofencingManagerDelegate:class {
     func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? )
 }
 
-public class PIGeofencingManager:NSObject {
+public final class PIGeofencingManager:NSObject {
     
     private let locationManager = CLLocationManager()
     
@@ -71,7 +72,7 @@ public class PIGeofencingManager:NSObject {
     
     public let service:PIService
     
-    public var delegate:PIGeofencingManagerDelegate?
+    public weak var delegate:PIGeofencingManagerDelegate?
     
     public init(tenant:String, org:String, baseURL:String, username:String, password:String,maxDistance:Int = 10_000) {
         self.maxDistance = maxDistance
@@ -96,12 +97,16 @@ public class PIGeofencingManager:NSObject {
                 break
             case let .Error(error)?:
                 print(error)
+                completionHandler?(error: error)
                 
             case .Exception(let exception)?:
                 print(exception)
+                completionHandler?(error: exception)
                 
-            case let .HTTPStatus(status)?:
+            case let .HTTPStatus(status,json)?:
                 print("HTTP Status \(status)")
+                completionHandler?(error: PIOutdoorError.HTTPStatus(status,json))
+                
             case let .OK(json)?:
                 if let json = json as? [String:AnyObject] {
                     if let geojson = json["geojson"] as? [String:AnyObject] {
@@ -171,7 +176,8 @@ public class PIGeofencingManager:NSObject {
                 if self.regions == nil {
                     // either the first time we monitor or the app has been unloaded
                     // find the regions currently being monitored
-                    let fetchMonitoredRegionsRequest = NSFetchRequest(entityName:StringFromClass(PIGeofence))
+                    let fetchMonitoredRegionsRequest = PIGeofence.fetchRequest
+                    
                     fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == 1")
                     guard let monitoredGeofences = try moc.executeFetchRequest(fetchMonitoredRegionsRequest) as? [PIGeofence] else {
                         fatalError("Programming error")
@@ -187,7 +193,7 @@ public class PIGeofencingManager:NSObject {
                 }
                 
                 // find the geofences in the bbox of the current position
-                let fetchRequest = NSFetchRequest(entityName:StringFromClass(PIGeofence))
+                let fetchRequest = PIGeofence.fetchRequest
                 // We will need to access properties of all returned objects
                 fetchRequest.returnsObjectsAsFaults = false
                 // Filter out regions which are too far
@@ -211,7 +217,7 @@ public class PIGeofencingManager:NSObject {
                 for (uuid,region) in self.regions! {
                     if uuids.contains(uuid) == false {
                         self.locationManager.stopMonitoringForRegion(region)
-                        let fetchRequest =  NSFetchRequest(entityName:StringFromClass(PIGeofence))
+                        let fetchRequest =  PIGeofence.fetchRequest
                         fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
                         let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence]
                         let geofence = geofences!.first!
@@ -281,7 +287,7 @@ public class PIGeofencingManager:NSObject {
         let moc = self.dataController.writerContext
         moc.performBlock {
             do {
-                let fetchRequest =  NSFetchRequest(entityName:StringFromClass(PIGeofence))
+                let fetchRequest =  PIGeofence.fetchRequest
                 fetchRequest.predicate = NSPredicate(format: "uuid == %@",uuid)
                 guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
                     fatalError("Programming error")
@@ -334,7 +340,7 @@ public class PIGeofencingManager:NSObject {
                     completionHandler?(geofence)
                 }
             } catch {
-                fatalError("\(error)")
+                fatalError("Core Data Error \(error)")
             }
             
         }
@@ -347,7 +353,7 @@ public class PIGeofencingManager:NSObject {
      */
     public func queryAllGeofences() -> [PIGeofence] {
         let moc = self.dataController.mainContext
-        let fetchRequest = NSFetchRequest(entityName:StringFromClass(PIGeofence))
+        let fetchRequest = PIGeofence.fetchRequest
         do {
             guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
                 fatalError("Programming error")
@@ -367,7 +373,7 @@ public class PIGeofencingManager:NSObject {
      */
     public func queryGeofence(uuid:String) -> PIGeofence? {
         let moc = self.dataController.mainContext
-        let fetchRequest = NSFetchRequest(entityName:StringFromClass(PIGeofence))
+        let fetchRequest = PIGeofence.fetchRequest
         fetchRequest.predicate = NSPredicate(format: "uuid = %@", uuid)
         do {
             guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
@@ -551,7 +557,7 @@ public class PIGeofencingManager:NSObject {
                     }
                 }
             } catch {
-                fatalError("\(error)")
+                fatalError("Core Data Error \(error)")
             }
         }
         
@@ -590,13 +596,13 @@ public class PIGeofencingManager:NSObject {
         moc.performBlock {
             do {
                 // find the geofences in the bbox of the current position
-                let fetchRequest = NSFetchRequest(entityName:StringFromClass(PIGeofence))
+                let fetchRequest = PIGeofence.fetchRequest
                 // We will need to access properties of all returned objects
                 fetchRequest.returnsObjectsAsFaults = false
                 // Filter out regions which are too far
                 fetchRequest.predicate = NSPredicate(format: "latitude < \(nw.latitude) and latitude > \(se.latitude) and longitude > \(nw.longitude) and longitude < \(se.longitude)")
                 guard let nearFences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
-                    fatalError("Programming error")
+                    fatalError("Programming error, shouldn't be there")
                 }
                 
                 // Sort fences in ascending order starting from the nearest fence
@@ -621,7 +627,7 @@ public class PIGeofencingManager:NSObject {
                 
                 
             } catch {
-                fatalError("Core Data Error")
+                fatalError("Core Data Error \(error)")
             }
         }
     }

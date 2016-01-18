@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D0C390B1C4CE42000BD7798 /* NewFence.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D0C390A1C4CE42000BD7798 /* NewFence.storyboard */; };
+		7D0C390D1C4CE53100BD7798 /* More.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D0C390C1C4CE53100BD7798 /* More.storyboard */; };
+		7D0C390F1C4CE57D00BD7798 /* Fences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D0C390E1C4CE57D00BD7798 /* Fences.storyboard */; };
+		7D0C39131C4CE5F100BD7798 /* MoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0C39121C4CE5F100BD7798 /* MoreController.swift */; };
+		7D0C39161C4CE69C00BD7798 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0C39151C4CE69C00BD7798 /* Settings.swift */; };
+		7D0C39191C4CE97400BD7798 /* CellSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0C39171C4CE97400BD7798 /* CellSwitch.swift */; };
+		7D0C391A1C4CE97400BD7798 /* CellSwitch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D0C39181C4CE97400BD7798 /* CellSwitch.xib */; };
 		7DDC91A01C479609002A5113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DDC919F1C479609002A5113 /* Assets.xcassets */; };
 		7DDC91A31C479609002A5113 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DDC91A11C479609002A5113 /* LaunchScreen.storyboard */; };
 		7DDC91D91C4798DA002A5113 /* SegHandlerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91D81C4798DA002A5113 /* SegHandlerType.swift */; };
@@ -64,6 +71,13 @@
 
 /* Begin PBXFileReference section */
 		554B221CA465AA19EB26E627 /* Pods-PIOutdoorSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PIOutdoorSample.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-PIOutdoorSample/Pods-PIOutdoorSample.debug.xcconfig"; sourceTree = "<group>"; };
+		7D0C390A1C4CE42000BD7798 /* NewFence.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFence.storyboard; sourceTree = "<group>"; };
+		7D0C390C1C4CE53100BD7798 /* More.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = More.storyboard; sourceTree = "<group>"; };
+		7D0C390E1C4CE57D00BD7798 /* Fences.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Fences.storyboard; sourceTree = "<group>"; };
+		7D0C39121C4CE5F100BD7798 /* MoreController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreController.swift; sourceTree = "<group>"; };
+		7D0C39151C4CE69C00BD7798 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		7D0C39171C4CE97400BD7798 /* CellSwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellSwitch.swift; sourceTree = "<group>"; };
+		7D0C39181C4CE97400BD7798 /* CellSwitch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CellSwitch.xib; sourceTree = "<group>"; };
 		7DDC91951C479609002A5113 /* PIOutdoorSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PIOutdoorSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DDC919F1C479609002A5113 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7DDC91A21C479609002A5113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -103,6 +117,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7D0C39091C4CE39D00BD7798 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				7D0C390A1C4CE42000BD7798 /* NewFence.storyboard */,
+				7DDC91EF1C4799C4002A5113 /* Main.storyboard */,
+				7D0C390E1C4CE57D00BD7798 /* Fences.storyboard */,
+				7D0C390C1C4CE53100BD7798 /* More.storyboard */,
+			);
+			name = Storyboards;
+			sourceTree = "<group>";
+		};
+		7D0C39101C4CE5AC00BD7798 /* Fences */ = {
+			isa = PBXGroup;
+			children = (
+				7DDC91EC1C4799C4002A5113 /* GeofenceAnnotation.swift */,
+				7DDC91EE1C4799C4002A5113 /* MapController.swift */,
+			);
+			name = Fences;
+			sourceTree = "<group>";
+		};
+		7D0C39111C4CE5D400BD7798 /* More */ = {
+			isa = PBXGroup;
+			children = (
+				7D0C39121C4CE5F100BD7798 /* MoreController.swift */,
+				7D0C39171C4CE97400BD7798 /* CellSwitch.swift */,
+				7D0C39181C4CE97400BD7798 /* CellSwitch.xib */,
+			);
+			name = More;
+			sourceTree = "<group>";
+		};
+		7D0C39141C4CE63F00BD7798 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				7D0C39151C4CE69C00BD7798 /* Settings.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		7DDC918C1C479609002A5113 = {
 			isa = PBXGroup;
 			children = (
@@ -124,13 +176,14 @@
 		7DDC91971C479609002A5113 /* PIOutdoorSample */ = {
 			isa = PBXGroup;
 			children = (
+				7D0C39141C4CE63F00BD7798 /* Settings */,
+				7D0C39111C4CE5D400BD7798 /* More */,
+				7D0C39101C4CE5AC00BD7798 /* Fences */,
+				7D0C39091C4CE39D00BD7798 /* Storyboards */,
 				7DDC91FA1C479A3C002A5113 /* PIOutdoorSDK.xcodeproj */,
 				7DDC91D71C4798C7002A5113 /* NewFence */,
 				7DDC91D61C4798BF002A5113 /* Utils */,
-				7DDC91EC1C4799C4002A5113 /* GeofenceAnnotation.swift */,
 				7DDC91ED1C4799C4002A5113 /* AppDelegate.swift */,
-				7DDC91EE1C4799C4002A5113 /* MapController.swift */,
-				7DDC91EF1C4799C4002A5113 /* Main.storyboard */,
 				7DDC919F1C479609002A5113 /* Assets.xcassets */,
 				7DDC91A11C479609002A5113 /* LaunchScreen.storyboard */,
 				7DDC91A41C479609002A5113 /* Info.plist */,
@@ -272,12 +325,16 @@
 				7DDC91F31C4799C4002A5113 /* Main.storyboard in Resources */,
 				7DDC91A31C479609002A5113 /* LaunchScreen.storyboard in Resources */,
 				7DDC91F91C479A13002A5113 /* referentiel-gares-voyageurs.geojson.zip in Resources */,
+				7D0C391A1C4CE97400BD7798 /* CellSwitch.xib in Resources */,
 				7DDC91E81C479993002A5113 /* GeofenceRadiusCell.xib in Resources */,
 				7DDC91E61C479993002A5113 /* GeofenceNameCell.xib in Resources */,
 				7DDC91EA1C479993002A5113 /* GeofenceRadiusPickerCell.xib in Resources */,
 				7DDC91F71C479A07002A5113 /* Localizable.strings in Resources */,
+				7D0C390B1C4CE42000BD7798 /* NewFence.storyboard in Resources */,
+				7D0C390F1C4CE57D00BD7798 /* Fences.storyboard in Resources */,
 				7DDC91A01C479609002A5113 /* Assets.xcassets in Resources */,
 				7DDC91E31C479993002A5113 /* MapCell.xib in Resources */,
+				7D0C390D1C4CE53100BD7798 /* More.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,11 +398,14 @@
 				7DDC91E51C479993002A5113 /* NewGeofenceController.swift in Sources */,
 				7DDC91EB1C479993002A5113 /* GeofenceRadiusPickerCell.swift in Sources */,
 				7DDC91E91C479993002A5113 /* GeofenceRadiusCell.swift in Sources */,
+				7D0C39131C4CE5F100BD7798 /* MoreController.swift in Sources */,
+				7D0C39161C4CE69C00BD7798 /* Settings.swift in Sources */,
 				7DDC91F51C4799FE002A5113 /* Utils.swift in Sources */,
 				7DDC91F01C4799C4002A5113 /* GeofenceAnnotation.swift in Sources */,
 				7DDC91E41C479993002A5113 /* MapCell.swift in Sources */,
 				7DDC91F21C4799C4002A5113 /* MapController.swift in Sources */,
 				7DDC91D91C4798DA002A5113 /* SegHandlerType.swift in Sources */,
+				7D0C39191C4CE97400BD7798 /* CellSwitch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

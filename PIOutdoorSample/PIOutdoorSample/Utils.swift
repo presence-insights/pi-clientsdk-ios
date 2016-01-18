@@ -19,7 +19,7 @@
 
 
 
-import Foundation
+import UIKit
 
 
 func StringFromClass(obj: AnyClass) -> String {
@@ -34,3 +34,19 @@ func maximum<T:RawRepresentable where T.RawValue:SignedIntegerType > (enumType:T
     
 }
 
+
+class Utils {
+    
+    static func updateTextStyle(label:UILabel) {
+        
+        
+        let textStyle = label.font.fontDescriptor().fontAttributes()[UIFontDescriptorTextStyleAttribute] as! String
+        
+        let newFont = UIFont.preferredFontForTextStyle(textStyle)
+        
+        if label.font != newFont {
+            label.font = newFont
+        }
+        
+    }
+}

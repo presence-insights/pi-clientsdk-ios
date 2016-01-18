@@ -35,12 +35,12 @@ public class PIAdapter: NSObject {
     private let POST = "POST"
     private let PUT = "PUT"
     
-    private var _baseURL: String!
-    private var _configURL: String!
-    private var _configURL_v2: String!
-    private var _tenantCode: String!
-    private var _orgCode: String!
-    private var _authorization: String!
+    private let _baseURL: String
+    private let _configURL: String
+    private let _configURL_v2: String
+    private let _tenantCode: String
+    private let _orgCode: String
+    private let _authorization: String
     
     private var _debug: Bool = false
     

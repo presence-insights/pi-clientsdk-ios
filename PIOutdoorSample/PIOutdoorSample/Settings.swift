@@ -1,6 +1,6 @@
 /**
- *  PIOutdoorSDK
- *  PIGeofence+CoreDataProperties.swift
+ *  PIOutdoorSample
+ *  Settings.swift
  *
  *
  *  © Copyright 2016 IBM Corp.
@@ -17,15 +17,16 @@
  **/
 
 import Foundation
-import CoreData
 
-extension PIGeofence {
 
-    @NSManaged public internal(set) var latitude: NSNumber
-    @NSManaged public internal(set) var longitude: NSNumber
-    @NSManaged public internal(set) var monitored: NSNumber
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var radius: NSNumber
-    @NSManaged public internal(set) var uuid: String
-
+struct Settings {
+    static var privacy:Bool {
+        set {
+        NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: "PrivacyOn")
+        NSUserDefaults.standardUserDefaults().synchronize()
+        }
+        get {
+            return NSUserDefaults.standardUserDefaults().boolForKey("PrivacyOn")
+        }
+    }
 }

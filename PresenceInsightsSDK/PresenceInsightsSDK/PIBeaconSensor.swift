@@ -22,7 +22,7 @@ import UIKit
 import CoreLocation
 
 // MARK: - Delegate protocol.
-public protocol PIBeaconSensorDelegate {
+public protocol PIBeaconSensorDelegate:class {
     func didRangeBeacons(beacons:[CLBeacon])
     func didEnterRegion(region: CLRegion)
     func didExitRegion(region: CLRegion)
@@ -33,22 +33,23 @@ public class PIBeaconSensor: NSObject {
     
     private var PI_REPORT_INTERVAL: NSTimeInterval = 5
     
-    public var delegate: PIBeaconSensorDelegate?
+    public weak var delegate: PIBeaconSensorDelegate?
     
-    private var _piAdapter: PIAdapter!
-    private var _locationManager: CLLocationManager!
-    private var _regionManager: RegionManager!
-    private var _lastDetected: NSDate!
+    private let _piAdapter: PIAdapter
+    private let _locationManager: CLLocationManager
+    private let _regionManager: RegionManager
+    private var _lastDetected: NSDate?
     
     public init(adapter: PIAdapter) {
         
-        super.init()
-        
         _piAdapter = adapter
         _locationManager = CLLocationManager()
-        _locationManager.delegate = self
         _locationManager.requestAlwaysAuthorization()
         _regionManager = RegionManager(locationManager: _locationManager)
+        
+        super.init()
+        
+        _locationManager.delegate = self
     }
     
     /**
@@ -200,8 +201,8 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         
         let detectedTime = NSDate()
         let lastReport: NSTimeInterval!
-        if (_lastDetected != nil) {
-            lastReport = detectedTime.timeIntervalSinceDate(_lastDetected)
+        if let lastDetected = _lastDetected  {
+            lastReport = detectedTime.timeIntervalSinceDate(lastDetected)
         } else {
             lastReport = PI_REPORT_INTERVAL + 1
         }

@@ -16,16 +16,27 @@
  *  limitations under the License.
  **/
 
-import Foundation
+
 import CoreData
 
-extension PIGeofence {
 
-    @NSManaged public internal(set) var latitude: NSNumber
-    @NSManaged public internal(set) var longitude: NSNumber
-    @NSManaged public internal(set) var monitored: NSNumber
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var radius: NSNumber
-    @NSManaged public internal(set) var uuid: String
-
+public class ManagedObject: NSManagedObject {
 }
+
+
+public protocol ManagedObjectType: class {
+    static var entityName: String { get }
+}
+
+
+extension ManagedObjectType {
+    
+    public static var fetchRequest: NSFetchRequest {
+        let request = NSFetchRequest(entityName: entityName)
+        return request
+    }
+}
+
+
+
+

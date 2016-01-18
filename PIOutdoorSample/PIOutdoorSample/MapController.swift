@@ -2,7 +2,6 @@
  *  PIOutdoorSample
  *  MapController.swift
  *
- *  Performs all communication to the PI Rest API.
  *
  *  © Copyright 2016 IBM Corp.
  *
@@ -97,7 +96,7 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
             return MKMapRectNull
         }
         
-        mapView.setVisibleMapRect(flyTo, edgePadding:UIEdgeInsets(top: 32, left: 32, bottom: 32, right: 32),animated: true)
+        mapView.setVisibleMapRect(flyTo, edgePadding:UIEdgeInsets(top: 50, left: 100, bottom: 50, right: 100),animated: true)
         
         return flyTo
     }
