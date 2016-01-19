@@ -323,8 +323,7 @@ public final class PIGeofencingManager:NSObject {
         
         moc.performBlock {
             
-            let geofence = NSEntityDescription.insertNewObjectForEntityForName(StringFromClass(PIGeofence),
-                inManagedObjectContext:moc) as! PIGeofence
+            let geofence:PIGeofence = moc.insertObject()
             geofence.name = name
             geofence.radius = radius
             geofence.uuid = NSUUID().UUIDString
@@ -533,8 +532,7 @@ public final class PIGeofencingManager:NSObject {
                     uuid = properties["uuid"] as? String ?? NSUUID().UUIDString
                 }
                 
-                let geofence = NSEntityDescription.insertNewObjectForEntityForName(StringFromClass(PIGeofence),
-                    inManagedObjectContext:moc) as! PIGeofence
+                let geofence:PIGeofence = moc.insertObject()
                 
                 geofence.name = name
                 geofence.radius = radius

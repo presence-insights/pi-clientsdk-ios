@@ -271,7 +271,7 @@ extension AppDelegate:PIGeofencingManagerDelegate {
         let geofenceName = geofence?.name ?? "unknown fence"
         var params:[String:String] = [:]
         params["channel"] = "#geo-spam"
-        params["text"] = "\(event) : \(geofenceName)"
+        params["text"] = ":iphone: \(event) : \(geofenceName)"
         
         let chatPostMessage = SlackOperation(session:session,slackAPI:"chat.postMessage",params:params,token:slackToken)
         

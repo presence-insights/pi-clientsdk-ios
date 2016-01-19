@@ -1,6 +1,6 @@
 /**
  *  PIOutdoorSDK
- *  ManagedObjectContext.swift
+ *  NSManagedObjectContext+Extensions.swift
  *
  *
  *  © Copyright 2016 IBM Corp.
@@ -20,23 +20,11 @@
 import CoreData
 
 
-public class ManagedObject: NSManagedObject {
-}
+extension NSManagedObjectContext {
 
-
-public protocol ManagedObjectType: class {
-    static var entityName: String { get }
-}
-
-
-extension ManagedObjectType {
-    
-    public static var fetchRequest: NSFetchRequest {
-        let request = NSFetchRequest(entityName: entityName)
-        return request
+    public func insertObject<A: ManagedObject where A: ManagedObjectType>() -> A {
+        guard let obj = NSEntityDescription.insertNewObjectForEntityForName(A.entityName, inManagedObjectContext: self) as? A else { fatalError("Wrong object type") }
+        return obj
     }
+    
 }
-
-
-
-
