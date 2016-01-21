@@ -253,7 +253,7 @@ extension MapController:MKMapViewDelegate {
             pinAnnotationView.selected = false
             pinAnnotationView.canShowCallout = true
             let removeButton = UIButton(type: .System)
-            removeButton.setImage(UIImage(named: "711-trash-toolbar"), forState: .Normal)
+            removeButton.setImage(UIImage(named: "trash"), forState: .Normal)
             removeButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
             removeButton.sizeToFit()
             removeButton.tag = removeButtonTag
