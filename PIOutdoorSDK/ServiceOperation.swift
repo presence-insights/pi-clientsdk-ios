@@ -30,6 +30,10 @@ class ServiceOperation: AsynchronousOperation {
     
     var result:HTTPOperationResult?
     
+    var request:NSURLRequest?
+    
+    var response:NSHTTPURLResponse?
+    
     init(service:PIService){
         self.service = service
     }
@@ -81,12 +85,24 @@ class ServiceOperation: AsynchronousOperation {
     }
     
     
+    func setBasicAuthHeader(request:NSMutableURLRequest) {
+        let authorization = service.username + ":" + service.password
+        guard let authorizationData = authorization.dataUsingEncoding(NSUTF8StringEncoding) else {
+            self.executing = false
+            self.finished = true
+            return
+        }
+        let authorizationbase64 = authorizationData.base64EncodedStringWithOptions([])
+        request.setValue("Basic " + authorizationbase64, forHTTPHeaderField: "Authorization")
+    }
+    
 }
 
 
 extension ServiceOperation {
     func performRequest(request:NSURLRequest,retryCount:Int = 0,completionHandler: () -> ())  {
         
+        self.request = request
         synchronized {
             if self.cancelled {
                 self.result = .Cancelled
@@ -96,6 +112,7 @@ extension ServiceOperation {
             
             self.task = self.service.serviceSession.dataTaskWithRequest(request)  {
                 [unowned self] (data, response, error) -> Void in
+                self.response = response as? NSHTTPURLResponse
                 if let error = error {
                     if self.isTaskCancelled(error) {
                         self.result = .Cancelled

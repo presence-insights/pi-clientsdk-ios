@@ -22,10 +22,14 @@ import Foundation
 
 public class Response {
     
-    public let aeRequest: Request
+    public let piRequest: Request
     
-    public internal(set) var httpRequest:NSURLRequest?
-    public internal(set) var httpResponse:NSHTTPURLResponse?
+    public var httpRequest:NSURLRequest? {
+        return operation.request
+    }
+    public var httpResponse:NSHTTPURLResponse? {
+        return operation.response
+    }
     
     var operation: ServiceOperation
     
@@ -45,8 +49,8 @@ public class Response {
         operation.cancel()
     }
     
-    init(aeRequest:Request,operation:ServiceOperation){
-        self.aeRequest = aeRequest
+    init(piRequest:Request,operation:ServiceOperation){
+        self.piRequest = piRequest
         self.operation = operation
     }
     

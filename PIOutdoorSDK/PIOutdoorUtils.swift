@@ -27,6 +27,12 @@ func StringFromClass(obj: AnyClass) -> String {
 
 class PIOutdoorUtils {
     
+    static let documentsDirectory: NSURL = {
+        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        return urls.first!
+    }()
+    
+    
     static let applicationCachesDirectory:NSURL = {
         
         return NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first!

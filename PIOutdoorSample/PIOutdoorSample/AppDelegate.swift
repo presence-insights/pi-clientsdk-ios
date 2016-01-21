@@ -25,7 +25,7 @@ import CoreLocation
 
 let slackToken:String? = "xoxb-16384356389-QhQvfBrIrUgne6CLza7fRkx5"
 
-let piGeofencingManager = PIGeofencingManager(tenant: "tenant", org: "org", baseURL: "host", username: "username", password: "password")
+let piGeofencingManager = PIGeofencingManager(tenant: "xf504jy", org: "bj6s0rw5", baseURL: "http://starterapp.mybluemix.net", username: "a6su7f", password: "8xdr5vfh")
 
 let SeedDidComplete = "com.ibm.PI.SeedDidComplete"
 
@@ -41,6 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
+        
+        piGeofencingManager.enableLogging = true
         
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)

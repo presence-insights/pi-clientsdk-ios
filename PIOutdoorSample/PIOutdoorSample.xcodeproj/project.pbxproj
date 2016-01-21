@@ -280,6 +280,7 @@
 				TargetAttributes = {
 					7DDC91941C479609002A5113 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 67DBV735VF;
 					};
 				};
 			};
@@ -519,6 +520,7 @@
 			baseConfigurationReference = 554B221CA465AA19EB26E627 /* Pods-PIOutdoorSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = PIOutdoorSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -532,6 +534,7 @@
 			baseConfigurationReference = F25E524EA718C6C3893B59BE /* Pods-PIOutdoorSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = PIOutdoorSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

@@ -19,6 +19,7 @@
 
 
 import Foundation
+import CocoaLumberjack
 
 class PIGeofenceMonitoringOperation:ServiceOperation {
     
@@ -56,15 +57,20 @@ class PIGeofenceMonitoringOperation:ServiceOperation {
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
         
+        DDLogVerbose("\(URLComponents.URL)")
         
         let request = NSMutableURLRequest(URL:URLComponents.URL!,cachePolicy:.ReloadIgnoringLocalCacheData,timeoutInterval:service.timeout)
         
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        setBasicAuthHeader(request)
+        
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
         request.HTTPMethod = "POST"
         
         let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-        print(string)
+        DDLogVerbose("\(string)")
         
         performRequest(request) {
             self.executing = false

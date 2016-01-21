@@ -44,7 +44,7 @@ public class PIGeofenceMonitoringRequest:Request {
     public func execute(service:PIService) -> Response {
         
         let operation = PIGeofenceMonitoringOperation(service:service,fenceId: self.fenceId,eventTime: self.eventTime,event: self.event)
-        let response = Response(aeRequest: self,operation:operation)
+        let response = Response(piRequest: self,operation:operation)
         
         operation.completionBlock = {[unowned self] in
             operation.completionBlock = nil

@@ -11,6 +11,7 @@ use_frameworks!
 
 target 'PIOutdoorSDK' do
 pod 'ZipArchive'
+pod 'CocoaLumberjack/Swift'
 xcodeproj 'PIOutdoorSDK.xcodeproj'
 end
 

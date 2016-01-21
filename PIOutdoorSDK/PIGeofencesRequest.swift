@@ -32,7 +32,7 @@ public class PIGeofencesRequest:Request {
     public func execute(service:PIService) -> Response {
         
         let operation = PIGeofencesOperation(service:service)
-        let response = Response(aeRequest: self,operation:operation)
+        let response = Response(piRequest: self,operation:operation)
         
         operation.completionBlock = {[unowned self] in
             operation.completionBlock = nil

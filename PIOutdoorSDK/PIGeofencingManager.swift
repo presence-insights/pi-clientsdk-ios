@@ -23,6 +23,7 @@ import CoreLocation
 import CoreData
 import MapKit
 import ZipArchive
+import CocoaLumberjack
 
 public enum PIOutdoorError:ErrorType {
     case UnzipOpenFile(String)
@@ -36,6 +37,8 @@ public enum PIOutdoorError:ErrorType {
     
     case WrongFences(Int)
     case HTTPStatus(Int,AnyObject?)
+    
+    case InternalError(ErrorType)
 }
 
 
@@ -86,6 +89,22 @@ public final class PIGeofencingManager:NSObject {
         
     }
     
+    public var enableLogging:Bool = false {
+        didSet {
+            if enableLogging {
+                DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
+                DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
+                
+                let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIOutdoorUtils.documentsDirectory.path)
+                
+                let fileLogger: DDFileLogger = DDFileLogger(logFileManager: documentsFileManager) // File Logger
+                fileLogger.rollingFrequency = 60*60*24  // 24 hours
+                fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+                DDLog.addLogger(fileLogger)
+            }
+        
+        }
+    }
     /**
      Ask the back end for the latest geofences to monitor
      - parameter completionHandler:  The closure called when the synchronisation is completed
@@ -96,15 +115,15 @@ public final class PIGeofencingManager:NSObject {
             case .Cancelled?:
                 break
             case let .Error(error)?:
-                print(error)
+                DDLogError("Synchronize Error \(error)")
                 completionHandler?(error: error)
                 
             case .Exception(let exception)?:
-                print(exception)
+                DDLogError("Synchronize Exception \(exception)")
                 completionHandler?(error: exception)
                 
             case let .HTTPStatus(status,json)?:
-                print("HTTP Status \(status)")
+                DDLogError("Synchronize HTTP Status \(status)")
                 completionHandler?(error: PIOutdoorError.HTTPStatus(status,json))
                 
             case let .OK(json)?:
@@ -180,13 +199,16 @@ public final class PIGeofencingManager:NSObject {
                     
                     fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == 1")
                     guard let monitoredGeofences = try moc.executeFetchRequest(fetchMonitoredRegionsRequest) as? [PIGeofence] else {
-                        fatalError("Programming error")
+                        DDLogError("Programming error",asynchronous:false)
+                        assertionFailure("Programming error")
+                        completionHandler?()
+                        return
                     }
                     
                     self.regions = [:]
                     for geofence in monitoredGeofences {
                         let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.uuid)
-                        print("already monitoring \(geofence.name)")
+                        DDLogVerbose("already monitoring \(geofence.name)")
                         self.regions?[geofence.uuid] = region
                         
                     }
@@ -199,7 +221,10 @@ public final class PIGeofencingManager:NSObject {
                 // Filter out regions which are too far
                 fetchRequest.predicate = NSPredicate(format: "latitude < \(nw.latitude) and latitude > \(se.latitude) and longitude > \(nw.longitude) and longitude < \(se.longitude)")
                 guard let nearFences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
-                    fatalError("Programming error")
+                    DDLogError("Programming error",asynchronous:false)
+                    assertionFailure("Programming error")
+                    completionHandler?()
+                    return
                 }
                 
                 // Sort fences in ascending order starting from the nearest fence
@@ -222,7 +247,7 @@ public final class PIGeofencingManager:NSObject {
                         let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence]
                         let geofence = geofences!.first!
                         geofence.monitored = false
-                        print("stopMonitoringForRegion",geofence.name,uuid)
+                        DDLogVerbose("stopMonitoringForRegion \(geofence.name) \(uuid)")
                     } else {
                         // keep the region
                         keepRegions[uuid] = region
@@ -241,13 +266,14 @@ public final class PIGeofencingManager:NSObject {
                     let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.uuid)
                     self.regions?[geofence.uuid] = region
                     self.locationManager.startMonitoringForRegion(region)
-                    print("startMonitoringForRegion",geofence.name,region.identifier)
+                    DDLogVerbose("startMonitoringForRegion \(geofence.name) \(region.identifier)")
                 }
                 
                 try moc.save()
                 
             } catch {
-                fatalError("Core Data Error \(error)")
+                DDLogError("Core Data Error \(error)")
+                assertionFailure("Core Data Error \(error)")
             }
             
             dispatch_async(dispatch_get_main_queue()) {
@@ -281,7 +307,7 @@ public final class PIGeofencingManager:NSObject {
         if let region = self.regions?[uuid] {
             self.regions?.removeValueForKey(uuid)
             self.locationManager.stopMonitoringForRegion(region)
-            print("Stop monitoring",region.identifier)
+            DDLogVerbose("Stop monitoring \(region.identifier)")
         }
         
         let moc = self.dataController.writerContext
@@ -290,13 +316,15 @@ public final class PIGeofencingManager:NSObject {
                 let fetchRequest =  PIGeofence.fetchRequest
                 fetchRequest.predicate = NSPredicate(format: "uuid == %@",uuid)
                 guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
+                    DDLogError("Programming error",asynchronous:false)
                     fatalError("Programming error")
                 }
                 
                 guard let geofence = geofences.first else {
+                    DDLogError("Programming error",asynchronous:false)
                     fatalError("Programming error")
                 }
-                print("delete fence",geofence.name)
+                DDLogInfo("delete fence \(geofence.name)")
                 moc.deleteObject(geofence)
                 
                 try moc.save()
@@ -306,7 +334,8 @@ public final class PIGeofencingManager:NSObject {
                 }
                 
             } catch {
-                fatalError("Core Data Error \(error)")
+                DDLogError("Core Data Error \(error)")
+                assertionFailure("Core Data Error \(error)")
             }
         }
     }
@@ -339,7 +368,9 @@ public final class PIGeofencingManager:NSObject {
                     completionHandler?(geofence)
                 }
             } catch {
-                fatalError("Core Data Error \(error)")
+                DDLogError("Core Data Error \(error)",asynchronous:false)
+                assertionFailure("Core Data Error \(error)")
+                completionHandler?(geofence)
             }
             
         }
@@ -355,11 +386,15 @@ public final class PIGeofencingManager:NSObject {
         let fetchRequest = PIGeofence.fetchRequest
         do {
             guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
-                fatalError("Programming error")
+                DDLogError("Programming Error",asynchronous:false)
+                assertionFailure("Programming error")
+                return []
             }
             return geofences
         } catch {
-            fatalError("Core Data Error \(error)")
+            DDLogError("Core Data Error \(error)",asynchronous:false)
+            assertionFailure("Core Data Error \(error)")
+            return []
         }
         
     }
@@ -376,14 +411,18 @@ public final class PIGeofencingManager:NSObject {
         fetchRequest.predicate = NSPredicate(format: "uuid = %@", uuid)
         do {
             guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
-                fatalError("Programming error")
+                DDLogError("Programming Error",asynchronous:false)
+                assertionFailure("Programming error")
+                return nil
             }
             guard let geofence = geofences.first else {
                 return nil
             }
             return geofence
         } catch {
-            fatalError("Core Data Error \(error)")
+            DDLogError("Core Data Error \(error)",asynchronous:false)
+            assertionFailure("Core Data Error \(error)")
+            return nil
         }
     }
     
@@ -413,7 +452,7 @@ public final class PIGeofencingManager:NSObject {
         }
         
         for file in unzippedFiles {
-            print("geojson",file)
+            DDLogVerbose("geojson \(file)")
             let url = NSURL(fileURLWithPath: file)
             let data = try NSData(contentsOfURL: url, options: .DataReadingMappedAlways)
             guard let jsonObject = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] else {
@@ -470,40 +509,40 @@ public final class PIGeofencingManager:NSObject {
             var nbErrors = 0
             for (i,fence) in geofences.enumerate() {
                 guard let type = fence["type"] as? String else {
-                    print(i,"Missing type property")
+                    DDLogError("\(i) Missing type property")
                     nbErrors += 1
                     continue
                 }
                 guard type == "Feature" else {
-                    print(i,"Wrong type \(type)")
+                    DDLogError("\(i) Wrong type \(type)")
                     nbErrors += 1
                     continue
                 }
                 guard let geometry = fence["geometry"] as? [String:AnyObject] else {
-                    print(i,"Missing geometry")
+                    DDLogError("\(i) Missing geometry")
                     nbErrors += 1
                     continue
                 }
                 
                 guard let geometry_type = geometry["type"] as? String else {
-                    print(i,"Missing geometry type")
+                    DDLogError("\(i) Missing geometry type")
                     nbErrors += 1
                     continue
                 }
                 guard geometry_type == "Point" else {
-                    print(i,"Does not support geometry \(geometry_type)")
+                    DDLogError("\(i) Does not support geometry \(geometry_type)")
                     nbErrors += 1
                     continue
                 }
                 
                 guard let coordinates = geometry["coordinates"] as? [NSNumber] else {
-                    print(i,"Missing coordinates")
+                    DDLogError("\(i) Missing coordinates")
                     nbErrors += 1
                     continue
                 }
                 
                 guard coordinates.count == 2 else {
-                    print(i,"Wrong number of coordinates")
+                    DDLogError("\(i) Wrong number of coordinates")
                     nbErrors += 1
                     continue
                 }
@@ -512,7 +551,7 @@ public final class PIGeofencingManager:NSObject {
                 let longitude = coordinates[0]
                 
                 guard let properties = fence["properties"] as? [String:AnyObject] else {
-                    print(i,"Missing properties")
+                    DDLogError("\(i) Missing properties")
                     nbErrors += 1
                     continue
                 }
@@ -555,7 +594,9 @@ public final class PIGeofencingManager:NSObject {
                     }
                 }
             } catch {
-                fatalError("Core Data Error \(error)")
+                DDLogError("Core Data Error \(error)",asynchronous:false)
+                assertionFailure("Core Data Error \(error)")
+                completionHandler?(error:PIOutdoorError.InternalError(error))
             }
         }
         
@@ -625,7 +666,9 @@ public final class PIGeofencingManager:NSObject {
                 
                 
             } catch {
-                fatalError("Core Data Error \(error)")
+                DDLogError("Core Data Error \(error)",asynchronous:false)
+                assertionFailure("Core Data Error \(error)")
+                completionHandler(geofence: nil)
             }
         }
     }
@@ -662,6 +705,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
             return
         }
         
+        self.sendPIMessage(.Enter, geofence: geofence)
         
         self.delegate?.geofencingManager(self, didEnterGeofence: geofence)
         
@@ -670,16 +714,62 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
     public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion){
         
         guard let geofence = self.queryGeofence(region.identifier) else {
-            print("Region not found")
+            DDLogError("Region not found")
             self.delegate?.geofencingManager(self, didExitGeofence: nil)
             return
         }
         
         
+        self.sendPIMessage(.Exit, geofence: geofence)
         self.delegate?.geofencingManager(self, didExitGeofence: geofence)
         
     }
     
+    
+    private func sendPIMessage(event:PIGeofenceEvent,geofence: PIGeofence?) {
+        
+        guard let geofence = geofence else {
+            return
+        }
+        
+        let application = UIApplication.sharedApplication()
+        var bkgTaskId = UIBackgroundTaskInvalid
+        bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
+            if bkgTaskId != UIBackgroundTaskInvalid {
+                self.service.cancelAll()
+                let id = bkgTaskId
+                bkgTaskId = UIBackgroundTaskInvalid
+                application.endBackgroundTask(id)
+            }
+        }
+        
+        let piRequest = PIGeofenceMonitoringRequest(fenceId:geofence.uuid,eventTime:NSDate(),event:event) {
+            response in
+            switch response.result {
+            case let .HTTPStatus(status,_)?:
+                DDLogError("PIGeofenceMonitoringRequest status \(status)")
+                DDLogError("PIGeofenceMonitoringRequest \(response.httpRequest)")
+            case let .Error(error)?:
+                DDLogError("PIGeofenceMonitoringRequest error \(error)")
+            case let .Exception(exception)?:
+                DDLogError("PIGeofenceMonitoringRequest exception \(exception)")
+            case .Cancelled?:
+                DDLogVerbose("PIGeofenceMonitoringRequest cancelled")
+            case .OK?:
+                DDLogError("PIGeofenceMonitoringRequest OK \(event.rawValue) : \(geofence.uuid)")
+            case nil:
+                break
+            }
+            if bkgTaskId != UIBackgroundTaskInvalid {
+                let id = bkgTaskId
+                bkgTaskId = UIBackgroundTaskInvalid
+                application.endBackgroundTask(id)
+            }
+        }
+        
+        service.executeRequest(piRequest)
+        
+    }
     
     
 }
