@@ -19,7 +19,7 @@
 
 import Foundation
 
-class PIGeofencesOperation:ServiceOperation {
+final class PIGeofencesOperation:ServiceOperation {
     
     override init(service: PIService) {
         super.init(service: service)

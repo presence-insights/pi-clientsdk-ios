@@ -21,7 +21,7 @@
 import Foundation
 
 
-public class PIGeofencesRequest:Request {
+public final class PIGeofencesRequest:Request {
     
     public let completionBlock: Response -> Void
     

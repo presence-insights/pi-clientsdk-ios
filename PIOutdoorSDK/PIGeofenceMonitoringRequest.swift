@@ -24,24 +24,24 @@ public enum PIGeofenceEvent:String {
     case Exit = "leave"
 }
 
-public class PIGeofenceMonitoringRequest:Request {
+final class PIGeofenceMonitoringRequest:Request {
     
-    public let completionBlock: Response -> Void
+    let completionBlock: Response -> Void
     
-    public let fenceId:String
+    let fenceId:String
     
-    public let eventTime:NSDate
+    let eventTime:NSDate
     
-    public let event:PIGeofenceEvent
+    let event:PIGeofenceEvent
     
-    public init(fenceId:String,eventTime:NSDate,event:PIGeofenceEvent,completionBlock:Response -> Void) {
+    init(fenceId:String,eventTime:NSDate,event:PIGeofenceEvent,completionBlock:Response -> Void) {
         self.fenceId = fenceId
         self.eventTime = eventTime
         self.event = event
         self.completionBlock = completionBlock
     }
     
-    public func execute(service:PIService) -> Response {
+    func execute(service:PIService) -> Response {
         
         let operation = PIGeofenceMonitoringOperation(service:service,fenceId: self.fenceId,eventTime: self.eventTime,event: self.event)
         let response = Response(piRequest: self,operation:operation)

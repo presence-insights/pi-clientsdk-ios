@@ -29,7 +29,6 @@
 		7DDC91D01C479846002A5113 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91CB1C479846002A5113 /* DataController.swift */; };
 		7DDC91D11C479846002A5113 /* PIOutdoor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91CC1C479846002A5113 /* PIOutdoor.swift */; };
 		7DDC91D31C47985F002A5113 /* PIOutdoorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91D21C47985F002A5113 /* PIOutdoorUtils.swift */; };
-		7DDC91D51C47986E002A5113 /* SlackOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91D41C47986E002A5113 /* SlackOperation.swift */; };
 		EBB99AC8B0931B6276A04D78 /* Pods_PIOutdoorSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F923515CC49602E51A69481 /* Pods_PIOutdoorSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,7 +60,6 @@
 		7DDC91CB1C479846002A5113 /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		7DDC91CC1C479846002A5113 /* PIOutdoor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIOutdoor.swift; sourceTree = "<group>"; };
 		7DDC91D21C47985F002A5113 /* PIOutdoorUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIOutdoorUtils.swift; sourceTree = "<group>"; };
-		7DDC91D41C47986E002A5113 /* SlackOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackOperation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +113,6 @@
 			isa = PBXGroup;
 			children = (
 				7D0C39241C4D69E600BD7798 /* CoreDataHelpers */,
-				7DDC91D41C47986E002A5113 /* SlackOperation.swift */,
 				7DDC91D21C47985F002A5113 /* PIOutdoorUtils.swift */,
 				7DDC91AD1C4797EC002A5113 /* Model */,
 				7DDC91AC1C4797E4002A5113 /* Geofencing */,
@@ -310,7 +307,6 @@
 				7DDC91B31C47980D002A5113 /* HTTPOperation.swift in Sources */,
 				7DDC91D11C479846002A5113 /* PIOutdoor.swift in Sources */,
 				7DDC91CE1C479846002A5113 /* PIGeofence.swift in Sources */,
-				7DDC91D51C47986E002A5113 /* SlackOperation.swift in Sources */,
 				7DDC91C41C47982E002A5113 /* PIGeofencesRequest.swift in Sources */,
 				7DDC91C31C47982E002A5113 /* PIGeofencingManager.swift in Sources */,
 				7DDC91B41C47980D002A5113 /* AsynchronousOperation.swift in Sources */,

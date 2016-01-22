@@ -18,6 +18,7 @@
  **/
 
 import Foundation
+import PIOutdoorSDK
 
 enum SlackAPI:ErrorType {
     case WrongAPI
@@ -59,7 +60,7 @@ public class SlackOperation: HTTPOperation {
         }
         queryItems["token"] = self.token
         queryItems["username"] = "geofence"
-        URLComponents.percentEncodedQuery = PIOutdoorUtils.buildQueryStringWithParams(queryItems)
+        URLComponents.percentEncodedQuery = buildQueryStringWithParams(queryItems)
         
         guard let urlAPI = URLComponents.URL else {
             self.result = .Exception(SlackAPI.WrongAPI)
@@ -84,3 +85,22 @@ public class SlackOperation: HTTPOperation {
     }
     
 }
+
+func buildQueryStringWithParams(params:[String:Any]) -> String {
+    
+    let pairs:NSMutableArray = []
+    
+    for (key,value) in params {
+        let param = "\(key)=\(value)"
+        pairs.addObject(param)
+    }
+    
+    let queryString = pairs.componentsJoinedByString("&")
+    
+    let encodedQueryString = queryString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+    
+    return encodedQueryString!
+}
+
+
+

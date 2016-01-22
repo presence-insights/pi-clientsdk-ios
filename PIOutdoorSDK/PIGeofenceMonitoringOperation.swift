@@ -21,7 +21,7 @@
 import Foundation
 import CocoaLumberjack
 
-class PIGeofenceMonitoringOperation:ServiceOperation {
+final class PIGeofenceMonitoringOperation:ServiceOperation {
     
     let fenceId:String
     
@@ -57,7 +57,7 @@ class PIGeofenceMonitoringOperation:ServiceOperation {
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
         
-        DDLogVerbose("\(URLComponents.URL)")
+//        DDLogVerbose("\(URLComponents.URL)")
         
         let request = NSMutableURLRequest(URL:URLComponents.URL!,cachePolicy:.ReloadIgnoringLocalCacheData,timeoutInterval:service.timeout)
         
@@ -69,8 +69,8 @@ class PIGeofenceMonitoringOperation:ServiceOperation {
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
         request.HTTPMethod = "POST"
         
-        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-        DDLogVerbose("\(string)")
+//        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
+//        DDLogVerbose("\(string)")
         
         performRequest(request) {
             self.executing = false

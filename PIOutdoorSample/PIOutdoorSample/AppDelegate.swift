@@ -23,7 +23,7 @@ import UIKit
 import PIOutdoorSDK
 import CoreLocation
 
-let slackToken:String? = "xoxb-16384356389-QhQvfBrIrUgne6CLza7fRkx5"
+let slackToken:String? = nil
 
 let piGeofencingManager = PIGeofencingManager(tenant: "xf504jy", org: "bj6s0rw5", baseURL: "http://starterapp.mybluemix.net", username: "a6su7f", password: "8xdr5vfh")
 

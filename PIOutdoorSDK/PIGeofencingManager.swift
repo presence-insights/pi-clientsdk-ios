@@ -42,8 +42,6 @@ public enum PIOutdoorError:ErrorType {
 }
 
 
-let kAnchorKey = "com.ibm.PI.geofencing.anchor"
-
 public struct PIFenceProperties {
     public let name:String
     public let radius:Int
@@ -63,7 +61,13 @@ public protocol PIGeofencingManagerDelegate:class {
     func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? )
 }
 
+/// `PIGeofencingManager` is your entry point to the PI Geofences.
+/// Its responsability is to monitor the PI geofences. 
+/// When the user enters or exits a geofence, `PIGeofencingManager` notifies
+/// the Presence Insights backend
 public final class PIGeofencingManager:NSObject {
+    
+    public static let DefaultMaxRegions = 15
     
     private let locationManager = CLLocationManager()
     
@@ -71,14 +75,33 @@ public final class PIGeofencingManager:NSObject {
     
     public let maxDistance:Int
     
+    public let maxRegions:Int
+    
     private lazy var dataController = PIOutdoor.dataController
     
     public let service:PIService
     
     public weak var delegate:PIGeofencingManagerDelegate?
-    
-    public init(tenant:String, org:String, baseURL:String, username:String, password:String,maxDistance:Int = 10_000) {
+    /// Create a `PIGeofencingManager` with the given PI connection parameters
+    /// - parameter tenant: PI tenant
+    /// - parameter org: PI organisation
+    /// - parameter baseURL: PI end point
+    /// - parameter username: PI username
+    /// - parameter password: PI password
+    /// - parameter maxDistance: When a significant change location is triggered,
+    /// `PIGeofencingManager` search for geofences within a square of side length 
+    /// of maxDistance meters.
+    /// - parameter maxRegions: The maximum number of regions being monitored at any time. The system
+    /// limit is 20 regions per app.
+    public init(tenant:String, org:String, baseURL:String, username:String, password:String,maxDistance:Int = 10_000, maxRegions:Int = DefaultMaxRegions ) {
+        
         self.maxDistance = maxDistance
+        if (1...20).contains(maxRegions) {
+            self.maxRegions = maxRegions
+        } else {
+            DDLogError("maxRegions \(maxRegions) is out of range")
+            self.maxRegions = self.dynamicType.DefaultMaxRegions
+        }
         self.service = PIService(tenant:tenant,org:org,baseURL:baseURL,username:username,password:password)
         super.init()
         self.locationManager.delegate = self
@@ -173,8 +196,11 @@ public final class PIGeofencingManager:NSObject {
         
         
         guard let currentPosition = locationManager.location else {
+            DDLogError("A significant location change occurred, but there is no location data")
             return
         }
+        
+        DDLogVerbose("Current position \(currentPosition.coordinate)")
         
         // Compute North East and South West coordinates of the bbox of the regions
         // which could be monitored
@@ -195,14 +221,19 @@ public final class PIGeofencingManager:NSObject {
                 if self.regions == nil {
                     // either the first time we monitor or the app has been unloaded
                     // find the regions currently being monitored
+                    DDLogVerbose("Initialize the regions to monitor")
                     let fetchMonitoredRegionsRequest = PIGeofence.fetchRequest
                     
-                    fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == 1")
+                    fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == true")
                     guard let monitoredGeofences = try moc.executeFetchRequest(fetchMonitoredRegionsRequest) as? [PIGeofence] else {
                         DDLogError("Programming error",asynchronous:false)
                         assertionFailure("Programming error")
                         completionHandler?()
                         return
+                    }
+                    
+                    if monitoredGeofences.count == 0 {
+                        DDLogVerbose("No region to monitor!")
                     }
                     
                     self.regions = [:]
@@ -230,8 +261,8 @@ public final class PIGeofencingManager:NSObject {
                 // Sort fences in ascending order starting from the nearest fence
                 let sortedFences = nearFences.sort(self.compareGeofence(currentPosition))
                 
-                // Keep the first 20 regions to stay under the system wide limit
-                let max = sortedFences.count < 20 ? sortedFences.count : 20
+                // Keep the first maxRegions regions to stay under the system wide limit
+                let max = sortedFences.count < self.maxRegions ? sortedFences.count : self.maxRegions
                 let fencesToMonitor = sortedFences[0..<max]
                 
                 let uuids = Set(fencesToMonitor.map { $0.uuid })
@@ -245,9 +276,12 @@ public final class PIGeofencingManager:NSObject {
                         let fetchRequest =  PIGeofence.fetchRequest
                         fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
                         let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence]
-                        let geofence = geofences!.first!
-                        geofence.monitored = false
-                        DDLogVerbose("stopMonitoringForRegion \(geofence.name) \(uuid)")
+                        if let geofence = geofences?.first {
+                            geofence.monitored = false
+                            DDLogVerbose("Too far, stopMonitoringForRegion \(geofence.name) \(uuid)")
+                        } else {
+                            DDLogError("Region \(uuid) not found")
+                        }
                     } else {
                         // keep the region
                         keepRegions[uuid] = region
@@ -258,7 +292,7 @@ public final class PIGeofencingManager:NSObject {
                 
                 // Start monitoring new regions near our current position
                 for geofence in fencesToMonitor {
-                    if self.regions?[geofence.uuid] != nil {
+                    guard self.regions?[geofence.uuid] == nil else {
                         // We are already monitoring this fence
                         continue
                     }
@@ -683,6 +717,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
             fallthrough
         case .AuthorizedWhenInUse:
             locationManager.startMonitoringSignificantLocationChanges()
+            DDLogVerbose("startMonitoringSignificantLocationChanges")
         case .Denied:
             break
         case .NotDetermined:
@@ -695,12 +730,13 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
     }
     
     public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        DDLogVerbose("didUpdateLocations")
         self.updateGeofenceMonitoring()
     }
     
     public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion){
         guard let geofence = self.queryGeofence(region.identifier) else {
-            print("Region not found")
+            DDLogError("Region not found")
             self.delegate?.geofencingManager(self, didEnterGeofence: nil)
             return
         }

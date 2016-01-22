@@ -27,7 +27,7 @@ public let PIServiceError = "com.ibm.PI.Error"
 
 public typealias PIResult = HTTPOperationResult
 
-public class PIService: NSObject {
+public final class PIService: NSObject {
     
     private let httpQueue:NSOperationQueue = NSOperationQueue()
     
