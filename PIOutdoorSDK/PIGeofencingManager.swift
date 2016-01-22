@@ -124,6 +124,8 @@ public final class PIGeofencingManager:NSObject {
                 fileLogger.rollingFrequency = 60*60*24  // 24 hours
                 fileLogger.logFileManager.maximumNumberOfLogFiles = 7
                 DDLog.addLogger(fileLogger)
+            } else {
+                DDLog.removeAllLoggers()
             }
         
         }
