@@ -40,8 +40,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     // proximity uuids
     func testGetProximityUuids() {
         let expectation = expectationWithDescription("Test retrieving proximityUUIDs from org")
-        _adapter.getAllBeaconRegions { (result:[String], error) -> () in
-            XCTAssertGreaterThan(result.count, 0)
+        _adapter.getAllBeaconRegions { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssertGreaterThan(result!.count, 0)
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -49,7 +51,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     // org
     func testGetOrg() {
         let expectation = expectationWithDescription("Test retrieving the org")
-        _adapter.getOrg { (result: PIOrg, error) -> () in
+        _adapter.getOrg { (result, error) -> () in
+            XCTAssertNotNil(error)
             XCTAssertNotNil(result, "Should not be nil")
             expectation.fulfill()
         }
@@ -59,8 +62,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     // all sites
     func testGetAllSites() {
         let expectation = expectationWithDescription("Test retrieving all the sites in the org")
-        _adapter.getAllSites { (result: [String : String], error) -> () in
-            XCTAssertGreaterThan(result.count, 0)
+        _adapter.getAllSites { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssertGreaterThan(result!.count, 0)
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -68,8 +73,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     // all floors
     func testGetAllFloors() {
         let expectation = expectationWithDescription("Test retrieving all the floors in the site")
-        _adapter.getAllFloors(PI.Site) { (result: [PIFloor], error) -> () in
-            XCTAssertGreaterThan(result.count, 0)
+        _adapter.getAllFloors(PI.Site) { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssertGreaterThan(result!.count, 0)
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -77,8 +84,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     // all beacons
     func testGetAllBeacons() {
         let expectation = expectationWithDescription("Test retrieving all the beacons on a floor")
-        _adapter.getAllBeacons(PI.Site, floor: PI.Floor) { (result: [PIBeacon], error) -> () in
-            XCTAssertGreaterThan(result.count, 0)
+        _adapter.getAllBeacons(PI.Site, floor: PI.Floor) { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssertGreaterThan(result!.count, 0)
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -86,8 +95,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     // all sensors
     func testGetAllSensors() {
         let expectation = expectationWithDescription("Test retrieving all the sensors on a floor")
-        _adapter.getAllSensors(PI.Site, floor: PI.Floor) { (result: [PISensor], error) -> () in
-            XCTAssertGreaterThan(result.count, 0)
+        _adapter.getAllSensors(PI.Site, floor: PI.Floor) { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssertGreaterThan(result!.count, 0)
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -95,8 +106,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     // all zones
     func testGetAllZones() {
         let expectation = expectationWithDescription("Test retrieving all the zones on a floor")
-        _adapter.getAllZones(PI.Site, floor: PI.Floor) { (result: [PIZone], error) -> () in
-            XCTAssertGreaterThan(result.count, 0)
+        _adapter.getAllZones(PI.Site, floor: PI.Floor) { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssertGreaterThan(result!.count, 0)
             expectation.fulfill()
         }
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -104,7 +117,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     // get map
     func testGetMap() {
         let expectation = expectationWithDescription("Test retrieving the floor map")
-        _adapter.getMap(PI.Site, floor: PI.Floor) { (result: UIImage, error) -> () in
+        _adapter.getMap(PI.Site, floor: PI.Floor) { (result, error) -> () in
+            XCTAssertNotNil(error)
             XCTAssertNotNil(result)
             expectation.fulfill()
         }
@@ -113,7 +127,8 @@ class PresenceInsightsSDKTests: XCTestCase {
     // register device
     func testRegisterDevice() {
         let expectation = expectationWithDescription("Test registering a device")
-        _adapter.registerDevice(_device, callback: { (result: PIDevice, error) -> () in
+        _adapter.registerDevice(_device, callback: { (result, error) -> () in
+            XCTAssertNotNil(error)
             XCTAssertNotNil(result)
             expectation.fulfill()
         })
@@ -123,8 +138,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     func testUpdateDevice() {
         let expectation = expectationWithDescription("Test updating a device")
         _device.name = "UpdatedTest"
-        _adapter.updateDevice(_device, callback: { (result: PIDevice, error) -> () in
-            XCTAssert(result.name == "UpdatedTest")
+        _adapter.updateDevice(_device, callback: { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssert(result?.name == "UpdatedTest")
             expectation.fulfill()
         })
         waitForExpectationsWithTimeout(15.0, handler: nil)
@@ -132,8 +149,10 @@ class PresenceInsightsSDKTests: XCTestCase {
     // unregister device
     func testUnregisterDevice() {
         let expectation = expectationWithDescription("Test unregistering a device")
-        _adapter.unregisterDevice(_device, callback: { (result: PIDevice, error) -> () in
-            XCTAssertFalse(result.registered)
+        _adapter.unregisterDevice(_device, callback: { (result, error) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertNotNil(result)
+            XCTAssertFalse(result!.registered)
             expectation.fulfill()
         })
         waitForExpectationsWithTimeout(15.0, handler: nil)

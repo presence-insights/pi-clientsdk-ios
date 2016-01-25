@@ -22,10 +22,10 @@ import UIKit
 import CoreLocation
 
 // MARK: - Delegate protocol.
-public protocol PIBeaconSensorDelegate {
+public protocol PIBeaconSensorDelegate:class {
     func didRangeBeacons(beacons:[CLBeacon])
-    func didEnterRegion(region: CLRegion)
-    func didExitRegion(region: CLRegion)
+    func didEnterRegion(region: CLBeaconRegion)
+    func didExitRegion(region: CLBeaconRegion)
 }
 
 // MARK: - PIBeaconSensor object
@@ -33,22 +33,23 @@ public class PIBeaconSensor: NSObject {
     
     private var PI_REPORT_INTERVAL: NSTimeInterval = 5
     
-    public var delegate: PIBeaconSensorDelegate?
+    public weak var delegate: PIBeaconSensorDelegate?
     
-    private var _piAdapter: PIAdapter!
-    private var _locationManager: CLLocationManager!
-    private var _regionManager: RegionManager!
-    private var _lastDetected: NSDate!
+    private let _piAdapter: PIAdapter
+    private let _locationManager: CLLocationManager
+    private let _regionManager: RegionManager
+    private var _lastDetected: NSDate?
     
     public init(adapter: PIAdapter) {
         
-        super.init()
-        
         _piAdapter = adapter
         _locationManager = CLLocationManager()
-        _locationManager.delegate = self
         _locationManager.requestAlwaysAuthorization()
         _regionManager = RegionManager(locationManager: _locationManager)
+        
+        super.init()
+        
+        _locationManager.delegate = self
     }
     
     /**
@@ -59,7 +60,7 @@ public class PIBeaconSensor: NSObject {
     public func start(callback:(NSError!)->()) {
         _piAdapter.getAllBeaconRegions({regions, error in
             
-            guard error == nil else {
+            guard let regions = regions where error == nil else {
                 callback(error)
                 return
             }
@@ -177,6 +178,9 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
 
     public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         _piAdapter.printDebug("Did Enter Region: " + region.description)
+        guard let region = region as? CLBeaconRegion else {
+            return
+        }
         _regionManager.didEnterRegion(region)
         if let d = delegate {
             d.didEnterRegion(region)
@@ -185,6 +189,9 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
     
     public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         _piAdapter.printDebug("Did Exit Region: " + region.description)
+        guard let region = region as? CLBeaconRegion else {
+            return
+        }
         _regionManager.didExitRegion(region)
         if let d = delegate {
             d.didExitRegion(region)
@@ -200,8 +207,8 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
         
         let detectedTime = NSDate()
         let lastReport: NSTimeInterval!
-        if (_lastDetected != nil) {
-            lastReport = detectedTime.timeIntervalSinceDate(_lastDetected)
+        if let lastDetected = _lastDetected {
+            lastReport = detectedTime.timeIntervalSinceDate(lastDetected)
         } else {
             lastReport = PI_REPORT_INTERVAL + 1
         }

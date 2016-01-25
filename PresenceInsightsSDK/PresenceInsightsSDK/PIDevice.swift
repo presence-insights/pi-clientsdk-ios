@@ -20,11 +20,11 @@
 import UIKit
 
 // MARK: - PIDevice object
-public class PIDevice: NSObject {
+public struct PIDevice {
     
     // Values every device has.
-    public var descriptor: String!
-    public var registered: Bool = false
+    public let descriptor: String?
+    public var registered: Bool
     
     // Optional values only registered devices have.
     public var code: String?
@@ -61,8 +61,15 @@ public class PIDevice: NSObject {
     
     - returns: An initialized PIDevice.
     */
-    public convenience override init() {
-        self.init(name: nil, type: nil, data: [:], unencryptedData: [:], registered: false, blacklist: false)
+    public init() {
+        self.name = nil
+        self.type = nil
+        self.data = nil
+        self.unencryptedData = nil
+        
+        self.registered = false
+        self.blacklist = nil
+        self.descriptor = nil
     }
     
     /**
@@ -72,8 +79,15 @@ public class PIDevice: NSObject {
 
     - returns: An initialized PIDevice.
     */
-    public convenience init(name: String) {
-        self.init(name: name, type: String(), data: [:], unencryptedData: [:], registered: false, blacklist: false)
+    public init(name: String) {
+        self.name = name
+        self.type = nil
+        self.data = nil
+        self.unencryptedData = nil
+        
+        self.registered = false
+        self.blacklist = nil
+        self.descriptor = nil
     }
     
     /**
@@ -83,31 +97,23 @@ public class PIDevice: NSObject {
 
     - returns: An initialized PIDevice.
     */
-    public convenience init(dictionary: [String: AnyObject]) {
+    public init(dictionary: [String: AnyObject]) {
         
-        self.init(name: nil, type: nil, data: [:], unencryptedData: [:], registered: false, blacklist: false)
+        self.descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
         
-        if let name = dictionary[Device.JSON_NAME_KEY] as? String {
-            self.name = name
-        }
-        if let type =  dictionary[Device.JSON_TYPE_KEY] as? String {
-            self.type = type;
-        }
-        if let dictionary = dictionary[Device.JSON_DATA_KEY] as? [String: String] {
-            self.data = dictionary
-        }
-        if let dictionary = dictionary[Device.JSON_UNENCRYPTED_DATA_KEY] as? [String: String] {
-            self.unencryptedData = dictionary
-        }
-        if let blacklist = dictionary[Device.JSON_BLACKLIST_KEY] as? Bool {
-            self.blacklist = blacklist
-        }
+        self.name = dictionary[Device.JSON_NAME_KEY] as? String
         
-        self.registered = dictionary[Device.JSON_REGISTERED_KEY] as! Bool
+        self.type =  dictionary[Device.JSON_TYPE_KEY] as? String
         
-        if let code = dictionary[Device.JSON_CODE_KEY] as? String {
-            self.code = code
-        }
+        self.data = dictionary[Device.JSON_DATA_KEY] as? [String: String]
+        
+        self.unencryptedData = dictionary[Device.JSON_UNENCRYPTED_DATA_KEY] as? [String: String]
+        
+        self.blacklist = dictionary[Device.JSON_BLACKLIST_KEY] as? Bool
+        
+        self.registered = dictionary[Device.JSON_REGISTERED_KEY] as? Bool ?? false
+        
+        self.code = dictionary[Device.JSON_CODE_KEY] as? String
         
     }
     
@@ -117,13 +123,12 @@ public class PIDevice: NSObject {
     - parameter object:   Object to be stored
     - parameter key:      Key to use to store object
     */
-    public func addToDataObject(object: AnyObject, key: String) {
+    public mutating func addToDataObject(object: AnyObject, key: String) {
         if data == nil {
-            data![key] = object
-        } else {
             data = [:]
-            data![key] = object
         }
+        
+        data![key] = object
     }
     
     /**
@@ -132,13 +137,11 @@ public class PIDevice: NSObject {
     - parameter object:   Object to be stored
     - parameter key:      Key to use to store object
     */
-    public func addToUnencryptedDataObject(object: AnyObject, key: String) {
-        if unencryptedData != nil {
-            unencryptedData![key] = object
-        } else {
+    public mutating func addToUnencryptedDataObject(object: AnyObject, key: String) {
+        if unencryptedData == nil {
             unencryptedData = [:]
-            unencryptedData![key] = object
         }
+        unencryptedData?[key] = object
     }
     
     /**
