@@ -20,7 +20,7 @@
 import UIKit
 
 // MARK: - PIFloor object
-public struct PIFloor {
+public class PIFloor:NSObject {
 
     // Floor properties
     public let name: String?
@@ -45,7 +45,7 @@ public struct PIFloor {
 
     - returns: An initialized PIFloor.
     */
-    public init() {
+    public override init() {
         self.name = nil
         self.barriers = nil
         self.z = nil

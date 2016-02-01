@@ -57,7 +57,7 @@ public class PIBeaconSensor: NSObject {
 
     - parameter callback: Returns result of starting the sensor as a boolean.
     */
-    public func start(callback:(NSError!)->()) {
+    public func start(callback:(NSError?)->()) {
         _piAdapter.getAllBeaconRegions({regions, error in
             
             guard let regions = regions where error == nil else {
@@ -105,26 +105,6 @@ public class PIBeaconSensor: NSObject {
     }
     
     /**
-    Private function to convert a CLProximity to a String.
-    
-    - parameter proximity: CLProximity to convert.
-    
-    - returns: String value of CLProximity.
-    */
-    private func proximityToString(proximity: CLProximity) -> String {
-        switch (proximity) {
-        case CLProximity.Far:
-            return "Far"
-        case CLProximity.Immediate:
-            return "Immediate"
-        case CLProximity.Near:
-            return "Near"
-        case CLProximity.Unknown:
-            return "Unknown"
-        }
-    }
-    
-    /**
     Private function to convert an NSDate to an ISO8601 time string.
     
     - parameter detectedTime: NSDate to convert.
@@ -160,7 +140,7 @@ public class PIBeaconSensor: NSObject {
         data["proximityUUID"] = beacon.proximityUUID.UUIDString.lowercaseString
         data["major"] = beacon.major.stringValue
         data["minor"] = beacon.minor.stringValue
-        data["proximity"] = proximityToString(beacon.proximity)
+        data["proximity"] = beacon.proximity.description
         
         dictionary["data"] = data
         

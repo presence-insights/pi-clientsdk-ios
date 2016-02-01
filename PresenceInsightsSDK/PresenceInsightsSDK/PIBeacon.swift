@@ -21,7 +21,7 @@ import UIKit
 import CoreLocation
 
 // MARK: - PIBeacon object
-public struct PIBeacon {
+public class PIBeacon:NSObject {
     
     // Beacon properties
     public let name: String?
@@ -60,7 +60,7 @@ public struct PIBeacon {
     
     - returns: An initialized PIBeacon.
     */
-    public init() {
+    public override init() {
         self.name = nil
         self.beaconDescription = nil
         self.proximityUUID = NSUUID()
@@ -111,18 +111,11 @@ public struct PIBeacon {
         self.name = properties[Beacon.JSON_NAME_KEY] as? String
         self.beaconDescription = properties[Beacon.JSON_DESCRIPTION_KEY] as? String
         
-        guard let proximityUUID = NSUUID(UUIDString: properties[Beacon.JSON_UUID_KEY] as! String) else {
-            self.major = nil
-            self.minor = nil
+        if let proximityUUID = NSUUID(UUIDString: properties[Beacon.JSON_UUID_KEY] as! String) {
+            self.proximityUUID = proximityUUID
+        } else {
             self.proximityUUID = nil
-            self.site = nil
-            self.floor = nil
-            self.x = nil
-            self.y = nil
-            return nil
         }
-        
-        self.proximityUUID = proximityUUID
         
         if let major = properties[Beacon.JSON_MAJOR_KEY] as? String {
             self.major = CLBeaconMajorValue(major)
@@ -144,6 +137,12 @@ public struct PIBeacon {
         } else {
             self.x = nil
             self.y = nil
+        }
+        
+        super.init()
+        
+        if self.proximityUUID == nil {
+            return nil
         }
     }
     

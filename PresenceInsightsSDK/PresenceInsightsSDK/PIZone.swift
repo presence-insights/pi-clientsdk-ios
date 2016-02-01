@@ -20,7 +20,7 @@
 import UIKit
 
 // MARK: - PIZone object
-public struct PIZone {
+public class PIZone:NSObject {
     
     // Zone properties
     public let name: String?
@@ -45,7 +45,7 @@ public struct PIZone {
     
     - returns: An initialized PIOrg.
     */
-    public init() {
+    public override init() {
         self.name = nil
         self.polygon = nil
         self.tags = nil

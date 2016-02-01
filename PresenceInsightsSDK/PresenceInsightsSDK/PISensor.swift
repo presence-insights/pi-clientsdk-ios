@@ -21,7 +21,7 @@ import UIKit
 import CoreLocation
 
 // MARK: - PISensor object
-public struct PISensor {
+public class PISensor:NSObject {
 
     // Sensor properties
     public let name: String?
@@ -55,7 +55,7 @@ public struct PISensor {
 
     - returns: An initialized PISensor.
     */
-    public init() {
+    public override init() {
         self.name = nil
         self.sensorDescription = nil
         self.threshold = nil
