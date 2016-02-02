@@ -57,7 +57,9 @@ public struct PIFenceProperties {
 public typealias FencePropertiesGenerator = ([String:AnyObject]) -> PIFenceProperties
 
 public protocol PIGeofencingManagerDelegate:class {
+    /// The device enters into a geofence
     func geofencingManager(manager: PIGeofencingManager, didEnterGeofence geofence: PIGeofence? )
+    /// The device exits a geofence
     func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? )
 }
 
@@ -67,14 +69,18 @@ public protocol PIGeofencingManagerDelegate:class {
 /// the Presence Insights backend
 public final class PIGeofencingManager:NSObject {
     
+    /// By default, `PIGeofencingManager` can monitore up to 15 regions simultaneously.
     public static let DefaultMaxRegions = 15
     
     private let locationManager = CLLocationManager()
     
     private var regions:[String:CLCircularRegion]?
     
+    /// The length of the sides of the bounding box used to find out
+    /// which fences should be monitored.
     public let maxDistance:Int
     
+    /// Maximum number of regions which can be monitored simultaneously.
     public let maxRegions:Int
     
     private lazy var dataController = PIOutdoor.dataController
@@ -84,7 +90,7 @@ public final class PIGeofencingManager:NSObject {
     public weak var delegate:PIGeofencingManagerDelegate?
     /// Create a `PIGeofencingManager` with the given PI connection parameters
     /// - parameter tenant: PI tenant
-    /// - parameter org: PI organisation
+    /// - parameter orgCode: PI organisation
     /// - parameter baseURL: PI end point
     /// - parameter username: PI username
     /// - parameter password: PI password
@@ -92,8 +98,8 @@ public final class PIGeofencingManager:NSObject {
     /// `PIGeofencingManager` search for geofences within a square of side length 
     /// of maxDistance meters.
     /// - parameter maxRegions: The maximum number of regions being monitored at any time. The system
-    /// limit is 20 regions per app.
-    public init(tenant:String, org:String, baseURL:String, username:String, password:String,maxDistance:Int = 10_000, maxRegions:Int = DefaultMaxRegions ) {
+    /// limit is 20 regions per app. Default is 15
+    public init(tenant:String, orgCode:String?, baseURL:String, username:String, password:String,maxDistance:Int = 10_000, maxRegions:Int = DefaultMaxRegions ) {
         
         self.maxDistance = maxDistance
         if (1...20).contains(maxRegions) {
@@ -102,34 +108,35 @@ public final class PIGeofencingManager:NSObject {
             DDLogError("maxRegions \(maxRegions) is out of range")
             self.maxRegions = self.dynamicType.DefaultMaxRegions
         }
-        self.service = PIService(tenant:tenant,org:org,baseURL:baseURL,username:username,password:password)
+        self.service = PIService(tenant:tenant,orgCode:orgCode,baseURL:baseURL,username:username,password:password)
         super.init()
         self.locationManager.delegate = self
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive:", name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive:", name: UIApplicationWillEnterForegroundNotification, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "willResignActive:", name: UIApplicationWillResignActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "willResignActive:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        
+    }
+    /// Enables or disables the logging
+    /// - parameter enable: `true` to enable the logging
+    public static func enableLogging(enable:Bool) {
+        
+        if enable {
+            DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
+            DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
+            
+            let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIOutdoorUtils.documentsDirectory.path)
+            
+            let fileLogger: DDFileLogger = DDFileLogger(logFileManager: documentsFileManager) // File Logger
+            fileLogger.rollingFrequency = 60*60*24  // 24 hours
+            fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+            DDLog.addLogger(fileLogger)
+        } else {
+            DDLog.removeAllLoggers()
+        }
         
     }
     
-    public var enableLogging:Bool = false {
-        didSet {
-            if enableLogging {
-                DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
-                DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
-                
-                let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIOutdoorUtils.documentsDirectory.path)
-                
-                let fileLogger: DDFileLogger = DDFileLogger(logFileManager: documentsFileManager) // File Logger
-                fileLogger.rollingFrequency = 60*60*24  // 24 hours
-                fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-                DDLog.addLogger(fileLogger)
-            } else {
-                DDLog.removeAllLoggers()
-            }
-        
-        }
-    }
     /**
      Ask the back end for the latest geofences to monitor
      - parameter completionHandler:  The closure called when the synchronisation is completed
@@ -463,9 +470,18 @@ public final class PIGeofencingManager:NSObject {
     }
     
     
+    /**
+     Sets the list of the fences to be monitored
+     
+     - paremeter url:
+     - parameter propertiesGenerator:  
+     - parameter completionHandler:
+     
+     */
+    
     public func seedGeojson(
-        url:NSURL,propertiesGenerator:
-        FencePropertiesGenerator? = nil,
+        url:NSURL,
+        propertiesGenerator:FencePropertiesGenerator? = nil,
         completionHandler:((error:ErrorType?) -> Void)? = nil) throws {
         
         let fileManager = NSFileManager.defaultManager()
@@ -767,6 +783,11 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
     private func sendPIMessage(event:PIGeofenceEvent,geofence: PIGeofence?) {
         
         guard let geofence = geofence else {
+            return
+        }
+        
+        guard let _ = service.orgCode else {
+            DDLogError("No Organization Code")
             return
         }
         

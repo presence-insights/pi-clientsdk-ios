@@ -20,9 +20,6 @@
 import Foundation
 import CocoaLumberjack
 
-public let PIServiceDidStartRequest = "com.ibm.PIService.DidStartRequest"
-public let PIServiceDidEndRequest = "com.ibm.PIService.DidEndRequest"
-
 public let PIServiceError = "com.ibm.PI.Error"
 
 public typealias PIResult = HTTPOperationResult
@@ -34,18 +31,18 @@ public final class PIService: NSObject {
     let timeout:NSTimeInterval = 30
     
     public let baseURL:NSURL
-    public let org:String
+    public var orgCode:String?
     public let username:String
     public let password:String
     public let tenant:String
     
     public var allowUntrustedCertificates = false
     
-    public init(tenant:String, org:String, baseURL:String, username:String, password:String){
+    public init(tenant:String, orgCode:String?, baseURL:String, username:String, password:String){
         self.baseURL = NSURL(string: baseURL)!
         self.username = username
         self.password = password
-        self.org = org
+        self.orgCode = orgCode
         self.tenant = tenant
         httpQueue.qualityOfService = .Utility
         httpQueue.name = "com.ibm.PI.service-queue"
@@ -76,7 +73,7 @@ public final class PIService: NSObject {
         configuration.HTTPShouldSetCookies = true
         configuration.HTTPAdditionalHeaders = self.defaultHTTPHeaders()
         configuration.URLCache = nil
-        configuration.timeoutIntervalForRequest = self.timeout
+        configuration.timeoutIntervalForResource = self.timeout
         configuration.allowsCellularAccess = true
         
         return NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)

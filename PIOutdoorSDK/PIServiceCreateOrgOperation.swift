@@ -1,6 +1,6 @@
 /**
  *  PIOutdoorSDK
- *  PIGeofenceMonitoringOperation.swift
+ *  PIServiceCreateOrgOperation
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -18,48 +18,33 @@
  **/
 
 
+
 import Foundation
 import CocoaLumberjack
 
-final class PIGeofenceMonitoringOperation:ServiceOperation {
+final class PIServiceCreateOrgOperation:ServiceOperation {
     
-    let fenceId:String
+    let orgName:String
     
-    let eventTime:NSDate
-    
-    let event:PIGeofenceEvent
-    
-    init(service: PIService,fenceId:String,eventTime:NSDate,event:PIGeofenceEvent) {
-        self.fenceId = fenceId
-        self.eventTime = eventTime
-        self.event = event
+    init(service: PIService,orgName:String) {
+        self.orgName = orgName
         super.init(service: service)
-        self.name = "com.ibm.PI.GeofenceMonitoringOperation"
+        self.name = "com.ibm.PI.ServiceCreateOrgOperation"
     }
     
     override func main() {
-        let path = "conn-geofence/v1/tenants/\(service.tenant)/orgs/\(service.orgCode!)"
+        let path = "pi-config/v2/tenants/\(service.tenant)/orgs"
         
         var json:[String:AnyObject] = [:]
-        var notification:[String:AnyObject] = [:]
         
-        notification["descriptor"] = UIDevice.currentDevice().identifierForVendor?.UUIDString
-        notification["detectedTime"] = self.eventTime.ISO8601
-
-        var data:[String:AnyObject] = [:]
-        data["fenceId"] = self.fenceId
-        data["crossingType"] = self.event.rawValue
-        notification["data"] = data
-        
-        json["notifications"] = [notification]
-        
+        json["name"] = self.orgName
         
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
         
-//        DDLogVerbose("\(URLComponents.URL)")
+        DDLogVerbose("\(URLComponents.URL)")
         
-        let request = NSMutableURLRequest(URL:URLComponents.URL!,cachePolicy:.ReloadIgnoringLocalCacheData,timeoutInterval:service.timeout)
+        let request = NSMutableURLRequest(URL:URLComponents.URL!)
         
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -69,14 +54,14 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
         request.HTTPMethod = "POST"
         
-//        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-//        DDLogVerbose("\(string)")
+        //        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
+        //        DDLogVerbose("\(string)")
         
         performRequest(request) {
             self.executing = false
             self.finished = true
         }
         
-        
     }
+    
 }

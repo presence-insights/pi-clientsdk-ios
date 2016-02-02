@@ -1,7 +1,8 @@
 /**
  *  PIOutdoorSDK
- *  PIGeofence+CoreDataProperties.swift
+ *  PIServiceCreateReponse
  *
+ *  Performs all communication to the PI Rest API.
  *
  *  © Copyright 2016 IBM Corp.
  *
@@ -16,16 +17,13 @@
  *  limitations under the License.
  **/
 
+
+
 import Foundation
-import CoreData
 
-extension PIGeofence {
 
-    @NSManaged public internal(set) var latitude: NSNumber
-    @NSManaged public internal(set) var longitude: NSNumber
-    @NSManaged var monitored: NSNumber
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var radius: NSNumber
-    @NSManaged public internal(set) var uuid: String
-
+final public class PIServiceCreateOrgResponse:Response {
+    
+    public var orgCode:String?
+    
 }

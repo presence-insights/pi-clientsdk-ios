@@ -41,15 +41,16 @@ public class NetworkActivityIndicatorManager: NSObject {
         self.synchronized(self.lock, criticalSection: criticalSection)
     }
     
-    public var enabled:Bool = false {
-        didSet {
-            if enabled {
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: "didStartRequest:", name: NetworkDidStartRequest, object: nil)
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEndRequest:", name: NetworkDidEndRequest, object: nil)
-            } else {
-                NSNotificationCenter.defaultCenter().removeObserver(self)
-            }
+    public var enabled:Bool = false
+    
+    public func enableActivityIndicator(enable:Bool) {
+        if enable {
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: "didStartRequest:", name: NetworkDidStartRequest, object: nil)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEndRequest:", name: NetworkDidEndRequest, object: nil)
+        } else {
+            NSNotificationCenter.defaultCenter().removeObserver(self)
         }
+        enabled = enable
     }
     
     func didStartRequest(notification:NSNotification) {

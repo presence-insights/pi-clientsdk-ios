@@ -31,5 +31,6 @@ Pod::Spec.new do |s|
   s.resources = ["pi-outdoor-ios/PIOutdoor/*.xcdatamodeld"]
 
   s.dependency 'ZipArchive'
+  s.dependency 'CocoaLumberjack/Swift'
 
 end

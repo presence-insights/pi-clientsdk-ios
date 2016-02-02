@@ -22,10 +22,12 @@
 import UIKit
 import PIOutdoorSDK
 import CoreLocation
+import SSKeychain
+import CocoaLumberjack
 
 let slackToken:String? = nil
 
-let piGeofencingManager = PIGeofencingManager(tenant: "xf504jy", org: "bj6s0rw5", baseURL: "http://starterapp.mybluemix.net", username: "a6su7f", password: "8xdr5vfh")
+var piGeofencingManager:PIGeofencingManager!
 
 let SeedDidComplete = "com.ibm.PI.SeedDidComplete"
 
@@ -41,12 +43,86 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
+        registerDefaultSettings()
         
-        piGeofencingManager.enableLogging = true
+        let tenant = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as! String
+        let hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as! String
+        let username = NSUserDefaults.standardUserDefaults().objectForKey("PIUsername") as! String
+        let password = NSUserDefaults.standardUserDefaults().objectForKey("PIPassword") as! String
         
+        PIGeofencingManager.enableLogging(true)
+        
+        DDLogVerbose("tenant \(tenant)")
+        DDLogVerbose("hostname \(hostname)")
+        DDLogVerbose("username \(username)")
+        DDLogVerbose("password \(password)")
+        
+        NetworkActivityIndicatorManager.sharedInstance.enableActivityIndicator(true)
+        
+        let data:NSData? = SSKeychain.passwordDataForService("PIIndoor", account: tenant)
+        
+        piGeofencingManager = PIGeofencingManager(
+            tenant: tenant,
+            orgCode: nil,
+            baseURL: hostname,
+            username: username,
+            password: password)
+        
+
+        
+        if let data = data {
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: [])
+                if let orgCode = json["orgCode"] as? String {
+                    piGeofencingManager.service.orgCode = orgCode
+                    DDLogVerbose("OrgCode \(orgCode)")
+                } else {
+                    DDLogError("orgCode missing in the JSON from the KeyChain")
+                }
+            } catch {
+                DDLogError("Can't read JSON in the KeyChain")
+            }
+        } else {
+            let service = piGeofencingManager.service
+            let orgName = UIDevice.currentDevice().name
+            DDLogVerbose("Start PIServiceCreateOrgRequest")
+            let request = PIServiceCreateOrgRequest(orgName:orgName) { response in
+                switch response.result {
+                case .OK?:
+                    DDLogVerbose("PIServiceCreateOrgRequest OK \(response.orgCode)")
+                    guard let orgCode = response.orgCode else {
+                        DDLogError("PIServiceCreateOrgRequest Missing org code")
+                        assertionFailure("Programming error")
+                        return
+                    }
+                    var json =  [String:AnyObject]()
+                    json["orgCode"] = orgCode
+                    let data = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
+                    SSKeychain.setPasswordData(data, forService: "PIIndoor", account: tenant)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        piGeofencingManager.service.orgCode = orgCode
+                        
+                    }
+                case .Cancelled?:
+                    DDLogVerbose("PIServiceCreateOrgRequest cancelled")
+                case let .Error(error)?:
+                    DDLogError("PIServiceCreateOrgRequest error \(error)")
+                case let .Exception(error)?:
+                    DDLogError("PIServiceCreateOrgRequest exception \(error)")
+                case let .HTTPStatus(status,_)?:
+                    DDLogError("PIServiceCreateOrgRequest status \(status)")
+                case nil:
+                    assertionFailure("Programming Error")
+                    break
+                }
+            }
+            service.executeRequest(request)
+        }
+        print("data",data)
+        
+
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
-        
         
         piGeofencingManager.delegate = self
         
@@ -61,6 +137,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    private func registerDefaultSettings() {
+        
+        let settingsURL = NSBundle.mainBundle().URLForResource("Settings", withExtension: "bundle")!
+        let settingsBundle = NSBundle(URL: settingsURL)!
+        let settingsFile = settingsBundle.URLForResource("Root", withExtension:"plist")!
+        let settingsDefault = NSDictionary(contentsOfURL:settingsFile) as! [String:AnyObject]
+        var defaultsToRegister = [String:AnyObject]()
+        let preferences = settingsDefault["PreferenceSpecifiers"] as! [[String:AnyObject]]
+        
+        for preference in preferences {
+            if
+                let key = preference["Key"] as? String,
+                let defaultValue = preference["DefaultValue"] {
+                    defaultsToRegister[key] = defaultValue
+            }
+        }
+        NSUserDefaults.standardUserDefaults().registerDefaults(defaultsToRegister)
+        
+    }
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.

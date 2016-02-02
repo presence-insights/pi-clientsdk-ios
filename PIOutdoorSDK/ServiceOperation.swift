@@ -44,7 +44,9 @@ class ServiceOperation: AsynchronousOperation {
             if executing {
                 self.didStart = true
                 dispatch_async(dispatch_get_main_queue()) {
-                    NSNotificationCenter.defaultCenter().postNotificationName(PIServiceDidStartRequest, object: self)
+                    NSNotificationCenter.defaultCenter().postNotificationName(
+                        NetworkDidStartRequest,
+                        object: self)
                 }
             }
         }
@@ -54,7 +56,9 @@ class ServiceOperation: AsynchronousOperation {
         didSet {
             if finished && self.didStart {
                 dispatch_async(dispatch_get_main_queue()) {
-                    NSNotificationCenter.defaultCenter().postNotificationName(PIServiceDidEndRequest, object: self)
+                    NSNotificationCenter.defaultCenter().postNotificationName(
+                        NetworkDidEndRequest,
+                        object: self)
                 }
             }
             

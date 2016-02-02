@@ -18,16 +18,20 @@
 
 import Foundation
 import CoreData
+import CoreLocation
 
-
+/// Represents a geofence
 public final class PIGeofence: ManagedObject {
 
-// Insert code here to add functionality to your managed object subclass
-
+    /// - returns: The coordinates of the center of this fence.
+    public var coordinate:CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: self.latitude.doubleValue, longitude: self.longitude.doubleValue)
+    }
 }
 
 
 extension PIGeofence: ManagedObjectType {
+    
     public static var entityName: String {
         return "PIGeofence"
     }
