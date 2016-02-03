@@ -34,3 +34,6 @@
 "More.Section.Settings" = "Settings";
 
 "More.Settings.Privacy" = "Privacy";
+
+"Alert.GeofenceCreation.Error.Title" = "Error";
+"Alert.GeofenceCreation.Error.Message" = "An error occured when creating the geofence";

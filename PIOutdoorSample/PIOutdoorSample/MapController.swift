@@ -145,6 +145,20 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
     func newGeofence(newGeofence:NewGeofenceController,center:CLLocationCoordinate2D,name:String,radius:Int) {
         piGeofencingManager.addGeofence(name, center: center, radius: radius) { geofence in
             
+            guard let geofence = geofence else {
+                let alertController = UIAlertController(
+                    title: NSLocalizedString("Alert.GeofenceCreation.Error.Title",comment:""),
+                    message: NSLocalizedString("Alert.GeofenceCreation.Error.Message",comment:""),
+                    preferredStyle: .Alert)
+                
+                let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
+                }
+                alertController.addAction(okAction)
+                
+                self.presentViewController(alertController, animated: true, completion: nil)
+                return
+            }
+            
             let annotation = GeofenceAnnotation(geofence: geofence)
             
             self.mapView.addAnnotation(annotation)

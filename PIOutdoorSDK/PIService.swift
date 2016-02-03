@@ -28,7 +28,7 @@ public final class PIService: NSObject {
     
     private let httpQueue:NSOperationQueue = NSOperationQueue()
     
-    let timeout:NSTimeInterval = 30
+    let timeout:NSTimeInterval = 60
     
     public let baseURL:NSURL
     public var orgCode:String?
@@ -84,6 +84,7 @@ public final class PIService: NSObject {
         
         let headers = [
             "Accept" : "application/json",
+            "Content-Type" : "application/json",
             "Accept-Charset" : "ISO-8859-1,utf-8;q=0.7,*;q=0.3",
             "Accept-Language": "en-US,en;q=0.8",
         ]

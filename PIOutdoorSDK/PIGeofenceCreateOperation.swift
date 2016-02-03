@@ -1,6 +1,6 @@
 /**
  *  PIOutdoorSDK
- *  PIServiceCreateOrgOperation
+ *  PIGeofenceCreateOperation.swift
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -17,48 +17,65 @@
  *  limitations under the License.
  **/
 
-
-
 import Foundation
 import CocoaLumberjack
+import CoreLocation
 
-final class PIServiceCreateOrgOperation:ServiceOperation {
+final class PIGeofenceCreateOperation:ServiceOperation {
     
-    let orgName:String
+    let fenceName:String
     
-    init(service: PIService,orgName:String) {
-        self.orgName = orgName
+    let fenceDescription:String?
+    
+    let fenceRadius:Int
+    
+    let fenceCoordinate:CLLocationCoordinate2D
+    
+    
+    init(service: PIService,fenceName:String,fenceDescription:String?,fenceRadius:Int,fenceCoordinate:CLLocationCoordinate2D) {
+        self.fenceName = fenceName
+        self.fenceDescription = fenceDescription
+        self.fenceRadius = fenceRadius
+        self.fenceCoordinate = fenceCoordinate
         super.init(service: service)
-        self.name = "com.ibm.PI.ServiceCreateOrgOperation"
+        self.name = "com.ibm.PI.GeofenceCreateOperation"
     }
     
     override func main() {
-        let path = "pi-config/v2/tenants/\(service.tenant)/orgs"
+        let path = "pi-config/v2/tenants/\(service.tenant)/orgs/\(service.orgCode!)/geofences"
         
         var json:[String:AnyObject] = [:]
+        json["type"] = "Feature"
         
-        json["name"] = self.orgName
+        var geometry:[String:AnyObject] = [:]
+        geometry["type"] = "Point"
+        geometry["coordinates"] = [fenceCoordinate.latitude,fenceCoordinate.longitude]
+        json["geometry"] = geometry
+        
+        var properties:[String:AnyObject] = [:]
+        properties["name"] = fenceName
+        properties["description"] = fenceDescription
+        properties["radius"] = fenceRadius
+        json["properties"] = properties
+        
         
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
         
         DDLogVerbose("\(URLComponents.URL)")
         
-        let request = NSMutableURLRequest(URL:URLComponents.URL!)
+        let request = NSMutableURLRequest(URL:URLComponents.URL!,cachePolicy:.ReloadIgnoringLocalCacheData,timeoutInterval:service.timeout)
         
         setBasicAuthHeader(request)
         
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
         request.HTTPMethod = "POST"
         
-        //        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-        //        DDLogVerbose("\(string)")
-        
         performRequest(request) {
             self.executing = false
             self.finished = true
         }
         
+        
     }
-    
 }

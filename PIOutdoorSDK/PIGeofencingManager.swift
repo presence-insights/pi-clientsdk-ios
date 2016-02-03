@@ -390,33 +390,74 @@ public final class PIGeofencingManager:NSObject {
      - parameter radius: The radius of the fence, should be larger than 200 m
      - parameter completionHandler:  Closure to be called when the fence has been added
      */
-    public func addGeofence(name:String,center:CLLocationCoordinate2D,radius:Int,completionHandler: ((PIGeofence) -> Void)? = nil) {
-        let moc = self.dataController.writerContext
+    public func addGeofence(name:String,center:CLLocationCoordinate2D,radius:Int,completionHandler: ((PIGeofence?) -> Void)? = nil) {
         
-        moc.performBlock {
-            
-            let geofence:PIGeofence = moc.insertObject()
-            geofence.name = name
-            geofence.radius = radius
-            geofence.uuid = NSUUID().UUIDString
-            geofence.latitude = center.latitude
-            geofence.longitude = center.longitude
-            
-            do {
-                try moc.save()
-                let geofenceURI = geofence.objectID.URIRepresentation()
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.updateGeofenceMonitoring()
-                    let geofence = self.dataController.managedObjectWithURI(geofenceURI) as! PIGeofence
-                    completionHandler?(geofence)
-                }
-            } catch {
-                DDLogError("Core Data Error \(error)",asynchronous:false)
-                assertionFailure("Core Data Error \(error)")
-                completionHandler?(geofence)
-            }
-            
+        guard let _ = service.orgCode else {
+            DDLogError("No Organization Code")
+            completionHandler?(nil)
+            return
         }
+        
+
+        let geofenceCreateRequest = PIGeofenceCreateRequest(fenceName: name, fenceDescription: nil, fenceRadius: radius, fenceCoordinate: center) {
+            response in
+            switch response.result {
+            case .OK?:
+                DDLogVerbose("PIGeofenceCreateRequest OK \(response.fenceId)")
+                guard let fenceId = response.fenceId else {
+                    DDLogError("PIGeofenceCreateRequest Missing fence Id")
+                    assertionFailure("Programming error")
+                    return
+                }
+                
+                let moc = self.dataController.writerContext
+                
+                moc.performBlock {
+                    
+                    let geofence:PIGeofence = moc.insertObject()
+                    geofence.name = name
+                    geofence.radius = radius
+                    geofence.uuid = fenceId
+                    geofence.latitude = center.latitude
+                    geofence.longitude = center.longitude
+                    
+                    do {
+                        try moc.save()
+                        let geofenceURI = geofence.objectID.URIRepresentation()
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.updateGeofenceMonitoring()
+                            let geofence = self.dataController.managedObjectWithURI(geofenceURI) as! PIGeofence
+                            completionHandler?(geofence)
+                        }
+                    } catch {
+                        DDLogError("Core Data Error \(error)",asynchronous:false)
+                        assertionFailure("Core Data Error \(error)")
+                        completionHandler?(nil)
+                    }
+                    
+                }
+                
+                
+            case .Cancelled?:
+                DDLogVerbose("PIGeofenceCreateRequest cancelled")
+                completionHandler?(nil)
+            case let .Error(error)?:
+                DDLogError("PIGeofenceCreateRequest error \(error)")
+                completionHandler?(nil)
+            case let .Exception(error)?:
+                DDLogError("PIGeofenceCreateRequest exception \(error)")
+                completionHandler?(nil)
+            case let .HTTPStatus(status,_)?:
+                DDLogError("PIGeofenceCreateRequest status \(status)")
+                completionHandler?(nil)
+            case nil:
+                assertionFailure("Programming Error")
+                completionHandler?(nil)
+            }
+        }
+        
+        service.executeRequest(geofenceCreateRequest)
+        
     }
     
     /**
