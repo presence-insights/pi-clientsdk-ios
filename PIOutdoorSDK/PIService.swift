@@ -34,16 +34,16 @@ public final class PIService: NSObject {
     public var orgCode:String?
     public let username:String
     public let password:String
-    public let tenant:String
+    public let tenantCode:String
     
     public var allowUntrustedCertificates = false
     
-    public init(tenant:String, orgCode:String?, baseURL:String, username:String, password:String){
+    public init(tenantCode:String, orgCode:String?, baseURL:String, username:String, password:String){
         self.baseURL = NSURL(string: baseURL)!
         self.username = username
         self.password = password
         self.orgCode = orgCode
-        self.tenant = tenant
+        self.tenantCode = tenantCode
         httpQueue.qualityOfService = .Utility
         httpQueue.name = "com.ibm.PI.service-queue"
         httpQueue.maxConcurrentOperationCount = 1

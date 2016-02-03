@@ -23,14 +23,14 @@ import CocoaLumberjack
 
 final class PIGeofenceMonitoringOperation:ServiceOperation {
     
-    let fenceId:String
+    let geofenceCode:String
     
     let eventTime:NSDate
     
     let event:PIGeofenceEvent
     
-    init(service: PIService,fenceId:String,eventTime:NSDate,event:PIGeofenceEvent) {
-        self.fenceId = fenceId
+    init(service: PIService,geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent) {
+        self.geofenceCode = geofenceCode
         self.eventTime = eventTime
         self.event = event
         super.init(service: service)
@@ -38,7 +38,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
     }
     
     override func main() {
-        let path = "conn-geofence/v1/tenants/\(service.tenant)/orgs/\(service.orgCode!)"
+        let path = "conn-geofence/v1/tenants/\(service.tenantCode)/orgs/\(service.orgCode!)"
         
         var json:[String:AnyObject] = [:]
         var notification:[String:AnyObject] = [:]
@@ -47,7 +47,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         notification["detectedTime"] = self.eventTime.ISO8601
 
         var data:[String:AnyObject] = [:]
-        data["fenceId"] = self.fenceId
+        data["fenceId"] = self.geofenceCode
         data["crossingType"] = self.event.rawValue
         notification["data"] = data
         

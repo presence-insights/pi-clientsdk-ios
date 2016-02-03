@@ -26,6 +26,6 @@ extension PIGeofence {
     @NSManaged var monitored: NSNumber
     @NSManaged public internal(set) var name: String
     @NSManaged public internal(set) var radius: NSNumber
-    @NSManaged public internal(set) var uuid: String
+    @NSManaged public internal(set) var code: String
 
 }

@@ -20,6 +20,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import MBProgressHUD
 
 class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
 
@@ -66,7 +67,7 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
             
             let circle = MKCircle(centerCoordinate: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: CLLocationDistance(geofence.radius.integerValue))
             self.mapView.addOverlay(circle)
-            self.geofenceCircles[geofence.uuid] = circle
+            self.geofenceCircles[geofence.code] = circle
             
         }
         
@@ -143,7 +144,11 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
     
     // MARK: - NewGeofenceDelegate
     func newGeofence(newGeofence:NewGeofenceController,center:CLLocationCoordinate2D,name:String,radius:Int) {
+        MBProgressHUD.showHUDAddedTo(self.view,animated:true)
+        
         piGeofencingManager.addGeofence(name, center: center, radius: radius) { geofence in
+            
+            MBProgressHUD.hideHUDForView(self.view, animated: true)
             
             guard let geofence = geofence else {
                 let alertController = UIAlertController(
@@ -166,7 +171,7 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
             let circle = MKCircle(centerCoordinate: center, radius: CLLocationDistance(radius))
             self.mapView.addOverlay(circle)
             
-            self.geofenceCircles[geofence.uuid] = circle
+            self.geofenceCircles[geofence.code] = circle
             
             self.zoomToFitMapOverlay(self.mapView, overlay: circle)
             self.mapView.selectAnnotation(annotation, animated: true)
@@ -297,12 +302,30 @@ extension MapController:MKMapViewDelegate {
         
         if let geofenceAnnotation = view.annotation as? GeofenceAnnotation where control.tag == removeButtonTag {
             
-            let uuid = geofenceAnnotation.uuid
+            let geofenceCode = geofenceAnnotation.geofenceCode
             self.mapView.removeAnnotation(geofenceAnnotation)
-            let circle = geofenceCircles[uuid] as! MKOverlay
+            let circle = geofenceCircles[geofenceCode] as! MKOverlay
             self.mapView.removeOverlay(circle)
             
-            piGeofencingManager.removeGeofence(uuid)
+            MBProgressHUD.showHUDAddedTo(self.view,animated:true)
+            
+            piGeofencingManager.removeGeofence(geofenceCode) {
+                success in
+                MBProgressHUD.hideHUDForView(self.view, animated: true)
+                if success == false {
+                    let alertController = UIAlertController(
+                        title: NSLocalizedString("Alert.GeofenceDeletion.Error.Title",comment:""),
+                        message: NSLocalizedString("Alert.GeofenceDeletion.Error.Message",comment:""),
+                        preferredStyle: .Alert)
+                    
+                    let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
+                    }
+                    alertController.addAction(okAction)
+                    
+                    self.presentViewController(alertController, animated: true, completion: nil)
+                
+                }
+            }
         }
         
     }

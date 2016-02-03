@@ -19,6 +19,7 @@ target 'PIOutdoorSample' do
 pod 'ZipArchive'
 pod 'SSKeychain'
 pod 'CocoaLumberjack/Swift'
+pod 'MBProgressHUD'
 xcodeproj 'PIOutdoorSample/PIOutdoorSample.xcodeproj'
 end
 

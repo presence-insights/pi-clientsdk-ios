@@ -1,6 +1,6 @@
 /**
  *  PIOutdoorSDK
- *  PIServiceCreateOrgOperation
+ *  PIGeofenceDeleteOperation.swift
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -18,47 +18,40 @@
  **/
 
 
-
 import Foundation
 import CocoaLumberjack
 
-final class PIServiceCreateOrgOperation:ServiceOperation {
+final class PIGeofenceDeleteOperation:ServiceOperation {
     
-    let orgName:String
+    let geofenceCode:String
     
-    init(service: PIService,orgName:String) {
-        self.orgName = orgName
+    init(service: PIService,geofenceCode:String) {
+        self.geofenceCode = geofenceCode
         super.init(service: service)
-        self.name = "com.ibm.PI.ServiceCreateOrgOperation"
+        self.name = "com.ibm.PI.PIGeofenceDeleteOperation"
     }
     
     override func main() {
-        let path = "pi-config/v2/tenants/\(service.tenantCode)/orgs"
+        let path = "pi-config/v2/tenants/\(service.tenantCode)/orgs/\(service.orgCode!)/geofences/\(geofenceCode)"
         
-        var json:[String:AnyObject] = [:]
         
-        json["name"] = self.orgName
         
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
         
         DDLogVerbose("\(URLComponents.URL)")
         
-        let request = NSMutableURLRequest(URL:URLComponents.URL!)
+        let request = NSMutableURLRequest(URL:URLComponents.URL!,cachePolicy:.ReloadIgnoringLocalCacheData,timeoutInterval:service.timeout)
         
         setBasicAuthHeader(request)
         
-        request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
-        request.HTTPMethod = "POST"
-        
-        //        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-        //        DDLogVerbose("\(string)")
+        request.HTTPMethod = "DELETE"
         
         performRequest(request) {
             self.executing = false
             self.finished = true
         }
         
+        
     }
-    
 }

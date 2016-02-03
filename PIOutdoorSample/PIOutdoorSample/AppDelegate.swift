@@ -45,24 +45,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         registerDefaultSettings()
         
-        let tenant = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as! String
+        let tenantCode = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as! String
         let hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as! String
         let username = NSUserDefaults.standardUserDefaults().objectForKey("PIUsername") as! String
         let password = NSUserDefaults.standardUserDefaults().objectForKey("PIPassword") as! String
         
         PIGeofencingManager.enableLogging(true)
         
-        DDLogVerbose("tenant \(tenant)")
+        DDLogVerbose("tenant \(tenantCode)")
         DDLogVerbose("hostname \(hostname)")
         DDLogVerbose("username \(username)")
         DDLogVerbose("password \(password)")
         
         NetworkActivityIndicatorManager.sharedInstance.enableActivityIndicator(true)
         
-        let data:NSData? = SSKeychain.passwordDataForService("PIIndoor", account: tenant)
+        let data:NSData? = SSKeychain.passwordDataForService("PIIndoor", account: tenantCode)
         
         piGeofencingManager = PIGeofencingManager(
-            tenant: tenant,
+            tenantCode: tenantCode,
             orgCode: nil,
             baseURL: hostname,
             username: username,
@@ -98,7 +98,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     var json =  [String:AnyObject]()
                     json["orgCode"] = orgCode
                     let data = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
-                    SSKeychain.setPasswordData(data, forService: "PIIndoor", account: tenant)
+                    SSKeychain.setPasswordData(data, forService: "PIIndoor", account: tenantCode)
                     dispatch_async(dispatch_get_main_queue()) {
                         piGeofencingManager.service.orgCode = orgCode
                         
@@ -232,9 +232,9 @@ extension AppDelegate {
         
     }
 
-    func fenceProperties(properties:[String:AnyObject]) -> PIFenceProperties {
+    func fenceProperties(properties:[String:AnyObject]) -> PIGeofenceProperties {
         let name = properties["intitule_gare"] as? String ?? "???!!!"
-        let fenceProperties = PIFenceProperties(name:name,radius:100,identifier:nil)
+        let fenceProperties = PIGeofenceProperties(name:name,radius:100,code:nil)
         return fenceProperties
     }
     
@@ -329,7 +329,7 @@ extension AppDelegate:PIGeofencingManagerDelegate {
         
         notification.soundName = UILocalNotificationDefaultSoundName
         if let geofence = geofence {
-            notification.userInfo = ["uuid":geofence.uuid]
+            notification.userInfo = ["uuid":geofence.code]
         }
         
         UIApplication.sharedApplication().presentLocalNotificationNow(notification)
@@ -347,7 +347,7 @@ extension AppDelegate:PIGeofencingManagerDelegate {
         
         notification.soundName = UILocalNotificationDefaultSoundName
         if let geofence = geofence {
-            notification.userInfo = ["uuid":geofence.uuid]
+            notification.userInfo = ["uuid":geofence.code]
         }
         
         UIApplication.sharedApplication().presentLocalNotificationNow(notification)

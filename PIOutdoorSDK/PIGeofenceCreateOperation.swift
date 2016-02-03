@@ -23,39 +23,39 @@ import CoreLocation
 
 final class PIGeofenceCreateOperation:ServiceOperation {
     
-    let fenceName:String
+    let geofenceName:String
     
-    let fenceDescription:String?
+    let geofenceDescription:String?
     
-    let fenceRadius:Int
+    let geofenceRadius:Int
     
-    let fenceCoordinate:CLLocationCoordinate2D
+    let geofenceCoordinate:CLLocationCoordinate2D
     
     
-    init(service: PIService,fenceName:String,fenceDescription:String?,fenceRadius:Int,fenceCoordinate:CLLocationCoordinate2D) {
-        self.fenceName = fenceName
-        self.fenceDescription = fenceDescription
-        self.fenceRadius = fenceRadius
-        self.fenceCoordinate = fenceCoordinate
+    init(service: PIService,geofenceName:String,geofenceDescription:String?,geofenceRadius:Int,geofenceCoordinate:CLLocationCoordinate2D) {
+        self.geofenceName = geofenceName
+        self.geofenceDescription = geofenceDescription
+        self.geofenceRadius = geofenceRadius
+        self.geofenceCoordinate = geofenceCoordinate
         super.init(service: service)
         self.name = "com.ibm.PI.GeofenceCreateOperation"
     }
     
     override func main() {
-        let path = "pi-config/v2/tenants/\(service.tenant)/orgs/\(service.orgCode!)/geofences"
+        let path = "pi-config/v2/tenants/\(service.tenantCode)/orgs/\(service.orgCode!)/geofences"
         
         var json:[String:AnyObject] = [:]
         json["type"] = "Feature"
         
         var geometry:[String:AnyObject] = [:]
         geometry["type"] = "Point"
-        geometry["coordinates"] = [fenceCoordinate.latitude,fenceCoordinate.longitude]
+        geometry["coordinates"] = [geofenceCoordinate.latitude,geofenceCoordinate.longitude]
         json["geometry"] = geometry
         
         var properties:[String:AnyObject] = [:]
-        properties["name"] = fenceName
-        properties["description"] = fenceDescription
-        properties["radius"] = fenceRadius
+        properties["name"] = geofenceName
+        properties["description"] = geofenceDescription
+        properties["radius"] = geofenceRadius
         json["properties"] = properties
         
         

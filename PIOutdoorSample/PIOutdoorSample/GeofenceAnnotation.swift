@@ -29,10 +29,10 @@ class GeofenceAnnotation:MKPointAnnotation {
         return lengthFormatter
         }()
     
-    let uuid:String
+    let geofenceCode:String
     
     init(geofence:PIGeofence) {
-        self.uuid = geofence.uuid
+        self.geofenceCode = geofence.code
         super.init()
         self.coordinate = CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue)
         self.title = geofence.name

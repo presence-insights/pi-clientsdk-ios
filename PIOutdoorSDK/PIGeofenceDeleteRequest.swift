@@ -1,6 +1,6 @@
 /**
  *  PIOutdoorSDK
- *  PIGeofenceMonitoringRequest.swift
+ *  PIGeofenceDeleteRequest.swift
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -17,47 +17,38 @@
  *  limitations under the License.
  **/
 
+
 import Foundation
+import CocoaLumberjack
 
-public enum PIGeofenceEvent:String {
-    case Enter = "enter"
-    case Exit = "leave"
-}
-
-/// Post a geofence event to the Presence Insight platform.
-public final class PIGeofenceMonitoringRequest:Request {
+/// Delete a geofence in the Presence Insight platform
+public final class PIGeofenceDeleteRequest:Request {
     
     public let completionBlock: Response -> Void
     
+    /// The code of the fence to be deleted
     public let geofenceCode:String
     
-    public let eventTime:NSDate
     
-    public let event:PIGeofenceEvent
-    
-    public init(geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent,completionBlock:Response -> Void) {
+    public init(geofenceCode:String, completionBlock:Response -> Void) {
         self.geofenceCode = geofenceCode
-        self.eventTime = eventTime
-        self.event = event
         self.completionBlock = completionBlock
     }
     
     public func execute(service:PIService) -> Response {
         
-        let operation = PIGeofenceMonitoringOperation(service:service,geofenceCode: self.geofenceCode,eventTime: self.eventTime,event: self.event)
+        let operation = PIGeofenceDeleteOperation(
+            service:service,
+            geofenceCode: self.geofenceCode)
+        
         let response = Response(piRequest: self,operation:operation)
         
         operation.completionBlock = {[unowned self] in
             operation.completionBlock = nil
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 switch operation.result! {
-                case .OK(let data):
-                    guard let data = data else {
-                        response.result = .OK(nil)
-                        break
-                    }
-                    let json = try? NSJSONSerialization.JSONObjectWithData(data,options:[])
-                    response.result = .OK(json)
+                case let .OK(data):
+                    response.result = .OK(data)
                 case .Cancelled:
                     response.result = .Cancelled
                 case let .HTTPStatus(status,data):

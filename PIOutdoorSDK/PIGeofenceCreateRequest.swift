@@ -22,34 +22,42 @@ import Foundation
 import CoreLocation
 import CocoaLumberjack
 
-final class PIGeofenceCreateRequest:Request {
+/// Creates a geofence in the Presence Insight platform.
+public final class PIGeofenceCreateRequest:Request {
     
-    let completionBlock: PIGeofenceCreateResponse -> Void
+    public let completionBlock: PIGeofenceCreateResponse -> Void
     
-    let fenceName:String
+    /// The name of the geofence.
+    public let geofenceName:String
     
-    let fenceDescription:String?
+    /// The description of the geofence
+    public let geofenceDescription:String?
     
-    let fenceRadius:Int
+    /// The radius of the geofence
+    public let geofenceRadius:Int
     
-    let fenceCoordinate:CLLocationCoordinate2D
+    /// The coordinates of the center of the geofence
+    public let geofenceCoordinate:CLLocationCoordinate2D
     
-    init(fenceName:String,fenceDescription:String?,fenceRadius:Int,fenceCoordinate:CLLocationCoordinate2D,completionBlock:PIGeofenceCreateResponse -> Void) {
-        self.fenceName = fenceName
-        self.fenceDescription = fenceDescription
-        self.fenceRadius = fenceRadius
-        self.fenceCoordinate = fenceCoordinate
+    /// - returns: The request to execute for creating a geofence
+    public init(geofenceName:String,geofenceDescription:String?,geofenceRadius:Int,geofenceCoordinate:CLLocationCoordinate2D,completionBlock:PIGeofenceCreateResponse -> Void) {
+        self.geofenceName = geofenceName
+        self.geofenceDescription = geofenceDescription
+        self.geofenceRadius = geofenceRadius
+        self.geofenceCoordinate = geofenceCoordinate
         self.completionBlock = completionBlock
     }
     
-    func execute(service:PIService) -> Response {
+    /// - param service: The PI service
+    /// Execute this request against the PI service
+    public func execute(service:PIService) -> Response {
         
         let operation = PIGeofenceCreateOperation(
             service:service,
-            fenceName: self.fenceName,
-            fenceDescription: self.fenceDescription,
-            fenceRadius: self.fenceRadius,
-            fenceCoordinate: self.fenceCoordinate)
+            geofenceName: self.geofenceName,
+            geofenceDescription: self.geofenceDescription,
+            geofenceRadius: self.geofenceRadius,
+            geofenceCoordinate: self.geofenceCoordinate)
         
         let response = PIGeofenceCreateResponse(piRequest: self,operation:operation)
         
@@ -70,12 +78,12 @@ final class PIGeofenceCreateRequest:Request {
                             break
                         }
                         
-                        guard let fenceId = properties["@code"] as? String else {
+                        guard let geofenceCode = properties["@code"] as? String else {
                             DDLogError("PIGeofenceCreateRequest,Missing Fence ID")
                             break
                         }
                         
-                        response.fenceId = fenceId
+                        response.geofenceCode = geofenceCode
                     } catch {
                         DDLogError("PIGeofenceCreateRequest,Json parsing error \(error)")
                         response.result = .OK(nil)

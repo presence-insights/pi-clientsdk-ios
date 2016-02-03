@@ -37,3 +37,7 @@
 
 "Alert.GeofenceCreation.Error.Title" = "Error";
 "Alert.GeofenceCreation.Error.Message" = "An error occured when creating the geofence";
+
+
+"Alert.GeofenceDeletion.Error.Title" = "Error";
+"Alert.GeofenceDeletion.Error.Message" = "An error occured when deleting the geofence";

@@ -42,19 +42,19 @@ public enum PIOutdoorError:ErrorType {
 }
 
 
-public struct PIFenceProperties {
+public struct PIGeofenceProperties {
     public let name:String
     public let radius:Int
-    public let identifier:String?
+    public let code:String?
     
-    public init(name:String,radius:Int,identifier:String?) {
+    public init(name:String,radius:Int,code:String?) {
         self.name = name
         self.radius = radius
-        self.identifier = identifier
+        self.code = code
     }
 }
 
-public typealias FencePropertiesGenerator = ([String:AnyObject]) -> PIFenceProperties
+public typealias GeofencePropertiesGenerator = ([String:AnyObject]) -> PIGeofenceProperties
 
 public protocol PIGeofencingManagerDelegate:class {
     /// The device enters into a geofence
@@ -89,7 +89,7 @@ public final class PIGeofencingManager:NSObject {
     
     public weak var delegate:PIGeofencingManagerDelegate?
     /// Create a `PIGeofencingManager` with the given PI connection parameters
-    /// - parameter tenant: PI tenant
+    /// - parameter tenantCode: PI tenant
     /// - parameter orgCode: PI organisation
     /// - parameter baseURL: PI end point
     /// - parameter username: PI username
@@ -99,7 +99,7 @@ public final class PIGeofencingManager:NSObject {
     /// of maxDistance meters.
     /// - parameter maxRegions: The maximum number of regions being monitored at any time. The system
     /// limit is 20 regions per app. Default is 15
-    public init(tenant:String, orgCode:String?, baseURL:String, username:String, password:String,maxDistance:Int = 10_000, maxRegions:Int = DefaultMaxRegions ) {
+    public init(tenantCode:String, orgCode:String?, baseURL:String, username:String, password:String,maxDistance:Int = 10_000, maxRegions:Int = DefaultMaxRegions ) {
         
         self.maxDistance = maxDistance
         if (1...20).contains(maxRegions) {
@@ -108,7 +108,7 @@ public final class PIGeofencingManager:NSObject {
             DDLogError("maxRegions \(maxRegions) is out of range")
             self.maxRegions = self.dynamicType.DefaultMaxRegions
         }
-        self.service = PIService(tenant:tenant,orgCode:orgCode,baseURL:baseURL,username:username,password:password)
+        self.service = PIService(tenantCode:tenantCode,orgCode:orgCode,baseURL:baseURL,username:username,password:password)
         super.init()
         self.locationManager.delegate = self
         
@@ -247,9 +247,9 @@ public final class PIGeofencingManager:NSObject {
                     
                     self.regions = [:]
                     for geofence in monitoredGeofences {
-                        let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.uuid)
+                        let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.code)
                         DDLogVerbose("already monitoring \(geofence.name)")
-                        self.regions?[geofence.uuid] = region
+                        self.regions?[geofence.code] = region
                         
                     }
                 }
@@ -274,7 +274,7 @@ public final class PIGeofencingManager:NSObject {
                 let max = sortedFences.count < self.maxRegions ? sortedFences.count : self.maxRegions
                 let fencesToMonitor = sortedFences[0..<max]
                 
-                let uuids = Set(fencesToMonitor.map { $0.uuid })
+                let uuids = Set(fencesToMonitor.map { $0.code })
                 
                 var keepRegions = [String:CLCircularRegion]()
                 
@@ -301,13 +301,13 @@ public final class PIGeofencingManager:NSObject {
                 
                 // Start monitoring new regions near our current position
                 for geofence in fencesToMonitor {
-                    guard self.regions?[geofence.uuid] == nil else {
+                    guard self.regions?[geofence.code] == nil else {
                         // We are already monitoring this fence
                         continue
                     }
                     geofence.monitored = true
-                    let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.uuid)
-                    self.regions?[geofence.uuid] = region
+                    let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.code)
+                    self.regions?[geofence.code] = region
                     self.locationManager.startMonitoringForRegion(region)
                     DDLogVerbose("startMonitoringForRegion \(geofence.name) \(region.identifier)")
                 }
@@ -346,41 +346,78 @@ public final class PIGeofencingManager:NSObject {
      Remove a geofence
      - parameter uuid:   The uuid of the fence to remove
      */
-    public func removeGeofence(uuid:String) {
-        if let region = self.regions?[uuid] {
-            self.regions?.removeValueForKey(uuid)
-            self.locationManager.stopMonitoringForRegion(region)
-            DDLogVerbose("Stop monitoring \(region.identifier)")
-        }
-        
-        let moc = self.dataController.writerContext
-        moc.performBlock {
-            do {
-                let fetchRequest =  PIGeofence.fetchRequest
-                fetchRequest.predicate = NSPredicate(format: "uuid == %@",uuid)
-                guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
-                    DDLogError("Programming error",asynchronous:false)
-                    fatalError("Programming error")
+    public func removeGeofence(geofenceCode:String,completionHandler: ((Bool) -> Void)? = nil) {
+        let geofenceDeleteRequest = PIGeofenceDeleteRequest(geofenceCode: geofenceCode) {
+            response in
+            switch response.result {
+            case .OK?:
+                let moc = self.dataController.writerContext
+                moc.performBlock {
+                    do {
+                        let fetchRequest =  PIGeofence.fetchRequest
+                        fetchRequest.predicate = NSPredicate(format: "code == %@",geofenceCode)
+                        guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
+                            DDLogError("Programming error",asynchronous:false)
+                            fatalError("Programming error")
+                        }
+                        
+                        guard let geofence = geofences.first else {
+                            DDLogError("Programming error",asynchronous:false)
+                            fatalError("Programming error")
+                        }
+                        DDLogInfo("delete fence \(geofence.name)")
+                        moc.deleteObject(geofence)
+                        
+                        try moc.save()
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            
+                            if let region = self.regions?[geofenceCode] {
+                                self.regions?.removeValueForKey(geofenceCode)
+                                self.locationManager.stopMonitoringForRegion(region)
+                                DDLogVerbose("Stop monitoring \(region.identifier)")
+                            }
+                            
+                            self.updateGeofenceMonitoring()
+                            completionHandler?(true)
+                        }
+                        
+                    } catch {
+                        DDLogError("Core Data Error \(error)")
+                        assertionFailure("Core Data Error \(error)")
+                    }
                 }
                 
-                guard let geofence = geofences.first else {
-                    DDLogError("Programming error",asynchronous:false)
-                    fatalError("Programming error")
-                }
-                DDLogInfo("delete fence \(geofence.name)")
-                moc.deleteObject(geofence)
-                
-                try moc.save()
-                
+            case .Cancelled?:
+                DDLogVerbose("PIGeofenceDeleteRequest cancelled")
                 dispatch_async(dispatch_get_main_queue()) {
-                    self.updateGeofenceMonitoring()
+                    completionHandler?(false)
                 }
-                
-            } catch {
-                DDLogError("Core Data Error \(error)")
-                assertionFailure("Core Data Error \(error)")
+            case let .Error(error)?:
+                DDLogError("PIGeofenceDeleteRequest error \(error)")
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(false)
+                }
+            case let .Exception(error)?:
+                DDLogError("PIGeofenceDeleteRequest exception \(error)")
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(false)
+                }
+            case let .HTTPStatus(status,_)?:
+                DDLogError("PIGeofenceDeleteRequest status \(status)")
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(false)
+                }
+            case nil:
+                assertionFailure("Programming Error")
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(false)
+                }
             }
         }
+        
+        self.service.executeRequest(geofenceDeleteRequest)
+        
     }
     
     /**
@@ -399,14 +436,14 @@ public final class PIGeofencingManager:NSObject {
         }
         
 
-        let geofenceCreateRequest = PIGeofenceCreateRequest(fenceName: name, fenceDescription: nil, fenceRadius: radius, fenceCoordinate: center) {
+        let geofenceCreateRequest = PIGeofenceCreateRequest(geofenceName: name, geofenceDescription: nil, geofenceRadius: radius, geofenceCoordinate: center) {
             response in
             switch response.result {
             case .OK?:
-                DDLogVerbose("PIGeofenceCreateRequest OK \(response.fenceId)")
-                guard let fenceId = response.fenceId else {
+                DDLogVerbose("PIGeofenceCreateRequest OK \(response.geofenceCode)")
+                guard let geofenceCode = response.geofenceCode else {
                     DDLogError("PIGeofenceCreateRequest Missing fence Id")
-                    assertionFailure("Programming error")
+                    completionHandler?(nil)
                     return
                 }
                 
@@ -417,7 +454,7 @@ public final class PIGeofencingManager:NSObject {
                     let geofence:PIGeofence = moc.insertObject()
                     geofence.name = name
                     geofence.radius = radius
-                    geofence.uuid = fenceId
+                    geofence.code = geofenceCode
                     geofence.latitude = center.latitude
                     geofence.longitude = center.longitude
                     
@@ -432,7 +469,9 @@ public final class PIGeofencingManager:NSObject {
                     } catch {
                         DDLogError("Core Data Error \(error)",asynchronous:false)
                         assertionFailure("Core Data Error \(error)")
-                        completionHandler?(nil)
+                        dispatch_async(dispatch_get_main_queue()) {
+                            completionHandler?(nil)
+                        }
                     }
                     
                 }
@@ -440,19 +479,29 @@ public final class PIGeofencingManager:NSObject {
                 
             case .Cancelled?:
                 DDLogVerbose("PIGeofenceCreateRequest cancelled")
-                completionHandler?(nil)
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(nil)
+                }
             case let .Error(error)?:
                 DDLogError("PIGeofenceCreateRequest error \(error)")
-                completionHandler?(nil)
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(nil)
+                }
             case let .Exception(error)?:
                 DDLogError("PIGeofenceCreateRequest exception \(error)")
-                completionHandler?(nil)
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(nil)
+                }
             case let .HTTPStatus(status,_)?:
                 DDLogError("PIGeofenceCreateRequest status \(status)")
-                completionHandler?(nil)
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(nil)
+                }
             case nil:
                 assertionFailure("Programming Error")
-                completionHandler?(nil)
+                dispatch_async(dispatch_get_main_queue()) {
+                    completionHandler?(nil)
+                }
             }
         }
         
@@ -460,11 +509,7 @@ public final class PIGeofencingManager:NSObject {
         
     }
     
-    /**
-     Returns all the fences
-     
-     - returns: the list of all the fences
-     */
+    /// - returns: The list of all the fences
     public func queryAllGeofences() -> [PIGeofence] {
         let moc = self.dataController.mainContext
         let fetchRequest = PIGeofence.fetchRequest
@@ -522,7 +567,7 @@ public final class PIGeofencingManager:NSObject {
     
     public func seedGeojson(
         url:NSURL,
-        propertiesGenerator:FencePropertiesGenerator? = nil,
+        propertiesGenerator:GeofencePropertiesGenerator? = nil,
         completionHandler:((error:ErrorType?) -> Void)? = nil) throws {
         
         let fileManager = NSFileManager.defaultManager()
@@ -569,7 +614,7 @@ public final class PIGeofencingManager:NSObject {
     
     public func seedGeojson(
         geojson:[String:AnyObject],
-        propertiesGenerator:FencePropertiesGenerator? = nil,
+        propertiesGenerator:GeofencePropertiesGenerator? = nil,
         completionHandler:((error:ErrorType?) -> Void)? = nil)  {
             
         let moc = dataController.writerContext
@@ -651,24 +696,24 @@ public final class PIGeofencingManager:NSObject {
                 
                 let name:String
                 let radius:Int
-                let uuid:String
+                let geofenceCode:String
                 
                 if let propertiesGenerator = propertiesGenerator {
                     let properties = propertiesGenerator(properties)
                     name = properties.name
                     radius = properties.radius
-                    uuid = properties.identifier ??  NSUUID().UUIDString
+                    geofenceCode = properties.code ??  NSUUID().UUIDString
                 } else {
                     name = properties["name"] as? String ?? "???!!!"
                     radius = properties["radius"] as? Int ?? 100
-                    uuid = properties["uuid"] as? String ?? NSUUID().UUIDString
+                    geofenceCode = properties["uuid"] as? String ?? NSUUID().UUIDString
                 }
                 
                 let geofence:PIGeofence = moc.insertObject()
                 
                 geofence.name = name
                 geofence.radius = radius
-                geofence.uuid = uuid
+                geofence.code = geofenceCode
                 geofence.latitude = latitude
                 geofence.longitude = longitude
             }
@@ -843,7 +888,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
             }
         }
         
-        let piRequest = PIGeofenceMonitoringRequest(fenceId:geofence.uuid,eventTime:NSDate(),event:event) {
+        let piRequest = PIGeofenceMonitoringRequest(geofenceCode:geofence.code,eventTime:NSDate(),event:event) {
             response in
             switch response.result {
             case let .HTTPStatus(status,_)?:
@@ -856,7 +901,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
             case .Cancelled?:
                 DDLogVerbose("PIGeofenceMonitoringRequest cancelled")
             case .OK?:
-                DDLogError("PIGeofenceMonitoringRequest OK \(event.rawValue) : \(geofence.uuid)")
+                DDLogError("PIGeofenceMonitoringRequest OK \(event.rawValue) : \(geofence.code)")
             case nil:
                 break
             }
