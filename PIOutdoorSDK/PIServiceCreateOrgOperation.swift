@@ -38,6 +38,8 @@ final class PIServiceCreateOrgOperation:ServiceOperation {
         var json:[String:AnyObject] = [:]
         
         json["name"] = self.orgName
+        json["registrationTypes"] = ["Internal"]
+        json["description"] = "PIOutdoorSample"
         
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
@@ -51,8 +53,8 @@ final class PIServiceCreateOrgOperation:ServiceOperation {
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
         request.HTTPMethod = "POST"
         
-        //        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-        //        DDLogVerbose("\(string)")
+        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
+        DDLogVerbose("\(string)")
         
         performRequest(request) {
             self.executing = false
