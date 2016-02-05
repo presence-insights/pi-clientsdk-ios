@@ -84,8 +84,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         } else {
             let service = piGeofencingManager.service
-            let orgName = UIDevice.currentDevice().name
-            DDLogVerbose("Start PIServiceCreateOrgRequest")
+            let orgName = UIDevice.currentDevice().name + "-" + NSUUID().UUIDString
+            DDLogVerbose("Start PIServiceCreateOrgRequest: \(orgName)")
             let request = PIServiceCreateOrgRequest(orgName:orgName) { response in
                 switch response.result {
                 case .OK?:
@@ -208,6 +208,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
+    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+        
+    }
 
 }
 

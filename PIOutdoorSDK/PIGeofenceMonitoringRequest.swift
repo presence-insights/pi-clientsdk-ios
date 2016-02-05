@@ -21,7 +21,7 @@ import Foundation
 
 public enum PIGeofenceEvent:String {
     case Enter = "enter"
-    case Exit = "leave"
+    case Exit = "exit"
 }
 
 /// Post a geofence event to the Presence Insight platform.

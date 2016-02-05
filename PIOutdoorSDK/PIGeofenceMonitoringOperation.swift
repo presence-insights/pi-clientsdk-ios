@@ -47,7 +47,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         notification["detectedTime"] = self.eventTime.ISO8601
 
         var data:[String:AnyObject] = [:]
-        data["fenceId"] = self.geofenceCode
+        data["geofenceCode"] = self.geofenceCode
         data["crossingType"] = self.event.rawValue
         notification["data"] = data
         
@@ -69,8 +69,8 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
         request.HTTPMethod = "POST"
         
-//        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-//        DDLogVerbose("\(string)")
+        let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
+        DDLogVerbose("\(string)")
         
         performRequest(request) {
             self.executing = false

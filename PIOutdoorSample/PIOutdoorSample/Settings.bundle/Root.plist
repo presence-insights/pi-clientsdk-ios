@@ -38,7 +38,7 @@
             <key>Key</key>
             <string>PIHostName</string>
             <key>DefaultValue</key>
-            <string>http://starterapp.mybluemix.net</string>
+            <string>http://pi-outdoor-proxy.mybluemix.net</string>
             <key>IsSecure</key>
             <false/>
             <key>KeyboardType</key>

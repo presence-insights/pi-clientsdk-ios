@@ -29,7 +29,7 @@ func StringFromClass(obj: AnyClass) -> String {
 
 func maximum<T:RawRepresentable where T.RawValue:SignedIntegerType > (enumType:T.Type) -> T.RawValue {
     var max: T.RawValue = 0
-    while let _ = enumType.init(rawValue: ++max) {}
+    while let _ = enumType.init(rawValue: max) {max = max + 1 }
     return max
     
 }

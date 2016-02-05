@@ -56,6 +56,7 @@ public class NetworkActivityIndicatorManager: NSObject {
     func didStartRequest(notification:NSNotification) {
         synchronized {
             self.requestCount += 1
+            print("didStartRequest",self.requestCount)
             self.refreshNetworkActivityIndicator()
         }
         
@@ -64,6 +65,7 @@ public class NetworkActivityIndicatorManager: NSObject {
     func didEndRequest(notification:NSNotification) {
         synchronized {
             self.requestCount -= 1
+            print("didEndRequest",self.requestCount)
             self.refreshNetworkActivityIndicator()
         }
         
