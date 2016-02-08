@@ -41,8 +41,8 @@ final public class PIServiceCreateOrgRequest:Request {
         operation.completionBlock = {[unowned self] in
             operation.completionBlock = nil
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                switch operation.result! {
-                case .OK(let data):
+                switch operation.result {
+                case .OK(let data)?:
                     guard let data = data else {
                         response.result = .OK(nil)
                         DDLogError("PIServiceCreateOrgRequest,OK but No data")
@@ -60,21 +60,25 @@ final public class PIServiceCreateOrgRequest:Request {
                         DDLogError("PIServiceCreateOrgRequest,Json parsing error \(error)")
                         response.result = .OK(nil)
                     }
-                case .Cancelled:
+                case .Cancelled?:
                     response.result = .Cancelled
-                case let .HTTPStatus(status,data):
+                case let .HTTPStatus(status, data)?:
                     if let data = data {
                         let json = try? NSJSONSerialization.JSONObjectWithData(data,options:[])
                         response.result = .HTTPStatus(status,json)
                     } else {
                         response.result = .HTTPStatus(status,nil)
                     }
-                case .Error(let error):
+                case .Error(let error)?:
                     response.result = .Error(error)
                     
-                case .Exception(let exception):
+                case .Exception(let exception)?:
                     response.result = .Exception(exception)
-                    
+
+				case nil:
+					response.result = .Cancelled
+
+
                 }
                 self.completionBlock(response)
             })
