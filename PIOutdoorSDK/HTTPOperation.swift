@@ -114,6 +114,7 @@ extension HTTPOperation {
         synchronized {
             if self.cancelled {
                 completionHandler(result:.Cancelled)
+				return
             }
             
             self.task = self.session.dataTaskWithRequest(request)  {
