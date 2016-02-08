@@ -28,50 +28,60 @@ public enum PIGeofenceEvent:String {
 public final class PIGeofenceMonitoringRequest:Request {
     
     public let completionBlock: Response -> Void
-    
+
+	/// PI Geofence code
     public let geofenceCode:String
-    
+
+	/// Time of the event
     public let eventTime:NSDate
-    
+
+	/// Type of the event, entering or exiting a geofence
     public let event:PIGeofenceEvent
-    
-    public init(geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent,completionBlock:Response -> Void) {
+
+	/// For debugging only
+	public let geofenceName:String?
+
+	public init(geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent,geofenceName:String? = nil,completionBlock:Response -> Void) {
         self.geofenceCode = geofenceCode
         self.eventTime = eventTime
         self.event = event
+		self.geofenceName = geofenceName
         self.completionBlock = completionBlock
     }
     
     public func execute(service:PIService) -> Response {
         
-        let operation = PIGeofenceMonitoringOperation(service:service,geofenceCode: self.geofenceCode,eventTime: self.eventTime,event: self.event)
+        let operation = PIGeofenceMonitoringOperation(service:service,geofenceCode: self.geofenceCode,eventTime: self.eventTime,event: self.event,geofenceName: self.geofenceName)
         let response = Response(piRequest: self,operation:operation)
         
         operation.completionBlock = {[unowned self] in
             operation.completionBlock = nil
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                switch operation.result! {
-                case .OK(let data):
+                switch operation.result {
+                case .OK(let data)?:
                     guard let data = data else {
                         response.result = .OK(nil)
                         break
                     }
                     let json = try? NSJSONSerialization.JSONObjectWithData(data,options:[])
                     response.result = .OK(json)
-                case .Cancelled:
+                case .Cancelled?:
                     response.result = .Cancelled
-                case let .HTTPStatus(status,data):
+                case let .HTTPStatus(status, data)?:
                     if let data = data {
                         let json = try? NSJSONSerialization.JSONObjectWithData(data,options:[])
                         response.result = .HTTPStatus(status,json)
                     } else {
                         response.result = .HTTPStatus(status,nil)
                     }
-                case .Error(let error):
+                case .Error(let error)?:
                     response.result = .Error(error)
                     
-                case .Exception(let exception):
+                case .Exception(let exception)?:
                     response.result = .Exception(exception)
+
+				case nil:
+					response.result = .Cancelled
                     
                 }
                 self.completionBlock(response)

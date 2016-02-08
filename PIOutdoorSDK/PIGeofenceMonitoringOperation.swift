@@ -29,10 +29,13 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
     
     let event:PIGeofenceEvent
     
-    init(service: PIService,geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent) {
+	let geofenceName:String?
+
+	init(service: PIService,geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent,geofenceName:String?) {
         self.geofenceCode = geofenceCode
         self.eventTime = eventTime
         self.event = event
+		self.geofenceName = geofenceName
         super.init(service: service)
         self.name = "com.ibm.PI.GeofenceMonitoringOperation"
     }
@@ -48,6 +51,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
 
         var data:[String:AnyObject] = [:]
         data["geofenceCode"] = self.geofenceCode
+		data["geofenceName"] = self.geofenceName
         data["crossingType"] = self.event.rawValue
         notification["data"] = data
         
