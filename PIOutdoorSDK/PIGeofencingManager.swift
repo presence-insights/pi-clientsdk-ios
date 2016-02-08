@@ -865,6 +865,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
         DDLogVerbose("didExitRegion \(region.identifier)")
         
         self.sendPIMessage(.Exit, geofence: geofence)
+		
         self.delegate?.geofencingManager(self, didExitGeofence: geofence)
         
     }

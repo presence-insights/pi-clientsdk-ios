@@ -79,8 +79,8 @@ public class SlackOperation: HTTPOperation {
         performRequest(request) {
             [unowned self] result in
             self.result = result
+			self.executing = false
             self.finished = true
-            self.executing = false
         }
     }
     

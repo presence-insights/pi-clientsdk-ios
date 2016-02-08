@@ -48,7 +48,7 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
 
         self.addFences()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "seedDidComplete:", name: SeedDidComplete, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "seedDidComplete:", name: kSeedDidComplete, object: nil)
         
         self.zoomToFitMapOverlays(self.mapView)
         self.first = false

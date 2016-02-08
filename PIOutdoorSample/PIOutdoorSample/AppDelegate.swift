@@ -25,11 +25,11 @@ import CoreLocation
 import SSKeychain
 import CocoaLumberjack
 
-let slackToken:String? = nil
+let slackToken: String? = nil
 
-var piGeofencingManager:PIGeofencingManager!
+var piGeofencingManager: PIGeofencingManager!
 
-let SeedDidComplete = "com.ibm.PI.SeedDidComplete"
+let kSeedDidComplete = "com.ibm.PI.SeedDidComplete"
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -38,18 +38,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private let locationManager = CLLocationManager()
 
-    private let slackQueue:NSOperationQueue = NSOperationQueue()
-    
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    private let slackQueue: NSOperationQueue = NSOperationQueue()
+
+    func application(application: UIApplication,
+		didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        
+
         registerDefaultSettings()
-        
-        let tenantCode = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as! String
-        let hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as! String
-        let username = NSUserDefaults.standardUserDefaults().objectForKey("PIUsername") as! String
-        let password = NSUserDefaults.standardUserDefaults().objectForKey("PIPassword") as! String
-        
+
+		guard let tenantCode = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as? String else {
+				assertionFailure("Programming Error")
+				return true
+			}
+		guard let hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as? String else {
+			assertionFailure("Programming Error")
+			return true
+			}
+		guard let username = NSUserDefaults.standardUserDefaults().objectForKey("PIUsername") as? String else {
+			assertionFailure("Programming Error")
+			return true
+			}
+		guard let password = NSUserDefaults.standardUserDefaults().objectForKey("PIPassword") as? String else {
+				assertionFailure("Programming Error")
+			return true
+		}
+
         PIGeofencingManager.enableLogging(true)
         
         DDLogVerbose("tenant \(tenantCode)")
@@ -59,8 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         NetworkActivityIndicatorManager.sharedInstance.enableActivityIndicator(true)
         
-        let data:NSData? = SSKeychain.passwordDataForService("PIIndoor", account: tenantCode)
-        
+
         piGeofencingManager = PIGeofencingManager(
             tenantCode: tenantCode,
             orgCode: nil,
@@ -69,7 +81,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             password: password)
         
 
-        
+		let data: NSData?
+		if piGeofencingManager.firstTime {
+			data = nil
+			DDLogInfo("First time after installation")
+		} else {
+			DDLogInfo("Look into the keychain")
+			data = SSKeychain.passwordDataForService("PIIndoor", account: tenantCode)
+		}
+
+
         if let data = data {
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: [])
@@ -97,19 +118,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                     var json =  [String:AnyObject]()
                     json["orgCode"] = orgCode
-                    let data = try! NSJSONSerialization.dataWithJSONObject(json, options: [])
+					guard let data = try? NSJSONSerialization.dataWithJSONObject(json, options: []) else {
+						DDLogError("Programming Error")
+						return
+					}
+
                     SSKeychain.setPasswordData(data, forService: "PIIndoor", account: tenantCode)
                     dispatch_async(dispatch_get_main_queue()) {
                         piGeofencingManager.service.orgCode = orgCode
-                        
                     }
+
                 case .Cancelled?:
                     DDLogVerbose("PIServiceCreateOrgRequest cancelled")
                 case let .Error(error)?:
                     DDLogError("PIServiceCreateOrgRequest error \(error)")
                 case let .Exception(error)?:
                     DDLogError("PIServiceCreateOrgRequest exception \(error)")
-                case let .HTTPStatus(status,_)?:
+                case let .HTTPStatus(status, _)?:
                     DDLogError("PIServiceCreateOrgRequest status \(status)")
                 case nil:
                     assertionFailure("Programming Error")
@@ -118,34 +143,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             service.executeRequest(request)
         }
-        print("data",data)
         
 
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
-        
+
         piGeofencingManager.delegate = self
-        
+
         slackQueue.qualityOfService = .Utility
         slackQueue.name = "com.ibm.PI.slackQueue"
-        
-        
+
         //self.seeding()
-        
+
         self.manageAuthorizations()
-        
+
         return true
     }
 
     private func registerDefaultSettings() {
-        
+
         let settingsURL = NSBundle.mainBundle().URLForResource("Settings", withExtension: "bundle")!
         let settingsBundle = NSBundle(URL: settingsURL)!
         let settingsFile = settingsBundle.URLForResource("Root", withExtension:"plist")!
-        let settingsDefault = NSDictionary(contentsOfURL:settingsFile) as! [String:AnyObject]
+        let settingsDefault = NSDictionary(contentsOfURL:settingsFile) as? [String:AnyObject]
         var defaultsToRegister = [String:AnyObject]()
-        let preferences = settingsDefault["PreferenceSpecifiers"] as! [[String:AnyObject]]
-        
+		guard let preferences = settingsDefault?["PreferenceSpecifiers"] as? [[String:AnyObject]] else {
+			fatalError("Programming Error")
+		}
+
         for preference in preferences {
             if
                 let key = preference["Key"] as? String,
@@ -226,7 +251,7 @@ extension AppDelegate {
             do {
                 try piGeofencingManager.seedGeojson(url,propertiesGenerator:fenceProperties) { error in
                     print(error)
-                    NSNotificationCenter.defaultCenter().postNotificationName(SeedDidComplete, object: nil)
+                    NSNotificationCenter.defaultCenter().postNotificationName(kSeedDidComplete, object: nil)
                 }
             } catch {
                 print(error)
@@ -375,47 +400,46 @@ extension AppDelegate:PIGeofencingManagerDelegate {
         params["text"] = ":iphone: \(event) : \(geofenceName)"
         
         let chatPostMessage = SlackOperation(session:session,slackAPI:"chat.postMessage",params:params,token:slackToken)
-        
         // https://developer.apple.com/library/ios/technotes/tn2277/_index.html
         let application = UIApplication.sharedApplication()
         var bkgTaskId = UIBackgroundTaskInvalid
         bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
             if bkgTaskId != UIBackgroundTaskInvalid {
-                print("expirationHandler",bkgTaskId)
+				DDLogError("****** SlackOperation ExpirationHandler \(bkgTaskId)")
                 self.slackQueue.cancelAllOperations()
                 let id = bkgTaskId
                 bkgTaskId = UIBackgroundTaskInvalid
                 application.endBackgroundTask(id)
             }
         }
-        
+		DDLogVerbose("SlackOperation beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+
         chatPostMessage.completionBlock = {
             chatPostMessage.completionBlock = nil
-            guard let result = chatPostMessage.result else {
-                NSLog("should'nt be there, no result for Slack API")
-                fatalError("should'nt be there, no result")
-            }
             
-            switch result {
-            case let .HTTPStatus(status,_):
-                print("Status",status)
-            case let .Error(error):
-                print(error)
-            case let .Exception(exception):
-                print(exception)
-            case .Cancelled:
-                print("cancelled")
-            case .OK:
-                print("ok")
+            switch chatPostMessage.result {
+            case let .HTTPStatus(status, _)?:
+                DDLogError("SlackOperation HTTPStatus \(status)")
+            case let .Error(error)?:
+                DDLogError("SlackOperation Error \(error)")
+            case let .Exception(exception)?:
+				DDLogError("SlackOperation Exception \(exception)")
+            case .Cancelled?:
+				DDLogError("SlackOperation cancelled")
+            case .OK?:
+                DDLogVerbose("SlackOperation OK")
+			case nil:
+				DDLogError("SlackOperation cancelled nil")
             }
             if bkgTaskId != UIBackgroundTaskInvalid {
-                print("end background",bkgTaskId)
+                DDLogVerbose("SlackOperation endBackgroundTask \(bkgTaskId)")
                 let id = bkgTaskId
                 bkgTaskId = UIBackgroundTaskInvalid
                 application.endBackgroundTask(id)
             }
+
         }
-        
+
         slackQueue.addOperation(chatPostMessage)
         
     }

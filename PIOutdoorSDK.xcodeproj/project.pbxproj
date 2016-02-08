@@ -39,10 +39,12 @@
 		7DF9101A1C60F7C5008FA84C /* PIGeofenceCreateRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF910191C60F7C5008FA84C /* PIGeofenceCreateRequest.swift */; };
 		7DF9101C1C60F7D8008FA84C /* PIGeofenceCreateOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF9101B1C60F7D8008FA84C /* PIGeofenceCreateOperation.swift */; };
 		7DF9101E1C60FBFB008FA84C /* PIGeofenceCreateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF9101D1C60FBFB008FA84C /* PIGeofenceCreateResponse.swift */; };
-		F6E967AEF1427A63590D2EFB /* Pods_PIOutdoorSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90BC6FA59AD38E3647FFDE3E /* Pods_PIOutdoorSDK.framework */; };
+		C9187D770E540FC71E007BD1 /* Pods_PIOutdoorSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D060390E0BBDFF35F8C712D5 /* Pods_PIOutdoorSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		025DD23DDA486CD33FDE5238 /* Pods-PIOutdoorSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PIOutdoorSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PIOutdoorSDK/Pods-PIOutdoorSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		07E3DBE7E352873E9CE15915 /* Pods-PIOutdoorSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PIOutdoorSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-PIOutdoorSDK/Pods-PIOutdoorSDK.release.xcconfig"; sourceTree = "<group>"; };
 		7D0C391E1C4D4BD100BD7798 /* ManagedObjectContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedObjectContext.swift; sourceTree = "<group>"; };
 		7D0C39251C4D6A6E00BD7798 /* NSManagedObjectContext+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Extensions.swift"; sourceTree = "<group>"; };
 		7D2696591C64A9F800A7F1CF /* PIGeofenceFencesRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIGeofenceFencesRequest.swift; sourceTree = "<group>"; };
@@ -77,9 +79,7 @@
 		7DF910191C60F7C5008FA84C /* PIGeofenceCreateRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIGeofenceCreateRequest.swift; sourceTree = "<group>"; };
 		7DF9101B1C60F7D8008FA84C /* PIGeofenceCreateOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIGeofenceCreateOperation.swift; sourceTree = "<group>"; };
 		7DF9101D1C60FBFB008FA84C /* PIGeofenceCreateResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIGeofenceCreateResponse.swift; sourceTree = "<group>"; };
-		90BC6FA59AD38E3647FFDE3E /* Pods_PIOutdoorSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PIOutdoorSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		91F750691F0C09663EFCB8C1 /* Pods-PIOutdoorSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PIOutdoorSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PIOutdoorSDK/Pods-PIOutdoorSDK.debug.xcconfig"; sourceTree = "<group>"; };
-		C932657755BD1339F4FAFCF7 /* Pods-PIOutdoorSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PIOutdoorSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-PIOutdoorSDK/Pods-PIOutdoorSDK.release.xcconfig"; sourceTree = "<group>"; };
+		D060390E0BBDFF35F8C712D5 /* Pods_PIOutdoorSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PIOutdoorSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,28 +87,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6E967AEF1427A63590D2EFB /* Pods_PIOutdoorSDK.framework in Frameworks */,
+				C9187D770E540FC71E007BD1 /* Pods_PIOutdoorSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2F459BDA864FCB4DEE5D8100 /* Pods */ = {
+		5C3D39D38940D83361991274 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				91F750691F0C09663EFCB8C1 /* Pods-PIOutdoorSDK.debug.xcconfig */,
-				C932657755BD1339F4FAFCF7 /* Pods-PIOutdoorSDK.release.xcconfig */,
+				025DD23DDA486CD33FDE5238 /* Pods-PIOutdoorSDK.debug.xcconfig */,
+				07E3DBE7E352873E9CE15915 /* Pods-PIOutdoorSDK.release.xcconfig */,
 			);
 			name = Pods;
-			sourceTree = "<group>";
-		};
-		36884BC436F75662C9BE2D14 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				90BC6FA59AD38E3647FFDE3E /* Pods_PIOutdoorSDK.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		7D0C39241C4D69E600BD7798 /* CoreDataHelpers */ = {
@@ -125,8 +117,8 @@
 			children = (
 				7DDC915F1C469BCC002A5113 /* PIOutdoorSDK */,
 				7DDC915E1C469BCC002A5113 /* Products */,
-				2F459BDA864FCB4DEE5D8100 /* Pods */,
-				36884BC436F75662C9BE2D14 /* Frameworks */,
+				5C3D39D38940D83361991274 /* Pods */,
+				9B86FB47D48021899BF20C6E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -209,6 +201,14 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
+		9B86FB47D48021899BF20C6E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D060390E0BBDFF35F8C712D5 /* Pods_PIOutdoorSDK.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -227,12 +227,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7DDC91651C469BCC002A5113 /* Build configuration list for PBXNativeTarget "PIOutdoorSDK" */;
 			buildPhases = (
-				C84225BF0BED1A34A696176C /* Check Pods Manifest.lock */,
+				2E551C7E2D472EADD2AE997B /* Check Pods Manifest.lock */,
 				7DDC91581C469BCC002A5113 /* Sources */,
 				7DDC91591C469BCC002A5113 /* Frameworks */,
 				7DDC915A1C469BCC002A5113 /* Headers */,
 				7DDC915B1C469BCC002A5113 /* Resources */,
-				F2272F7BD445F41546DDDB6F /* Copy Pods Resources */,
+				16CC1BD97CBC8DD9FAC30C48 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -285,22 +285,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		C84225BF0BED1A34A696176C /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		F2272F7BD445F41546DDDB6F /* Copy Pods Resources */ = {
+		16CC1BD97CBC8DD9FAC30C48 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -313,6 +298,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PIOutdoorSDK/Pods-PIOutdoorSDK-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2E551C7E2D472EADD2AE997B /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -450,7 +450,7 @@
 		};
 		7DDC91661C469BCC002A5113 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 91F750691F0C09663EFCB8C1 /* Pods-PIOutdoorSDK.debug.xcconfig */;
+			baseConfigurationReference = 025DD23DDA486CD33FDE5238 /* Pods-PIOutdoorSDK.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -469,7 +469,7 @@
 		};
 		7DDC91671C469BCC002A5113 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C932657755BD1339F4FAFCF7 /* Pods-PIOutdoorSDK.release.xcconfig */;
+			baseConfigurationReference = 07E3DBE7E352873E9CE15915 /* Pods-PIOutdoorSDK.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
