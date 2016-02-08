@@ -885,14 +885,16 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
         var bkgTaskId = UIBackgroundTaskInvalid
         bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
             if bkgTaskId != UIBackgroundTaskInvalid {
+				DDLogError("****** PIGeofenceMonitoringRequest ExpirationHandler \(bkgTaskId)")
                 self.service.cancelAll()
                 let id = bkgTaskId
                 bkgTaskId = UIBackgroundTaskInvalid
                 application.endBackgroundTask(id)
             }
         }
-        
-        let piRequest = PIGeofenceMonitoringRequest(geofenceCode:geofence.code,eventTime:NSDate(),event:event) {
+		DDLogInfo("PIGeofenceMonitoringRequest beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+
+        let piRequest = PIGeofenceMonitoringRequest(geofenceCode:geofence.code,eventTime:NSDate(),event:event,geofenceName: geofence.name) {
             response in
             switch response.result {
             case let .HTTPStatus(status,_)?:
@@ -910,6 +912,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
                 break
             }
             if bkgTaskId != UIBackgroundTaskInvalid {
+				DDLogInfo("PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)")
                 let id = bkgTaskId
                 bkgTaskId = UIBackgroundTaskInvalid
                 application.endBackgroundTask(id)
