@@ -19,6 +19,7 @@
 
 import Foundation
 import PIOutdoorSDK
+import CocoaLumberjack
 
 enum SlackAPI:ErrorType {
     case WrongAPI
@@ -42,10 +43,12 @@ public class SlackOperation: HTTPOperation {
         super.init(session:session, url: url,maxRetry:1)
         
         self.name = "com.ibm.PI.SlackOperation"
+		DDLogVerbose("Create SlackOperation \(params)")
     }
     
     
     override public func main() {
+
         guard let url = NSURL(string:slackAPI,relativeToURL:self.url) else {
             self.result = .Exception(SlackAPI.WrongAPI)
             self.executing = false
@@ -69,7 +72,7 @@ public class SlackOperation: HTTPOperation {
             return
         }
         
-        print(urlAPI)
+        DDLogVerbose("Main Slack Operation \(urlAPI)")
         
         let request = NSMutableURLRequest(URL:urlAPI,cachePolicy:.UseProtocolCachePolicy,timeoutInterval:self.timeout)
         
@@ -81,6 +84,7 @@ public class SlackOperation: HTTPOperation {
             self.result = result
 			self.executing = false
             self.finished = true
+			DDLogVerbose("End SlackOperation \(self.params)")
         }
     }
     

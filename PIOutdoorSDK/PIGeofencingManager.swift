@@ -68,7 +68,10 @@ public protocol PIGeofencingManagerDelegate:class {
 /// When the user enters or exits a geofence, `PIGeofencingManager` notifies
 /// the Presence Insights backend
 public final class PIGeofencingManager:NSObject {
-    
+
+	/// When `true`, the `PIGeofencingManager`does not post event against PIT backend
+	public var privacy = false
+
     /// By default, `PIGeofencingManager` can monitore up to 15 regions simultaneously.
     public static let DefaultMaxRegions = 15
     
@@ -84,11 +87,13 @@ public final class PIGeofencingManager:NSObject {
     public let maxRegions:Int
     
     private lazy var dataController = PIOutdoor.dataController
-    
+
+	/// PI Service
     public let service:PIService
     
     public weak var delegate:PIGeofencingManagerDelegate?
     /// Create a `PIGeofencingManager` with the given PI connection parameters
+	/// This initializer must be called in the main thread
     /// - parameter tenantCode: PI tenant
     /// - parameter orgCode: PI organisation
     /// - parameter baseURL: PI end point
@@ -134,9 +139,8 @@ public final class PIGeofencingManager:NSObject {
         } else {
             DDLog.removeAllLoggers()
         }
-        
     }
-    
+
     /**
      Ask the back end for the latest geofences to monitor
      - parameter completionHandler:  The closure called when the synchronisation is completed
@@ -189,7 +193,7 @@ public final class PIGeofencingManager:NSObject {
      This function should be called when a significant location changed is detected
      It updates the list of the monitored region, the limit being 20 regions per app
      */
-    public func updateGeofenceMonitoring(completionHandler: (()-> Void)? = nil) {
+	func updateGeofenceMonitoring(completionHandler: (()-> Void)? = nil) {
         
         // https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/RegionMonitoring/RegionMonitoring.html
         /*
@@ -237,7 +241,9 @@ public final class PIGeofencingManager:NSObject {
                     guard let monitoredGeofences = try moc.executeFetchRequest(fetchMonitoredRegionsRequest) as? [PIGeofence] else {
                         DDLogError("Programming error",asynchronous:false)
                         assertionFailure("Programming error")
-                        completionHandler?()
+						dispatch_async(dispatch_get_main_queue()) {
+							completionHandler?()
+						}
                         return
                     }
                     
@@ -263,7 +269,9 @@ public final class PIGeofencingManager:NSObject {
                 guard let nearFences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
                     DDLogError("Programming error",asynchronous:false)
                     assertionFailure("Programming error")
-                    completionHandler?()
+					dispatch_async(dispatch_get_main_queue()) {
+						completionHandler?()
+					}
                     return
                 }
                 
@@ -278,10 +286,12 @@ public final class PIGeofencingManager:NSObject {
                 
                 var keepRegions = [String:CLCircularRegion]()
                 
+				var regionsToStop: [CLRegion] = []
+
                 // Stop monitoring regions that are too far
                 for (geofenceCode,region) in self.regions! {
                     if geofenceCodes.contains(geofenceCode) == false {
-                        self.locationManager.stopMonitoringForRegion(region)
+						regionsToStop.append(region)
                         let fetchRequest =  PIGeofence.fetchRequest
                         fetchRequest.predicate = NSPredicate(format: "code == %@", geofenceCode)
                         let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence]
@@ -298,7 +308,8 @@ public final class PIGeofencingManager:NSObject {
                 }
                 
                 self.regions = keepRegions
-                
+
+				var regionsToStart: [CLRegion] = []
                 // Start monitoring new regions near our current position
                 for geofence in fencesToMonitor {
                     guard self.regions?[geofence.code] == nil else {
@@ -307,21 +318,31 @@ public final class PIGeofencingManager:NSObject {
                     }
                     geofence.monitored = true
                     let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.code)
+					regionsToStart.append(region)
                     self.regions?[geofence.code] = region
-                    self.locationManager.startMonitoringForRegion(region)
                     DDLogVerbose("startMonitoringForRegion \(geofence.name) \(region.identifier)")
                 }
                 
                 try moc.save()
                 
+				dispatch_async(dispatch_get_main_queue()) {
+					for region in regionsToStop {
+						self.locationManager.stopMonitoringForRegion(region)
+					}
+					for region in regionsToStart {
+						self.locationManager.startMonitoringForRegion(region)
+					}
+					completionHandler?()
+				}
+
             } catch {
                 DDLogError("Core Data Error \(error)")
                 assertionFailure("Core Data Error \(error)")
+				dispatch_async(dispatch_get_main_queue()) {
+					completionHandler?()
+				}
             }
             
-            dispatch_async(dispatch_get_main_queue()) {
-                completionHandler?()
-            }
         }
         
     }
@@ -341,11 +362,87 @@ public final class PIGeofencingManager:NSObject {
         return aDistance < bDistance
         
     }
-    
-    /**
-     Remove a geofence
-     - parameter code:   The uuid of the fence to remove
-     */
+
+	public func startMonitoringRegions() {
+		self.locationManager.startMonitoringSignificantLocationChanges()
+
+	}
+	
+
+	public func stopMonitoringAllRegions(completionHandler: (()-> Void)? = nil) {
+
+		locationManager.stopMonitoringSignificantLocationChanges()
+
+		let moc = self.dataController.writerContext
+
+		moc.performBlock {
+			do {
+				// find the regions currently being monitored
+				DDLogVerbose("Stop monitoring all the regions")
+				let fetchMonitoredRegionsRequest = PIGeofence.fetchRequest
+
+				fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == true")
+				guard let monitoredGeofences = try moc.executeFetchRequest(fetchMonitoredRegionsRequest) as? [PIGeofence] else {
+					DDLogError("Programming error",asynchronous:false)
+					assertionFailure("Programming error")
+					dispatch_async(dispatch_get_main_queue()) {
+						completionHandler?()
+					}
+					return
+				}
+
+				if monitoredGeofences.count == 0 {
+					DDLogVerbose("No region to stop!")
+					dispatch_async(dispatch_get_main_queue()) {
+						completionHandler?()
+					}
+					return
+				}
+
+				var regionsToStop: [CLRegion] = []
+				for geofence in monitoredGeofences {
+					geofence.monitored = false
+					if let region = self.regions?[geofence.code] {
+						regionsToStop.append(region)
+					}
+				}
+
+				try moc.save()
+
+				self.regions = nil
+
+				dispatch_async(dispatch_get_main_queue()) {
+					for region in regionsToStop {
+						self.locationManager.stopMonitoringForRegion(region)
+						DDLogVerbose("Stop monitoring \(region.identifier)")
+					}
+					completionHandler?()
+				}
+
+			} catch {
+				DDLogError("Core Data Error \(error)")
+				dispatch_async(dispatch_get_main_queue()) {
+					completionHandler?()
+				}
+			}
+		}
+
+	}
+
+	public func reset() {
+		self.stopMonitoringAllRegions {
+			do {
+				try self.dataController.removeStore()
+			} catch {
+				DDLogError("Core Data Error \(error)")
+			}
+
+		}
+	}
+    ///
+    /// - parameter code:   The code of the geofence to remove
+	/// - parameter completionHandler: closure invoked on completion
+	///
     public func removeGeofence(code:String,completionHandler: ((Bool) -> Void)? = nil) {
         let geofenceDeleteRequest = PIGeofenceDeleteRequest(geofenceCode: code) {
             response in
@@ -529,12 +626,9 @@ public final class PIGeofencingManager:NSObject {
         
     }
     
-    /**
-     Returns a fence
-     - parameter code:   the code of the fence we are asking for
-     
-     - returns: the geofence with the given code or nil if not found
-     */
+	/// - parameter code:   the code of the fence we are asking for
+	///
+	/// - returns: the geofence with the given code or nil if not found
     public func queryGeofence(code:String) -> PIGeofence? {
         let moc = self.dataController.mainContext
         let fetchRequest = PIGeofence.fetchRequest
@@ -872,7 +966,11 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
     
     
     private func sendPIMessage(event:PIGeofenceEvent,geofence: PIGeofence?) {
-        
+
+		guard privacy == false else {
+			return
+		}
+		
         guard let geofence = geofence else {
             return
         }
@@ -893,27 +991,33 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
                 application.endBackgroundTask(id)
             }
         }
+		if bkgTaskId == UIBackgroundTaskInvalid {
+			DDLogError("****** No background time for PIGeofenceMonitoringRequest")
+		}
+		
 		DDLogInfo("PIGeofenceMonitoringRequest beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+
+		DDLogInfo("Create PIGeofenceMonitoringRequest \(geofence.code) , \(geofence.name), \(event.rawValue)")
 
         let piRequest = PIGeofenceMonitoringRequest(geofenceCode:geofence.code,eventTime:NSDate(),event:event,geofenceName: geofence.name) {
             response in
             switch response.result {
             case let .HTTPStatus(status,_)?:
-                DDLogError("PIGeofenceMonitoringRequest status \(status)")
-                DDLogError("PIGeofenceMonitoringRequest \(response.httpRequest)")
+                DDLogError("****** PIGeofenceMonitoringRequest status \(status)")
+                DDLogError("****** PIGeofenceMonitoringRequest \(response.httpRequest)")
             case let .Error(error)?:
-                DDLogError("PIGeofenceMonitoringRequest error \(error)")
+                DDLogError("****** PIGeofenceMonitoringRequest error \(error)")
             case let .Exception(exception)?:
-                DDLogError("PIGeofenceMonitoringRequest exception \(exception)")
+                DDLogError("****** PIGeofenceMonitoringRequest exception \(exception)")
             case .Cancelled?:
-                DDLogVerbose("PIGeofenceMonitoringRequest cancelled")
+                DDLogVerbose("****** PIGeofenceMonitoringRequest cancelled")
             case .OK?:
                 DDLogInfo("PIGeofenceMonitoringRequest OK \(event.rawValue) : \(geofence.code)")
             case nil:
                 break
             }
             if bkgTaskId != UIBackgroundTaskInvalid {
-				DDLogInfo("PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)")
+				DDLogInfo("****** PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)")
                 let id = bkgTaskId
                 bkgTaskId = UIBackgroundTaskInvalid
                 application.endBackgroundTask(id)

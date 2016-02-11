@@ -57,12 +57,20 @@ public final class PIService: NSObject {
         self.httpQueue.addOperation(response.operation)
         return response
     }
-    
+
+
+	public func executeDownload(request:DownloadRequest) -> DownloadResponse? {
+		let response = request.executeDownload(self)
+		return response
+	}
+
+
+
     public func cancelAll() {
         self.httpQueue.cancelAllOperations()
     }
     
-    /// This foreground session shares its cookies with the background session
+    /// Foreground session
     lazy var serviceSession:NSURLSession = {
         
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
@@ -80,8 +88,24 @@ public final class PIService: NSObject {
         
     }()
     
+	lazy var backgroundServiceSession:NSURLSession = {
+
+		let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(NSUUID().UUIDString)
+
+		configuration.discretionary = false
+		configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
+		configuration.HTTPCookieAcceptPolicy = .Always
+		configuration.HTTPShouldSetCookies = true
+		configuration.HTTPAdditionalHeaders = self.defaultHTTPHeaders()
+		configuration.URLCache = nil
+		configuration.allowsCellularAccess = true
+
+		return NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+
+	}()
+
     private func defaultHTTPHeaders() -> [String:String] {
-        
+
         let headers = [
             "Accept" : "application/json",
             "Content-Type" : "application/json",

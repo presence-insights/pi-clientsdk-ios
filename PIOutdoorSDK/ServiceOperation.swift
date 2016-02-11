@@ -149,5 +149,21 @@ extension ServiceOperation {
         }
         
     }
-    
+
+	func performDownloadRequest(request:NSURLRequest,retryCount:Int = 0,completionHandler: () -> ())  {
+
+		self.request = request
+		synchronized {
+			if self.cancelled {
+				self.result = .Cancelled
+				completionHandler()
+				return
+			}
+
+			self.task = self.service.serviceSession.downloadTaskWithRequest(request)
+			self.task?.resume()
+		}
+	}
+
+
 }

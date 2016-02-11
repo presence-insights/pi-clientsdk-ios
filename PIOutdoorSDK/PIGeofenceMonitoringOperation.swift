@@ -38,11 +38,15 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
 		self.geofenceName = geofenceName
         super.init(service: service)
         self.name = "com.ibm.PI.GeofenceMonitoringOperation"
+
+		DDLogVerbose("Create PIGeofenceMonitoringOperation \(geofenceCode) , \(geofenceName)")
     }
     
     override func main() {
         let path = "conn-geofence/v1/tenants/\(service.tenantCode)/orgs/\(service.orgCode!)"
         
+		DDLogVerbose("Main PIGeofenceMonitoringOperation \(path)")
+
         var json:[String:AnyObject] = [:]
         var notification:[String:AnyObject] = [:]
         
@@ -79,6 +83,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         performRequest(request) {
             self.executing = false
             self.finished = true
+			DDLogVerbose("End PIGeofenceMonitoringOperation \(path)")
         }
         
         

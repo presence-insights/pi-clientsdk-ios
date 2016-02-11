@@ -18,12 +18,14 @@
 
 import Foundation
 
+let kPrivacyDidChange = "com.ibm.PIOutdoorSample"
 
 struct Settings {
     static var privacy:Bool {
         set {
         NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: "PrivacyOn")
         NSUserDefaults.standardUserDefaults().synchronize()
+		NSNotificationCenter.defaultCenter().postNotificationName(kPrivacyDidChange, object: nil)
         }
         get {
             return NSUserDefaults.standardUserDefaults().boolForKey("PrivacyOn")

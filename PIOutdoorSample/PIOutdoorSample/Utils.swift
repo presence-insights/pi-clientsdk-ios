@@ -49,4 +49,18 @@ class Utils {
         }
         
     }
+	
+	static func updateBodyTextStyle(label:UILabel) {
+
+		var font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+		if font.pointSize > 22 {
+			font = font.fontWithSize(22)
+		}
+		if font.pointSize < 15 {
+			font = font.fontWithSize(15)
+		}
+
+		label.font = font
+
+	}
 }

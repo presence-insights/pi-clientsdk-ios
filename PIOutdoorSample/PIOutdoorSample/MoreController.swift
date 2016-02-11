@@ -24,6 +24,8 @@ enum MoreSections: Int {
 
 enum MoreSettings: Int {
     case Privacy
+	case TenantCode
+	case OrgCode
 }
 
 
@@ -37,13 +39,19 @@ class MoreController: UITableViewController {
         self.tableView.estimatedRowHeight = 44
         
         self.tableView.registerNib(CellSwitch.nib, forCellReuseIdentifier:CellSwitch.identifier)
-        
+
         NSNotificationCenter.defaultCenter().addObserver(
             self,
             selector: "contentsSizeChanged:",
             name: UIContentSizeCategoryDidChangeNotification,
             object: nil)
         
+		NSNotificationCenter.defaultCenter().addObserver(
+			self,
+			selector: "orgCodeDidChange:",
+			name: kOrgCodeDidChange,
+			object: nil)
+
 
     }
 
@@ -108,6 +116,20 @@ class MoreController: UITableViewController {
                 cell.switchOn.on = Settings.privacy
                 cell.switchOn?.addTarget(self, action: "onChanged:", forControlEvents: UIControlEvents.ValueChanged)
                 return cell
+			case .TenantCode:
+				let cell = self.dequeueBasicCellForIndexPath(indexPath)
+				cell.textLabel?.text = NSLocalizedString("More.Settings.TenantCode",comment:"")
+
+				cell.detailTextLabel?.text = piGeofencingManager.service.tenantCode
+
+				return cell
+			case .OrgCode:
+				let cell = self.dequeueBasicCellForIndexPath(indexPath)
+				cell.textLabel?.text = NSLocalizedString("More.Settings.OrgCode",comment:"")
+
+				cell.detailTextLabel?.text = piGeofencingManager.service.orgCode
+				
+				return cell
             }
             
             
@@ -115,6 +137,19 @@ class MoreController: UITableViewController {
         
     }
     
+	private func dequeueBasicCellForIndexPath(indexPath:NSIndexPath) -> UITableViewCell
+	{
+
+		let cell = self.tableView.dequeueReusableCellWithIdentifier("BasicCellID", forIndexPath:indexPath) as UITableViewCell
+
+		cell.imageView?.image = nil
+		cell.detailTextLabel?.text = nil
+		cell.textLabel?.textColor = nil
+		Utils.updateBodyTextStyle(cell.textLabel!)
+		Utils.updateBodyTextStyle(cell.detailTextLabel!)
+		return cell
+	}
+
     func onChanged(sender: UISwitch) {
         Settings.privacy = sender.on
     }
@@ -123,5 +158,8 @@ class MoreController: UITableViewController {
         self.tableView.reloadData()
     }
     
+	func orgCodeDidChange(notification:NSNotification){
+		self.tableView.reloadData()
+	}
 
 }

@@ -41,3 +41,6 @@
 
 "Alert.GeofenceDeletion.Error.Title" = "Error";
 "Alert.GeofenceDeletion.Error.Message" = "An error occured when deleting the geofence";
+
+"More.Settings.TenantCode" = "PI Tenant";
+"More.Settings.OrgCode" = "PI Organization";

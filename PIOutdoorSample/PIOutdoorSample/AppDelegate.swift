@@ -31,6 +31,8 @@ var piGeofencingManager: PIGeofencingManager!
 
 let kSeedDidComplete = "com.ibm.PI.SeedDidComplete"
 
+let kOrgCodeDidChange = "com.ibm.PI.OrgCodeDidChange"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -80,6 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             username: username,
             password: password)
         
+		piGeofencingManager.privacy = Settings.privacy
 
 		let data: NSData?
 		if piGeofencingManager.firstTime {
@@ -87,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			DDLogInfo("First time after installation")
 		} else {
 			DDLogInfo("Look into the keychain")
-			data = SSKeychain.passwordDataForService("PIIndoor", account: tenantCode)
+			data = SSKeychain.passwordDataForService(hostname, account: tenantCode)
 		}
 
 
@@ -95,15 +98,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: [])
                 if let orgCode = json["orgCode"] as? String {
-                    piGeofencingManager.service.orgCode = orgCode
-                    DDLogVerbose("OrgCode \(orgCode)")
+						piGeofencingManager.service.orgCode = orgCode
+						DDLogVerbose("OrgCode \(orgCode)")
                 } else {
                     DDLogError("orgCode missing in the JSON from the KeyChain")
                 }
             } catch {
-                DDLogError("Can't read JSON in the KeyChain")
+                DDLogError("Can't read JSON in the KeyChain \(error)")
             }
-        } else {
+        }
+		if piGeofencingManager.service.orgCode == nil {
             let service = piGeofencingManager.service
             let orgName = UIDevice.currentDevice().name + "-" + NSUUID().UUIDString
             DDLogVerbose("Start PIServiceCreateOrgRequest: \(orgName)")
@@ -123,9 +127,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 						return
 					}
 
-                    SSKeychain.setPasswordData(data, forService: "PIIndoor", account: tenantCode)
+                    SSKeychain.setPasswordData(data, forService: hostname, account: tenantCode)
                     dispatch_async(dispatch_get_main_queue()) {
                         piGeofencingManager.service.orgCode = orgCode
+						NSNotificationCenter.defaultCenter().postNotificationName(kOrgCodeDidChange, object: self)
                     }
 
                 case .Cancelled?:
@@ -156,6 +161,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //self.seeding()
 
         self.manageAuthorizations()
+
+		NSNotificationCenter.defaultCenter().addObserver(
+			self,
+			selector: "privacyDidChange:",
+			name: kPrivacyDidChange,
+			object: nil)
 
         return true
     }
@@ -412,6 +423,10 @@ extension AppDelegate:PIGeofencingManagerDelegate {
                 application.endBackgroundTask(id)
             }
         }
+		if bkgTaskId == UIBackgroundTaskInvalid {
+			DDLogError("****** No background time for SlackOperation!!!")
+		}
+
 		DDLogVerbose("SlackOperation beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
 
         chatPostMessage.completionBlock = {
@@ -419,20 +434,20 @@ extension AppDelegate:PIGeofencingManagerDelegate {
             
             switch chatPostMessage.result {
             case let .HTTPStatus(status, _)?:
-                DDLogError("SlackOperation HTTPStatus \(status)")
+                DDLogError("****** SlackOperation HTTPStatus \(status)")
             case let .Error(error)?:
-                DDLogError("SlackOperation Error \(error)")
+                DDLogError("****** SlackOperation Error \(error)")
             case let .Exception(exception)?:
-				DDLogError("SlackOperation Exception \(exception)")
+				DDLogError("****** SlackOperation Exception \(exception)")
             case .Cancelled?:
-				DDLogError("SlackOperation cancelled")
+				DDLogError("****** SlackOperation cancelled")
             case .OK?:
                 DDLogVerbose("SlackOperation OK")
 			case nil:
-				DDLogError("SlackOperation cancelled nil")
+				DDLogError("****** SlackOperation cancelled nil")
             }
             if bkgTaskId != UIBackgroundTaskInvalid {
-                DDLogVerbose("SlackOperation endBackgroundTask \(bkgTaskId)")
+                DDLogVerbose("****** SlackOperation endBackgroundTask \(bkgTaskId)")
                 let id = bkgTaskId
                 bkgTaskId = UIBackgroundTaskInvalid
                 application.endBackgroundTask(id)
@@ -444,5 +459,12 @@ extension AppDelegate:PIGeofencingManagerDelegate {
         
     }
 
+}
+
+extension AppDelegate {
+
+	func privacyDidChange(notification:NSNotification) {
+		piGeofencingManager.privacy = Settings.privacy
+	}
 }
 
