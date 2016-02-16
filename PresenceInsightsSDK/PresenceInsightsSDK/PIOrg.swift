@@ -20,7 +20,7 @@
 import UIKit
 
 // MARK: - PIOrg object
-public struct PIOrg {
+public class PIOrg:NSObject {
     
     // Org properties
     public var name: String?
@@ -48,7 +48,7 @@ public struct PIOrg {
     
     - returns: An initialized PIOrg.
     */
-    public init() {
+    public override init() {
         self.name = nil
         self.piDescription = nil
         self.registrationTypes = nil

@@ -20,7 +20,7 @@
 import UIKit
 
 // MARK: - PIDevice object
-public struct PIDevice {
+public class PIDevice:NSObject {
     
     // Values every device has.
     public let descriptor: String?
@@ -61,7 +61,7 @@ public struct PIDevice {
     
     - returns: An initialized PIDevice.
     */
-    public init() {
+    public override init() {
         self.name = nil
         self.type = nil
         self.data = nil
@@ -123,12 +123,12 @@ public struct PIDevice {
     - parameter object:   Object to be stored
     - parameter key:      Key to use to store object
     */
-    public mutating func addToDataObject(object: AnyObject, key: String) {
+    public func addToDataObject(object: AnyObject, key: String) {
         if data == nil {
             data = [:]
         }
         
-        data![key] = object
+        data?[key] = object
     }
     
     /**
@@ -137,7 +137,7 @@ public struct PIDevice {
     - parameter object:   Object to be stored
     - parameter key:      Key to use to store object
     */
-    public mutating func addToUnencryptedDataObject(object: AnyObject, key: String) {
+    public func addToUnencryptedDataObject(object: AnyObject, key: String) {
         if unencryptedData == nil {
             unencryptedData = [:]
         }

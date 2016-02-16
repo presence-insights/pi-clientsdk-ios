@@ -120,7 +120,7 @@ internal class RegionManager {
     
     func removeAllRegions() {
         // stop ranging
-        for region: CLRegion in self._locationManager.rangedRegions {
+        for region in self._locationManager.rangedRegions {
             let beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: region.identifier)!, identifier: region.identifier)
             _locationManager.stopRangingBeaconsInRegion(beaconRegion)
         }
