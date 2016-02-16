@@ -37,7 +37,8 @@ public enum PIOutdoorError:ErrorType {
     
     case WrongFences(Int)
     case HTTPStatus(Int,AnyObject?)
-    
+
+	case DownloadError
     case InternalError(ErrorType)
 }
 
@@ -141,43 +142,45 @@ public final class PIGeofencingManager:NSObject {
         }
     }
 
+	public static func logFiles() -> [String] {
+		let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIOutdoorUtils.documentsDirectory.path)
+
+		return documentsFileManager.sortedLogFilePaths().map { String($0) }
+
+	}
+
     /**
      Ask the back end for the latest geofences to monitor
      - parameter completionHandler:  The closure called when the synchronisation is completed
      */
-    public func synchronize(completionHandler:((error:ErrorType?) -> Void)? = nil)  {
-        let request = PIGeofencesRequest() { response in
-            switch response.result {
-            case .Cancelled?:
-                break
-            case let .Error(error)?:
-                DDLogError("Synchronize Error \(error)")
-                completionHandler?(error: error)
-                
-            case .Exception(let exception)?:
-                DDLogError("Synchronize Exception \(exception)")
-                completionHandler?(error: exception)
-                
-            case let .HTTPStatus(status,json)?:
-                DDLogError("Synchronize HTTP Status \(status)")
-                completionHandler?(error: PIOutdoorError.HTTPStatus(status,json))
-                
-            case let .OK(json)?:
-                if let json = json as? [String:AnyObject] {
-                    if let geojson = json["geojson"] as? [String:AnyObject] {
-                        self.seedGeojson(geojson,completionHandler:completionHandler)
-                    }
-                }
-                print(json)
-            case nil:
-                fatalError("Shouldn't be there")
-            }
-        }
-        
-        service.executeRequest(request)
-        
-        
+	public func synchronize(completionHandler: ((Bool)-> Void)? = nil) {
+        let request = PIGeofenceFencesDownloadRequest()
+		guard let response = service.executeDownload(request) else {
+			completionHandler?(false)
+			return
+		}
+
+		let moc = dataController.writerContext
+		moc.performBlock {
+			let download:PIDownload = moc.insertObject()
+
+			download.sessionId = response.backgroundSessionIdentifier
+			download.taskId = response.taskIdentifier
+			download.completed = false
+			do {
+				try moc.save()
+				completionHandler?(true)
+			} catch {
+				DDLogError("Core Data Error \(error)",asynchronous:false)
+				completionHandler?(false)
+			}
+		}
+
     }
+
+	public func handleEventsForBackgroundURLSession(identifier: String, completionHandler: () -> Void) {
+
+	}
     
     func didBecomeActive(notification:NSNotification) {
     }
@@ -254,9 +257,15 @@ public final class PIGeofencingManager:NSObject {
                     self.regions = [:]
                     for geofence in monitoredGeofences {
                         let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.code)
-                        DDLogVerbose("already monitoring \(geofence.name)")
+                        DDLogVerbose("already monitoring \(geofence.name) \(geofence.code)")
                         self.regions?[geofence.code] = region
-                        
+						let monitoredRegions = self.locationManager.monitoredRegions.filter {
+							$0.identifier == region.identifier
+						}
+						if monitoredRegions.isEmpty {
+							DDLogError("Error \(geofence.name) \(geofence.code) not found in CLLocationManager.monitoredRegions")
+						}
+
                     }
                 }
                 
@@ -297,9 +306,9 @@ public final class PIGeofencingManager:NSObject {
                         let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence]
                         if let geofence = geofences?.first {
                             geofence.monitored = false
-                            DDLogVerbose("Too far, stopMonitoringForRegion \(geofence.name) \(geofenceCode)")
+                            DDLogVerbose("Too far, will stopMonitoringForRegion \(geofence.name) \(geofenceCode)")
                         } else {
-                            DDLogError("Region \(geofenceCode) not found")
+                            DDLogError("Region \(geofenceCode) not found, can't stopMonitoringForRegion")
                         }
                     } else {
                         // keep the region
@@ -320,7 +329,7 @@ public final class PIGeofencingManager:NSObject {
                     let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.code)
 					regionsToStart.append(region)
                     self.regions?[geofence.code] = region
-                    DDLogVerbose("startMonitoringForRegion \(geofence.name) \(region.identifier)")
+                    DDLogVerbose("will startMonitoringForRegion \(geofence.name) \(region.identifier)")
                 }
                 
                 try moc.save()
@@ -328,9 +337,11 @@ public final class PIGeofencingManager:NSObject {
 				dispatch_async(dispatch_get_main_queue()) {
 					for region in regionsToStop {
 						self.locationManager.stopMonitoringForRegion(region)
+						DDLogVerbose("did stopMonitoringForRegion \(region.identifier)")
 					}
 					for region in regionsToStart {
 						self.locationManager.startMonitoringForRegion(region)
+						DDLogVerbose("did startMonitoringForRegion \(region.identifier)")
 					}
 					completionHandler?()
 				}
@@ -742,23 +753,23 @@ public final class PIGeofencingManager:NSObject {
             var nbErrors = 0
             for (i,fence) in geofences.enumerate() {
                 guard let type = fence["type"] as? String else {
-                    DDLogError("\(i) Missing type property")
+                    DDLogError("\(i) Missing type property",asynchronous:false)
                     nbErrors += 1
                     continue
                 }
                 guard type == "Feature" else {
-                    DDLogError("\(i) Wrong type \(type)")
+                    DDLogError("\(i) Wrong type \(type)",asynchronous:false)
                     nbErrors += 1
                     continue
                 }
                 guard let geometry = fence["geometry"] as? [String:AnyObject] else {
-                    DDLogError("\(i) Missing geometry")
+                    DDLogError("\(i) Missing geometry",asynchronous:false)
                     nbErrors += 1
                     continue
                 }
                 
                 guard let geometry_type = geometry["type"] as? String else {
-                    DDLogError("\(i) Missing geometry type")
+                    DDLogError("\(i) Missing geometry type",asynchronous:false)
                     nbErrors += 1
                     continue
                 }
@@ -769,7 +780,7 @@ public final class PIGeofencingManager:NSObject {
                 }
                 
                 guard let coordinates = geometry["coordinates"] as? [NSNumber] else {
-                    DDLogError("\(i) Missing coordinates")
+                    DDLogError("\(i) Missing coordinates",asynchronous:false)
                     nbErrors += 1
                     continue
                 }
@@ -784,7 +795,7 @@ public final class PIGeofencingManager:NSObject {
                 let longitude = coordinates[0]
                 
                 guard let properties = fence["properties"] as? [String:AnyObject] else {
-                    DDLogError("\(i) Missing properties")
+                    DDLogError("\(i) Missing properties",asynchronous:false)
                     nbErrors += 1
                     continue
                 }
@@ -935,12 +946,12 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
     
     public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion){
         guard let geofence = self.queryGeofence(region.identifier) else {
-            DDLogError("Region not found")
+			DDLogError("didEnterRegion Region \(region.identifier) not found")
             self.delegate?.geofencingManager(self, didEnterGeofence: nil)
             return
         }
         
-        DDLogVerbose("didEnterRegion \(region.identifier)")
+        DDLogVerbose("didEnterRegion \(region.identifier) \(geofence.name)")
         
         self.sendPIMessage(.Enter, geofence: geofence)
         
@@ -951,12 +962,12 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
     public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion){
         
         guard let geofence = self.queryGeofence(region.identifier) else {
-            DDLogError("Region not found")
+            DDLogError("didExitRegion Region \(region.identifier) not found")
             self.delegate?.geofencingManager(self, didExitGeofence: nil)
             return
         }
         
-        DDLogVerbose("didExitRegion \(region.identifier)")
+        DDLogVerbose("didExitRegion \(region.identifier) \(geofence.name)")
         
         self.sendPIMessage(.Exit, geofence: geofence)
 		
@@ -968,15 +979,17 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
     private func sendPIMessage(event:PIGeofenceEvent,geofence: PIGeofence?) {
 
 		guard privacy == false else {
+			DDLogVerbose("sendPIMessage \(geofence?.name) \(event), privacyOn !!!")
 			return
 		}
 		
         guard let geofence = geofence else {
+			DDLogError("****** sendPIMessage, Missing fence",asynchronous:false)
             return
         }
         
         guard let _ = service.orgCode else {
-            DDLogError("No Organization Code")
+            DDLogError("****** sendPIMessage, No Organization Code",asynchronous:false)
             return
         }
         
@@ -984,7 +997,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
         var bkgTaskId = UIBackgroundTaskInvalid
         bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
             if bkgTaskId != UIBackgroundTaskInvalid {
-				DDLogError("****** PIGeofenceMonitoringRequest ExpirationHandler \(bkgTaskId)")
+				DDLogError("****** PIGeofenceMonitoringRequest ExpirationHandler \(bkgTaskId)",asynchronous:false)
                 self.service.cancelAll()
                 let id = bkgTaskId
                 bkgTaskId = UIBackgroundTaskInvalid
@@ -992,7 +1005,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
             }
         }
 		if bkgTaskId == UIBackgroundTaskInvalid {
-			DDLogError("****** No background time for PIGeofenceMonitoringRequest")
+			DDLogError("****** No background time for PIGeofenceMonitoringRequest",asynchronous:false)
 		}
 		
 		DDLogInfo("PIGeofenceMonitoringRequest beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
@@ -1003,12 +1016,12 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
             response in
             switch response.result {
             case let .HTTPStatus(status,_)?:
-                DDLogError("****** PIGeofenceMonitoringRequest status \(status)")
-                DDLogError("****** PIGeofenceMonitoringRequest \(response.httpRequest)")
+                DDLogError("****** PIGeofenceMonitoringRequest status \(status)",asynchronous:false)
+                DDLogError("****** PIGeofenceMonitoringRequest \(response.httpRequest)",asynchronous:false)
             case let .Error(error)?:
-                DDLogError("****** PIGeofenceMonitoringRequest error \(error)")
+                DDLogError("****** PIGeofenceMonitoringRequest error \(error)",asynchronous:false)
             case let .Exception(exception)?:
-                DDLogError("****** PIGeofenceMonitoringRequest exception \(exception)")
+                DDLogError("****** PIGeofenceMonitoringRequest exception \(exception)",asynchronous:false)
             case .Cancelled?:
                 DDLogVerbose("****** PIGeofenceMonitoringRequest cancelled")
             case .OK?:

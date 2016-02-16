@@ -29,7 +29,7 @@ class CellSwitch: UITableViewCell {
     }
     
     func updateFonts() {
-        Utils.updateTextStyle(leftLabel)
+        Utils.updateBodyTextStyle(leftLabel)
         
     }
     

@@ -49,7 +49,7 @@ final class PIGeofenceCreateOperation:ServiceOperation {
         
         var geometry:[String:AnyObject] = [:]
         geometry["type"] = "Point"
-        geometry["coordinates"] = [geofenceCoordinate.latitude,geofenceCoordinate.longitude]
+        geometry["coordinates"] = [geofenceCoordinate.longitude,geofenceCoordinate.latitude]
         json["geometry"] = geometry
         
         var properties:[String:AnyObject] = [:]

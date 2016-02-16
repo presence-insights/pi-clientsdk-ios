@@ -32,8 +32,21 @@
 
 
 "More.Section.Settings" = "Settings";
+"More.Section.PIOutdoorSample" = "PI Sample";
 
 "More.Settings.Privacy" = "Privacy";
+
+"More.PIOutdoorSample.ContactUs" = "Contact Us";
+
+"NoMail.Message.ContactUs" = "No mail account available to contact us.";
+"NoMail.Message.Title" = "No Mail";
+
+
+"Alert.OrgCreation.Error.Title" = "Error";
+"Alert.OrgCreation.Error.Message" = "An error occured when creating an org";
+
+"Alert.OrgCreation.Title" = "Organization";
+"Alert.OrgCreation.Message" = "An org has been created for your device";
 
 "Alert.GeofenceCreation.Error.Title" = "Error";
 "Alert.GeofenceCreation.Error.Message" = "An error occured when creating the geofence";
@@ -44,3 +57,8 @@
 
 "More.Settings.TenantCode" = "PI Tenant";
 "More.Settings.OrgCode" = "PI Organization";
+
+"MailFooter.App %@" = "App: %@\n";
+"MailFooter.Device %@ %@" = "Device: %@ (%@)\n";
+"MailFooter.Locale %@" = "Locale: %@";
+

@@ -24,8 +24,9 @@ import PIOutdoorSDK
 import CoreLocation
 import SSKeychain
 import CocoaLumberjack
+import MBProgressHUD
 
-let slackToken: String? = nil
+let slackToken: String? = "xoxb-16384356389-QhQvfBrIrUgne6CLza7fRkx5"
 
 var piGeofencingManager: PIGeofencingManager!
 
@@ -84,6 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 		piGeofencingManager.privacy = Settings.privacy
 
+		SSKeychain.setAccessibilityType(kSecAttrAccessibleAlwaysThisDeviceOnly)
 		let data: NSData?
 		if piGeofencingManager.firstTime {
 			data = nil
@@ -108,10 +110,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 		if piGeofencingManager.service.orgCode == nil {
+			MBProgressHUD.showHUDAddedTo(self.window?.rootViewController?.view,animated:true)
             let service = piGeofencingManager.service
             let orgName = UIDevice.currentDevice().name + "-" + NSUUID().UUIDString
             DDLogVerbose("Start PIServiceCreateOrgRequest: \(orgName)")
             let request = PIServiceCreateOrgRequest(orgName:orgName) { response in
+				MBProgressHUD.hideHUDForView(self.window?.rootViewController?.view, animated: true)
                 switch response.result {
                 case .OK?:
                     DDLogVerbose("PIServiceCreateOrgRequest OK \(response.orgCode)")
@@ -128,8 +132,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 					}
 
                     SSKeychain.setPasswordData(data, forService: hostname, account: tenantCode)
+					piGeofencingManager.service.orgCode = orgCode
                     dispatch_async(dispatch_get_main_queue()) {
-                        piGeofencingManager.service.orgCode = orgCode
 						NSNotificationCenter.defaultCenter().postNotificationName(kOrgCodeDidChange, object: self)
                     }
 
@@ -145,10 +149,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     assertionFailure("Programming Error")
                     break
                 }
+				if let _ = piGeofencingManager.service.orgCode {
+					let alertController = UIAlertController(
+						title: NSLocalizedString("Alert.OrgCreation.Title",comment:""),
+						message: NSLocalizedString("Alert.OrgCreation.Message",comment:""),
+						preferredStyle: .Alert)
+
+					let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
+					}
+					alertController.addAction(okAction)
+
+
+					self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+				} else {
+					let alertController = UIAlertController(
+						title: NSLocalizedString("Alert.OrgCreation.Error.Title",comment:""),
+						message: NSLocalizedString("Alert.OrgCreation.Error.Message",comment:""),
+						preferredStyle: .Alert)
+
+					let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
+					}
+					alertController.addAction(okAction)
+
+
+					self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+					
+
+				}
             }
             service.executeRequest(request)
         }
-        
+
 
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
@@ -245,7 +276,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
-        
+
+		piGeofencingManager.handleEventsForBackgroundURLSession(identifier, completionHandler: completionHandler)
     }
 
 }
@@ -396,10 +428,12 @@ extension AppDelegate:PIGeofencingManagerDelegate {
     private func sendSlackMessage(event:String,geofence: PIGeofence?) {
         
         guard Settings.privacy == false else {
+			DDLogVerbose("sendSlackMessage, privacyOn !!!")
             return
         }
         
         guard let slackToken = slackToken else {
+			DDLogVerbose("sendSlackMessage, No slack token !!!")
             return
         }
         

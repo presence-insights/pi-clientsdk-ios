@@ -25,14 +25,6 @@ import CocoaLumberjack
 /// Get the geofences defined on the PI backend
 public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 
-	public let completionBlock: Response -> Void
-
-
-
-	public init(completionBlock:Response -> Void) {
-		self.completionBlock = completionBlock
-	}
-
 	public func executeDownload(service:PIService) -> DownloadResponse? {
 
 
@@ -44,7 +36,7 @@ public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 		task.resume()
 		let taskIdentifier = task.taskIdentifier
 		guard let backgroundSessionIdentifier = service.backgroundServiceSession.configuration.identifier else {
-			DDLogError("No Background session identifier")
+			DDLogError("No Background session identifier",asynchronous:false)
 			return nil
 		}
 

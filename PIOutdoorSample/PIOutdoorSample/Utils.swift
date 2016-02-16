@@ -64,3 +64,39 @@ class Utils {
 
 	}
 }
+
+extension Utils {
+
+	static func mailFooter() -> String {
+
+		let infoDictionary = NSBundle.mainBundle().infoDictionary!
+
+		let appBundleIdentifier = infoDictionary["CFBundleIdentifier"] as! String
+
+		let appVersion = "\(appBundleIdentifier) \(self.version))"
+
+		let systemVersion = UIDevice.currentDevice().systemVersion
+
+		let emailBody = "\n\n\n-----\n" +
+			String(format:NSLocalizedString("MailFooter.App %@", comment:""),appVersion) +
+			String(format:NSLocalizedString("MailFooter.Device %@ %@", comment:""),UIDevice.currentDevice().machineName,systemVersion) +
+			String(format:NSLocalizedString("MailFooter.Locale %@", comment:""),NSLocale.currentLocale().localeIdentifier)
+
+
+
+		return emailBody
+
+	}
+
+	static let version:String = {
+		let infoDictionary = NSBundle(forClass: Utils.self).infoDictionary!
+		let appVersionName = infoDictionary["CFBundleShortVersionString"] as! String
+		let appBuildNumber = infoDictionary["CFBundleVersion"] as! String
+
+		return "\(appVersionName) (\(appBuildNumber))"
+
+	}()
+	
+
+}
+

@@ -16,6 +16,7 @@
 		7D0C39191C4CE97400BD7798 /* CellSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0C39171C4CE97400BD7798 /* CellSwitch.swift */; };
 		7D0C391A1C4CE97400BD7798 /* CellSwitch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D0C39181C4CE97400BD7798 /* CellSwitch.xib */; };
 		7D4510A91C5A66FE007BA047 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D4510A81C5A66FE007BA047 /* Settings.bundle */; };
+		7DAD42CA1C6E7F520012CE25 /* UIDevice+machineName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAD42C91C6E7F520012CE25 /* UIDevice+machineName.swift */; };
 		7DDC91A01C479609002A5113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DDC919F1C479609002A5113 /* Assets.xcassets */; };
 		7DDC91A31C479609002A5113 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DDC91A11C479609002A5113 /* LaunchScreen.storyboard */; };
 		7DDC91D91C4798DA002A5113 /* SegHandlerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91D81C4798DA002A5113 /* SegHandlerType.swift */; };
@@ -82,6 +83,7 @@
 		7D0C39171C4CE97400BD7798 /* CellSwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellSwitch.swift; sourceTree = "<group>"; };
 		7D0C39181C4CE97400BD7798 /* CellSwitch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CellSwitch.xib; sourceTree = "<group>"; };
 		7D4510A81C5A66FE007BA047 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		7DAD42C91C6E7F520012CE25 /* UIDevice+machineName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+machineName.swift"; sourceTree = "<group>"; };
 		7DDC91951C479609002A5113 /* PIOutdoorSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PIOutdoorSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DDC919F1C479609002A5113 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7DDC91A21C479609002A5113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				7DDC91A41C479609002A5113 /* Info.plist */,
 				7DDC91F61C479A07002A5113 /* Localizable.strings */,
 				7DDC91F41C4799FE002A5113 /* Utils.swift */,
+				7DAD42C91C6E7F520012CE25 /* UIDevice+machineName.swift */,
 				7DDC91F81C479A13002A5113 /* referentiel-gares-voyageurs.geojson.zip */,
 				7D4510A81C5A66FE007BA047 /* Settings.bundle */,
 			);
@@ -418,6 +421,7 @@
 				7D0C39161C4CE69C00BD7798 /* Settings.swift in Sources */,
 				7DDC91F51C4799FE002A5113 /* Utils.swift in Sources */,
 				7DDC91F01C4799C4002A5113 /* GeofenceAnnotation.swift in Sources */,
+				7DAD42CA1C6E7F520012CE25 /* UIDevice+machineName.swift in Sources */,
 				7DDC91E41C479993002A5113 /* MapCell.swift in Sources */,
 				7D0101071C511F46006C0666 /* SlackOperation.swift in Sources */,
 				7DDC91F21C4799C4002A5113 /* MapController.swift in Sources */,

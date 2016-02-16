@@ -62,7 +62,7 @@ public class SlackOperation: HTTPOperation {
             queryItems[key] = value
         }
         queryItems["token"] = self.token
-        queryItems["username"] = "geofence"
+        queryItems["username"] = "geofence - \(Utils.version)"
         URLComponents.percentEncodedQuery = buildQueryStringWithParams(queryItems)
         
         guard let urlAPI = URLComponents.URL else {

@@ -37,7 +37,15 @@ class PIOutdoorUtils {
         
         return NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first!
     }()
-    
+
+	static let version:String = {
+		let infoDictionary = NSBundle(forClass: PIOutdoorUtils.self).infoDictionary!
+		let appVersionName = infoDictionary["CFBundleShortVersionString"] as! String
+		let appBuildNumber = infoDictionary["CFBundleVersion"] as! String
+
+		return "\(appVersionName) (\(appBuildNumber))"
+
+	}()
 
 }
 

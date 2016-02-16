@@ -17,15 +17,23 @@
  **/
 
 import UIKit
+import MessageUI
+import CocoaLumberjack
+import PIOutdoorSDK
 
 enum MoreSections: Int {
     case Settings
+	case PIOutdoorSample
 }
 
 enum MoreSettings: Int {
     case Privacy
 	case TenantCode
 	case OrgCode
+}
+
+enum MorePIOutdoorSample: Int {
+	case ContactUs
 }
 
 
@@ -71,6 +79,9 @@ class MoreController: UITableViewController {
         switch (sectionEnum){
         case .Settings:
             return maximum(MoreSettings)
+		case .PIOutdoorSample:
+			return maximum(MorePIOutdoorSample)
+
         }
     }
 
@@ -79,7 +90,10 @@ class MoreController: UITableViewController {
         switch (sectionEnum){
         case .Settings:
             return NSLocalizedString("More.Section.Settings",comment:"")
-            
+		case .PIOutdoorSample:
+			return NSLocalizedString("More.Section.PIOutdoorSample",comment:"")
+
+
         }
     }
     
@@ -87,13 +101,9 @@ class MoreController: UITableViewController {
         
         let s = MoreSections(rawValue: section)
         
-        if case .Settings? = s {
-            let infoDictionary = NSBundle.mainBundle().infoDictionary!
-            
-            let appBuildNumber = infoDictionary["CFBundleVersion"] as! String
-            let appVersionName = infoDictionary["CFBundleShortVersionString"] as! String
-            
-            let footer = "Copyright ⓒ 2016 IBM \(appVersionName) (\(appBuildNumber))"
+        if case .PIOutdoorSample? = s {
+
+            let footer = "Copyright ⓒ 2016 IBM \(Utils.version)"
             
             return footer
         } else {
@@ -131,12 +141,35 @@ class MoreController: UITableViewController {
 				
 				return cell
             }
-            
-            
+		case .PIOutdoorSample:
+			let row = MorePIOutdoorSample(rawValue: indexPath.row)
+			switch row! {
+			case .ContactUs:
+				let cell = self.dequeueBasicCellForIndexPath(indexPath)
+				cell.textLabel?.text = NSLocalizedString("More.PIOutdoorSample.ContactUs",comment:"")
+
+				return cell
+			}
+
         }
         
     }
-    
+
+	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		let section = MoreSections(rawValue: indexPath.section)!
+		switch (section) {
+		case .Settings:
+			break
+		case .PIOutdoorSample:
+			let row = MorePIOutdoorSample(rawValue: indexPath.row)!
+			switch row {
+			case .ContactUs:
+				sendLogFiles()
+			}
+
+		}
+	}
+
 	private func dequeueBasicCellForIndexPath(indexPath:NSIndexPath) -> UITableViewCell
 	{
 
@@ -150,16 +183,85 @@ class MoreController: UITableViewController {
 		return cell
 	}
 
+	private func sendLogFiles() {
+
+		if !MFMailComposeViewController.canSendMail() {
+			let message = NSLocalizedString("NoMail.Message.ContactUs", comment: "")
+			let alertController = UIAlertController(title: NSLocalizedString("NoMail.Message.Title", comment: ""), message: message, preferredStyle: .Alert)
+			alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .Default, handler: { (action) -> Void in
+			}))
+			self.presentViewController(alertController, animated: true, completion: nil)
+		} else {
+			let picker = MFMailComposeViewController()
+			picker.mailComposeDelegate = self
+
+			let subject = "PIOutdoorSample \(Utils.version))"
+			picker.setSubject(subject)
+
+			// Set up recipients
+			picker.setToRecipients(["lizeray@fr.ibm.com"])
+
+			let mailFooter = Utils.mailFooter()
+
+			let emailBody = mailFooter
+			// Fill out the email body text
+			picker.setMessageBody(emailBody,isHTML:false)
+
+			collectLogFiles(picker)
+
+			self.presentViewController(picker, animated: true, completion: nil)
+
+		}
+
+	}
+
+	private func collectLogFiles(picker:MFMailComposeViewController) {
+
+		for p in PIGeofencingManager.logFiles() {
+			let url = NSURL(fileURLWithPath: p)
+			if let
+			data = NSData(contentsOfURL: url),
+			filename = url.lastPathComponent {
+				picker.addAttachmentData(data, mimeType: "text/plain", fileName: filename)
+			}
+		}
+
+	}
+
     func onChanged(sender: UISwitch) {
         Settings.privacy = sender.on
     }
-    
+
     func contentsSizeChanged(notification:NSNotification){
         self.tableView.reloadData()
     }
-    
+
 	func orgCodeDidChange(notification:NSNotification){
 		self.tableView.reloadData()
 	}
 
 }
+
+extension MoreController:MFMailComposeViewControllerDelegate {
+
+	func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+
+		self.dismissViewControllerAnimated(true) { (finished) -> Void in
+			switch (result) {
+			case MFMailComposeResultCancelled:
+				break
+			case MFMailComposeResultSaved:
+				break
+			case MFMailComposeResultSent:
+				self.dismissViewControllerAnimated(true,completion:nil)
+			case MFMailComposeResultFailed:
+				break
+			default:
+				break
+			}
+		}
+	}
+}
+
+
+
