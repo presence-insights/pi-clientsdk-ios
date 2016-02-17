@@ -20,12 +20,12 @@
 import UIKit
 
 // MARK: - PIFloor object
-public class PIFloor: NSObject {
+public class PIFloor:NSObject {
 
     // Floor properties
-    public var name: String!
-    public var barriers: CGPoint!
-    public var z: Int!
+    public let name: String?
+    public let barriers: CGPoint?
+    public let z: Int?
 
     /**
     Default object initializer.
@@ -45,8 +45,10 @@ public class PIFloor: NSObject {
 
     - returns: An initialized PIFloor.
     */
-    public convenience override init() {
-        self.init(name: "", barriers: CGPoint() , z: 0)
+    public override init() {
+        self.name = nil
+        self.barriers = nil
+        self.z = nil
     }
 
     /**
@@ -56,17 +58,19 @@ public class PIFloor: NSObject {
 
     - returns: An initialized PIFloor.
     */
-    public convenience init(dictionary: [String: AnyObject]) {
-
-        self.init(name: "", barriers: CGPoint(), z: 0)
+    public init(dictionary: [String: AnyObject]) {
 
         // retrieve dictionaries from feature object
         let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as! [String: AnyObject]
         let properties = dictionary[GeoJSON.PROPERTIES_KEY] as! [String: AnyObject]
 
-        self.name = properties[Floor.JSON_NAME_KEY] as! String
-        self.z = properties[Floor.JSON_Z_KEY] as! Int
-        self.barriers = self.convertGeoJsonPayload(geometry[GeoJSON.COORDINATES_KEY] as! [CGFloat])
+        self.name = properties[Floor.JSON_NAME_KEY] as? String
+        self.z = properties[Floor.JSON_Z_KEY] as? Int
+        if let coordinates = geometry[GeoJSON.COORDINATES_KEY] as? [CGFloat] where coordinates.count == 2 {
+            self.barriers = CGPoint(x: coordinates[0], y: coordinates[1])
+        } else {
+            self.barriers = nil
+        }
 
     }
 
@@ -84,10 +88,6 @@ public class PIFloor: NSObject {
 
         return dictionary
 
-    }
-
-    func convertGeoJsonPayload(payload: [CGFloat]) -> CGPoint{
-        return CGPoint(x: payload.first!, y: payload.last!)
     }
 
 }

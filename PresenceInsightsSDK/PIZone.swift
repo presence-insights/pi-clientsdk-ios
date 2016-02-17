@@ -20,12 +20,12 @@
 import UIKit
 
 // MARK: - PIZone object
-public class PIZone: NSObject {
+public class PIZone:NSObject {
     
     // Zone properties
-    public var name: String!
-    public var polygon: [[CGPoint]]!
-    public var tags: [String]!
+    public let name: String?
+    public let polygon: [[CGPoint]]?
+    public let tags: [String]?
     
     /**
     Default object initializer.
@@ -45,8 +45,10 @@ public class PIZone: NSObject {
     
     - returns: An initialized PIOrg.
     */
-    public convenience override init() {
-        self.init(name: "", polygon: [[CGPoint]](), tags: [])
+    public override init() {
+        self.name = nil
+        self.polygon = nil
+        self.tags = nil
     }
     
     /**
@@ -56,8 +58,10 @@ public class PIZone: NSObject {
 
     - returns: An initialized PIZone.
     */
-    public convenience init(name: String) {
-        self.init(name: name, polygon: [[CGPoint]](), tags: [])
+    public init(name: String) {
+        self.name = name
+        self.polygon = nil
+        self.tags = nil
     }
     
     /**
@@ -67,16 +71,19 @@ public class PIZone: NSObject {
 
     - returns: An initialized PIZone.
     */
-    public convenience init(dictionary: [String: AnyObject]) {
-        self.init(name: "", polygon: [[CGPoint]](), tags: [])
+    public init(dictionary: [String: AnyObject]) {
         
         // retrieve dictionaries from feature object
-        let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as! [String: AnyObject]
-        let properties = dictionary[GeoJSON.PROPERTIES_KEY] as! [String: AnyObject]
+        let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as? [String: AnyObject]
+        let properties = dictionary[GeoJSON.PROPERTIES_KEY] as? [String: AnyObject]
         
-        self.name = properties[Zone.JSON_NAME_KEY] as! String
-        self.tags = properties[Zone.JSON_TAGS_KEY] as! [String]
-        self.polygon = self.convertGeoJsonPayload(geometry[GeoJSON.COORDINATES_KEY] as! [[[CGFloat]]])
+        self.name = properties?[Zone.JSON_NAME_KEY] as? String
+        self.tags = properties?[Zone.JSON_TAGS_KEY] as? [String]
+        if let coordinates = geometry?[GeoJSON.COORDINATES_KEY] as? [[[CGFloat]]] {
+            self.polygon = convertGeoJsonPayload(coordinates)
+        } else {
+            self.polygon = nil
+        }
     }
     
     /**
@@ -87,25 +94,31 @@ public class PIZone: NSObject {
     public func toDictionary() -> [String: Any] {
         
         var dictionary: [String: Any] = [:]
-        
-        dictionary[Zone.JSON_NAME_KEY] = name
-        dictionary[Zone.JSON_POLYGON_KEY] = polygon
-        dictionary[Zone.JSON_TAGS_KEY] = tags
+        if let name = name {
+            dictionary[Zone.JSON_NAME_KEY] = name
+        }
+        if let polygon = polygon {
+            dictionary[Zone.JSON_POLYGON_KEY] = polygon
+        }
+        if let tags = tags {
+            dictionary[Zone.JSON_TAGS_KEY] = tags
+        }
         
         return dictionary
 
     }
     
-    func convertGeoJsonPayload(payload: [[[CGFloat]]]) -> [[CGPoint]]{
-        var returnPayload = [[CGPoint]]()
-        for polygonObj in payload {
-            var pointArray = [CGPoint]()
-            for points in polygonObj {
-                pointArray.append(CGPoint(x: points.first!, y: points.last!))
-            }
-            returnPayload.append(pointArray)
-        }
-        return returnPayload
-    }
-
 }
+
+private func convertGeoJsonPayload(payload: [[[CGFloat]]]) -> [[CGPoint]]{
+    var returnPayload = [[CGPoint]]()
+    for polygonObj in payload {
+        var pointArray = [CGPoint]()
+        for points in polygonObj {
+            pointArray.append(CGPoint(x: points.first!, y: points.last!))
+        }
+        returnPayload.append(pointArray)
+    }
+    return returnPayload
+}
+
