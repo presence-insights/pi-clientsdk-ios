@@ -24,6 +24,7 @@ import CoreLocation
 public class PIBeacon:NSObject {
     
     // Beacon properties
+    public let code: String?
     public let name: String?
     public let beaconDescription: String?
     public let proximityUUID: NSUUID?
@@ -44,6 +45,7 @@ public class PIBeacon:NSObject {
     - parameter minor:           Unique identifier within the major space
     */
     public init(name: String, description: String, proximityUUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
+        self.code = nil
         self.name = name
         self.beaconDescription = description
         self.proximityUUID = proximityUUID
@@ -61,6 +63,7 @@ public class PIBeacon:NSObject {
     - returns: An initialized PIBeacon.
     */
     public override init() {
+        self.code = nil
         self.name = nil
         self.beaconDescription = nil
         self.proximityUUID = NSUUID()
@@ -82,6 +85,7 @@ public class PIBeacon:NSObject {
     - returns: An initialized PIBeacon.
     */
     public init(name: String, description: String, beacon: CLBeacon) {
+        self.code = nil
         self.name = name
         self.beaconDescription = description
         self.proximityUUID = beacon.proximityUUID
@@ -108,6 +112,7 @@ public class PIBeacon:NSObject {
         let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as! [String: AnyObject]
         let properties = dictionary[GeoJSON.PROPERTIES_KEY] as! [String: AnyObject]
         
+        self.code = properties[Beacon.JSON_CODE_KEY] as? String
         self.name = properties[Beacon.JSON_NAME_KEY] as? String
         self.beaconDescription = properties[Beacon.JSON_DESCRIPTION_KEY] as? String
         
@@ -155,6 +160,7 @@ public class PIBeacon:NSObject {
         
         var dictionary: [String: AnyObject] = [:]
         
+        dictionary[Beacon.JSON_CODE_KEY] = code
         dictionary[Beacon.JSON_NAME_KEY] = name
         dictionary[Beacon.JSON_DESCRIPTION_KEY] = beaconDescription
         dictionary[Beacon.JSON_UUID_KEY] = proximityUUID

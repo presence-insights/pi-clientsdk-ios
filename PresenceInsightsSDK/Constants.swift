@@ -29,6 +29,7 @@ struct Device {
 }
 
 struct Org {
+    static let JSON_CODE_KEY = "@code"
     static let JSON_NAME_KEY = "name"
     static let JSON_DESCRIPTION_KEY = "description"
     static let JSON_REGISTRATION_TYPES_KEY = "registrationTypes"
@@ -36,12 +37,14 @@ struct Org {
 }
 
 struct Floor {
+    static let JSON_CODE_KEY = "@code"
     static let JSON_NAME_KEY = "name"
     static let JSON_BARRIERS_KEY = "barriers"
     static let JSON_Z_KEY = "z"
 }
 
 struct Sensor {
+    static let JSON_CODE_KEY = "@code"
     static let JSON_NAME_KEY = "name"
     static let JSON_DESCRIPTION_KEY = "description"
     static let JSON_THRESHOLD_KEY = "threshold"
@@ -52,12 +55,14 @@ struct Sensor {
 }
 
 struct Zone {
+    static let JSON_CODE_KEY = "@code"
     static let JSON_NAME_KEY = "name"
     static let JSON_POLYGON_KEY = "polygon"
     static let JSON_TAGS_KEY = "tags"
 }
 
 struct Beacon {
+    static let JSON_CODE_KEY = "@code"
     static let JSON_NAME_KEY = "name"
     static let JSON_DESCRIPTION_KEY = "description"
     static let JSON_UUID_KEY = "proximityUUID"

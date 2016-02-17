@@ -23,6 +23,7 @@ import UIKit
 public class PIZone:NSObject {
     
     // Zone properties
+    public let code: String?
     public let name: String?
     public let polygon: [[CGPoint]]?
     public let tags: [String]?
@@ -35,6 +36,7 @@ public class PIZone:NSObject {
     - parameter tags:    useful identifying keywords for the zone
     */
     public init(name: String, polygon: [[CGPoint]], tags: [String]) {
+        self.code = nil
         self.name = name
         self.polygon = polygon
         self.tags = tags
@@ -46,6 +48,7 @@ public class PIZone:NSObject {
     - returns: An initialized PIOrg.
     */
     public override init() {
+        self.code = nil
         self.name = nil
         self.polygon = nil
         self.tags = nil
@@ -59,6 +62,7 @@ public class PIZone:NSObject {
     - returns: An initialized PIZone.
     */
     public init(name: String) {
+        self.code = nil
         self.name = name
         self.polygon = nil
         self.tags = nil
@@ -77,6 +81,7 @@ public class PIZone:NSObject {
         let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as? [String: AnyObject]
         let properties = dictionary[GeoJSON.PROPERTIES_KEY] as? [String: AnyObject]
         
+        self.code = properties?[Zone.JSON_CODE_KEY] as? String
         self.name = properties?[Zone.JSON_NAME_KEY] as? String
         self.tags = properties?[Zone.JSON_TAGS_KEY] as? [String]
         if let coordinates = geometry?[GeoJSON.COORDINATES_KEY] as? [[[CGFloat]]] {
@@ -94,6 +99,9 @@ public class PIZone:NSObject {
     public func toDictionary() -> [String: Any] {
         
         var dictionary: [String: Any] = [:]
+        if let code = code {
+            dictionary[Zone.JSON_CODE_KEY] = code
+        }
         if let name = name {
             dictionary[Zone.JSON_NAME_KEY] = name
         }

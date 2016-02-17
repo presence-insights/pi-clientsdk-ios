@@ -24,6 +24,7 @@ import CoreLocation
 public class PISensor:NSObject {
 
     // Sensor properties
+    public let code: String?
     public let name: String?
     public let sensorDescription: String?
     public let threshold: CGFloat?
@@ -41,6 +42,7 @@ public class PISensor:NSObject {
 
     */
     public init(name: String, description: String, threshold: CGFloat) {
+        self.code = nil
         self.name = name
         self.sensorDescription = description
         self.threshold = threshold
@@ -56,6 +58,7 @@ public class PISensor:NSObject {
     - returns: An initialized PISensor.
     */
     public override init() {
+        self.code = nil
         self.name = nil
         self.sensorDescription = nil
         self.threshold = nil
@@ -80,10 +83,9 @@ public class PISensor:NSObject {
         let geometry = dictionary[GeoJSON.GEOMETRY_KEY] as? [String: AnyObject]
         let properties = dictionary[GeoJSON.PROPERTIES_KEY] as? [String: AnyObject]
 
+        self.code = properties?[Sensor.JSON_CODE_KEY] as? String
         self.name = properties?[Sensor.JSON_NAME_KEY] as? String
-
         self.sensorDescription = dictionary[Sensor.JSON_DESCRIPTION_KEY] as? String
-        
 
         self.threshold = properties?[Sensor.JSON_THRESHOLD_KEY] as? CGFloat
         self.site = properties?[Sensor.JSON_SITE_KEY] as? String
@@ -107,6 +109,9 @@ public class PISensor:NSObject {
 
         var dictionary: [String: AnyObject] = [:]
 
+        if let code = code {
+            dictionary[Sensor.JSON_CODE_KEY] = code
+        }
         if let name = name {
             dictionary[Sensor.JSON_NAME_KEY] = name
         }
