@@ -20,13 +20,14 @@
 import UIKit
 
 // MARK: - PIOrg object
-public class PIOrg: NSObject {
+public class PIOrg:NSObject {
     
     // Org properties
-    public var name: String!
-    public var piDescription: String!
-    public var registrationTypes: [String]!
-    public var publicKey: String!
+    public let code: String?
+    public let name: String?
+    public let piDescription: String?
+    public let registrationTypes: [String]?
+    public let publicKey: String?
     
     /**
     Default object initializer.
@@ -37,6 +38,7 @@ public class PIOrg: NSObject {
     - parameter publicKey:           public key used by the organization
    */
     public init(name: String, description: String, registrationTypes: [String], publicKey: String) {
+        self.code = nil
         self.name = name
         self.piDescription = description
         self.registrationTypes = registrationTypes
@@ -48,8 +50,12 @@ public class PIOrg: NSObject {
     
     - returns: An initialized PIOrg.
     */
-    public convenience override init() {
-        self.init(name: "", description: "", registrationTypes: [], publicKey: "")
+    public override init() {
+        self.code = nil
+        self.name = nil
+        self.piDescription = nil
+        self.registrationTypes = nil
+        self.publicKey = nil
     }
     
     /**
@@ -59,20 +65,12 @@ public class PIOrg: NSObject {
 
     - returns: An initialized PIOrg.
     */
-    public convenience init(dictionary: [String: AnyObject]) {
-        
-        self.init(name: "", description: "", registrationTypes: [], publicKey: "")
-        
-        self.name = dictionary[Org.JSON_NAME_KEY] as! String
-        if let piDescription = dictionary[Beacon.JSON_DESCRIPTION_KEY] as? String {
-            self.piDescription = piDescription;
-        }
-        self.registrationTypes = dictionary[Org.JSON_REGISTRATION_TYPES_KEY] as! [String]
-        if let publicKey = dictionary[Org.JSON_PUBLIC_KEY_KEY] as? String {
-            self.publicKey = publicKey
-        } else {
-            self.publicKey = ""
-        }
+    public init(dictionary: [String: AnyObject]) {
+        self.code = dictionary[Org.JSON_CODE_KEY] as? String
+        self.name = dictionary[Org.JSON_NAME_KEY] as? String
+        self.piDescription = dictionary[Beacon.JSON_DESCRIPTION_KEY] as? String
+        self.registrationTypes = dictionary[Org.JSON_REGISTRATION_TYPES_KEY] as? [String]
+        self.publicKey = dictionary[Org.JSON_PUBLIC_KEY_KEY] as? String
         
     }
     
@@ -85,10 +83,21 @@ public class PIOrg: NSObject {
         
         var dictionary: [String: AnyObject] = [:]
         
-        dictionary[Org.JSON_NAME_KEY] = name
-        dictionary[Org.JSON_DESCRIPTION_KEY] = description
-        dictionary[Org.JSON_REGISTRATION_TYPES_KEY] = registrationTypes
-        dictionary[Org.JSON_PUBLIC_KEY_KEY] = publicKey
+        if let code = code {
+            dictionary[Org.JSON_CODE_KEY] = code
+        }
+        if let name = name {
+            dictionary[Org.JSON_NAME_KEY] = name
+        }
+        if let piDescription = piDescription {
+            dictionary[Org.JSON_DESCRIPTION_KEY] = piDescription
+        }
+        if let registrationTypes = registrationTypes {
+            dictionary[Org.JSON_REGISTRATION_TYPES_KEY] = registrationTypes
+        }
+        if let publicKey = publicKey {
+            dictionary[Org.JSON_PUBLIC_KEY_KEY] = publicKey
+        }
         
         return dictionary
         
