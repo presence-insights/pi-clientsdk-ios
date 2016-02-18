@@ -76,7 +76,7 @@ public final class PIGeofencingManager:NSObject {
     /// By default, `PIGeofencingManager` can monitore up to 15 regions simultaneously.
     public static let DefaultMaxRegions = 15
     
-    private let locationManager = CLLocationManager()
+    let locationManager = CLLocationManager()
     
     private var regions:[String:CLCircularRegion]?
     
@@ -87,7 +87,7 @@ public final class PIGeofencingManager:NSObject {
     /// Maximum number of regions which can be monitored simultaneously.
     public let maxRegions:Int
     
-    private lazy var dataController = PIOutdoor.dataController
+    public lazy var dataController = PIOutdoor.dataController
 
 	/// PI Service
     public let service:PIService
@@ -117,7 +117,9 @@ public final class PIGeofencingManager:NSObject {
         self.service = PIService(tenantCode:tenantCode,orgCode:orgCode,baseURL:baseURL,username:username,password:password)
         super.init()
         self.locationManager.delegate = self
-        
+
+		self.service.delegate = self
+		
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive:", name: UIApplicationWillEnterForegroundNotification, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "willResignActive:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
@@ -164,12 +166,15 @@ public final class PIGeofencingManager:NSObject {
 		moc.performBlock {
 			let download:PIDownload = moc.insertObject()
 
-			download.sessionId = response.backgroundSessionIdentifier
-			download.taskId = response.taskIdentifier
-			download.completed = false
+			download.sessionIdentifier = response.backgroundSessionIdentifier
+			download.taskIdentifier = response.taskIdentifier
+			download.progressStatus = .InProgress
+			download.timestamp = NSDate()
 			do {
 				try moc.save()
-				completionHandler?(true)
+				dispatch_async(dispatch_get_main_queue()) {
+					completionHandler?(true)
+				}
 			} catch {
 				DDLogError("Core Data Error \(error)",asynchronous:false)
 				completionHandler?(false)
@@ -178,10 +183,24 @@ public final class PIGeofencingManager:NSObject {
 
     }
 
-	public func handleEventsForBackgroundURLSession(identifier: String, completionHandler: () -> Void) {
+	public func handleEventsForBackgroundURLSession(identifier: String, completionHandler: () -> Void) -> Bool {
 
+		DDLogInfo("PIGeofencingManager.handleEventsForBackgroundURLSession",asynchronous:false)
+		guard identifier.hasPrefix("com.ibm.PI") else {
+			DDLogInfo("Not a  PIbackgroundURLSession",asynchronous:false)
+			return false
+		}
+
+		self.service.backgroundURLSessionCompletionHandler = completionHandler
+		let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
+
+		let session = NSURLSession(configuration: config, delegate: self.service, delegateQueue: nil)
+		self.service.backgroundPendingSessions.insert(session)
+
+
+		return true
 	}
-    
+
     func didBecomeActive(notification:NSNotification) {
     }
     
@@ -919,127 +938,3 @@ public final class PIGeofencingManager:NSObject {
     
 }
 
-extension PIGeofencingManager: CLLocationManagerDelegate {
-    
-    public func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus){
-        switch status {
-        case .AuthorizedAlways:
-            fallthrough
-        case .AuthorizedWhenInUse:
-            locationManager.startMonitoringSignificantLocationChanges()
-            DDLogVerbose("startMonitoringSignificantLocationChanges")
-        case .Denied:
-            break
-        case .NotDetermined:
-            break
-        case .Restricted:
-            break
-            
-        }
-        
-    }
-    
-    public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        DDLogVerbose("didUpdateLocations")
-        self.updateGeofenceMonitoring()
-    }
-    
-    public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion){
-        guard let geofence = self.queryGeofence(region.identifier) else {
-			DDLogError("didEnterRegion Region \(region.identifier) not found")
-            self.delegate?.geofencingManager(self, didEnterGeofence: nil)
-            return
-        }
-        
-        DDLogVerbose("didEnterRegion \(region.identifier) \(geofence.name)")
-        
-        self.sendPIMessage(.Enter, geofence: geofence)
-        
-        self.delegate?.geofencingManager(self, didEnterGeofence: geofence)
-        
-    }
-    
-    public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion){
-        
-        guard let geofence = self.queryGeofence(region.identifier) else {
-            DDLogError("didExitRegion Region \(region.identifier) not found")
-            self.delegate?.geofencingManager(self, didExitGeofence: nil)
-            return
-        }
-        
-        DDLogVerbose("didExitRegion \(region.identifier) \(geofence.name)")
-        
-        self.sendPIMessage(.Exit, geofence: geofence)
-		
-        self.delegate?.geofencingManager(self, didExitGeofence: geofence)
-        
-    }
-    
-    
-    private func sendPIMessage(event:PIGeofenceEvent,geofence: PIGeofence?) {
-
-		guard privacy == false else {
-			DDLogVerbose("sendPIMessage \(geofence?.name) \(event), privacyOn !!!")
-			return
-		}
-		
-        guard let geofence = geofence else {
-			DDLogError("****** sendPIMessage, Missing fence",asynchronous:false)
-            return
-        }
-        
-        guard let _ = service.orgCode else {
-            DDLogError("****** sendPIMessage, No Organization Code",asynchronous:false)
-            return
-        }
-        
-        let application = UIApplication.sharedApplication()
-        var bkgTaskId = UIBackgroundTaskInvalid
-        bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
-            if bkgTaskId != UIBackgroundTaskInvalid {
-				DDLogError("****** PIGeofenceMonitoringRequest ExpirationHandler \(bkgTaskId)",asynchronous:false)
-                self.service.cancelAll()
-                let id = bkgTaskId
-                bkgTaskId = UIBackgroundTaskInvalid
-                application.endBackgroundTask(id)
-            }
-        }
-		if bkgTaskId == UIBackgroundTaskInvalid {
-			DDLogError("****** No background time for PIGeofenceMonitoringRequest",asynchronous:false)
-		}
-		
-		DDLogInfo("PIGeofenceMonitoringRequest beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
-
-		DDLogInfo("Create PIGeofenceMonitoringRequest \(geofence.code) , \(geofence.name), \(event.rawValue)")
-
-        let piRequest = PIGeofenceMonitoringRequest(geofenceCode:geofence.code,eventTime:NSDate(),event:event,geofenceName: geofence.name) {
-            response in
-            switch response.result {
-            case let .HTTPStatus(status,_)?:
-                DDLogError("****** PIGeofenceMonitoringRequest status \(status)",asynchronous:false)
-                DDLogError("****** PIGeofenceMonitoringRequest \(response.httpRequest)",asynchronous:false)
-            case let .Error(error)?:
-                DDLogError("****** PIGeofenceMonitoringRequest error \(error)",asynchronous:false)
-            case let .Exception(exception)?:
-                DDLogError("****** PIGeofenceMonitoringRequest exception \(exception)",asynchronous:false)
-            case .Cancelled?:
-                DDLogVerbose("****** PIGeofenceMonitoringRequest cancelled")
-            case .OK?:
-                DDLogInfo("PIGeofenceMonitoringRequest OK \(event.rawValue) : \(geofence.code)")
-            case nil:
-                break
-            }
-            if bkgTaskId != UIBackgroundTaskInvalid {
-				DDLogInfo("****** PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)")
-                let id = bkgTaskId
-                bkgTaskId = UIBackgroundTaskInvalid
-                application.endBackgroundTask(id)
-            }
-        }
-        
-        service.executeRequest(piRequest)
-        
-    }
-    
-    
-}

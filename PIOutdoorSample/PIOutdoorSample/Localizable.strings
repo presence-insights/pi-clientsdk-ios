@@ -29,7 +29,7 @@
 "Region.Notification.Inside %@" = "You are inside region %@";
 
 "Alert.LocalNotification.Title" = "Notification";
-
+"Alert.LocalNotification.MissingBody" = "No message!";
 
 "More.Section.Settings" = "Settings";
 "More.Section.PIOutdoorSample" = "PI Sample";
@@ -54,6 +54,10 @@
 
 "Alert.GeofenceDeletion.Error.Title" = "Error";
 "Alert.GeofenceDeletion.Error.Message" = "An error occured when deleting the geofence";
+
+"Alert.Refresh.Error.Title" = "Error";
+"Alert.Refresh.Error.Message" = "An error occured when creating the geofence";
+
 
 "More.Settings.TenantCode" = "PI Tenant";
 "More.Settings.OrgCode" = "PI Organization";

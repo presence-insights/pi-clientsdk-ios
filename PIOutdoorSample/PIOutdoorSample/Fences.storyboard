@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="SHH-oU-J1g">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="SHH-oU-J1g">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--PI Geofences-->
@@ -30,11 +31,18 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="PI Geofences" id="Zfd-Ta-PPm">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="VsD-YW-drp">
-                            <connections>
-                                <segue destination="7yO-Rq-tx5" kind="presentation" identifier="AddGeofenceSegID" id="ami-Y2-bg8"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="VsD-YW-drp">
+                                <connections>
+                                    <segue destination="7yO-Rq-tx5" kind="presentation" identifier="AddGeofenceSegID" id="ami-Y2-bg8"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="refresh" id="r2B-2J-ruu">
+                                <connections>
+                                    <action selector="refresh:" destination="BYZ-38-t0r" id="aYq-1v-FOb"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="mapView" destination="cJp-9J-X8v" id="a9N-hm-uqO"/>

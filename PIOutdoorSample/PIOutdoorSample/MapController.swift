@@ -144,11 +144,11 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
     
     // MARK: - NewGeofenceDelegate
     func newGeofence(newGeofence:NewGeofenceController,center:CLLocationCoordinate2D,name:String,radius:Int) {
-        MBProgressHUD.showHUDAddedTo(self.view,animated:true)
+        MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
         
         piGeofencingManager.addGeofence(name, center: center, radius: radius) { geofence in
             
-            MBProgressHUD.hideHUDForView(self.view, animated: true)
+            MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
             
             guard let geofence = geofence else {
                 let alertController = UIAlertController(
@@ -313,24 +313,36 @@ extension MapController:MKMapViewDelegate {
                 success in
                 MBProgressHUD.hideHUDForView(self.view, animated: true)
                 if success == false {
-                    let alertController = UIAlertController(
-                        title: NSLocalizedString("Alert.GeofenceDeletion.Error.Title",comment:""),
-                        message: NSLocalizedString("Alert.GeofenceDeletion.Error.Message",comment:""),
-                        preferredStyle: .Alert)
-                    
-                    let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
-                    }
-                    alertController.addAction(okAction)
-                    
-                    self.presentViewController(alertController, animated: true, completion: nil)
-                
+					let title = NSLocalizedString("Alert.GeofenceDeletion.Error.Title",comment:"")
+					let message = NSLocalizedString("Alert.GeofenceDeletion.Error.Message",comment:"")
+					self.showError(title, message: message)
+
                 }
             }
         }
         
     }
     
-    
+	@IBAction func refresh(sender: AnyObject) {
+
+		MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
+		piGeofencingManager.synchronize { success in
+			MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
+			if success == false {
+				let title = NSLocalizedString("Alert.Refresh.Error.Title",comment:"")
+				let message = NSLocalizedString("Alert.Refresh.Error.Message",comment:"")
+				self.showError(title, message: message)
+
+			}
+		}
+	}
+
+	private func showError(title:String,message:String) {
+
+		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		app.showAlert(title, message: message)
+	}
+
 }
 
 

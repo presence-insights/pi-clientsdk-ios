@@ -24,6 +24,12 @@ public let PIServiceError = "com.ibm.PI.Error"
 
 public typealias PIResult = HTTPOperationResult
 
+public protocol PIServiceDelegate:class {
+	func didProgress(session: NSURLSession, downloadTask: NSURLSessionDownloadTask,progress:Float)
+	func didReceiveFile(session: NSURLSession, downloadTask: NSURLSessionDownloadTask,geofencesURL:NSURL)
+	func didCompleteWithError(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?)
+}
+
 public final class PIService: NSObject {
     
     private let httpQueue:NSOperationQueue = NSOperationQueue()
@@ -35,9 +41,15 @@ public final class PIService: NSObject {
     public let username:String
     public let password:String
     public let tenantCode:String
-    
+
+	public weak var delegate:PIServiceDelegate?
+
     public var allowUntrustedCertificates = false
-    
+
+	var backgroundURLSessionCompletionHandler:(() -> ())?
+
+	var backgroundPendingSessions:Set<NSURLSession> = []
+	
     public init(tenantCode:String, orgCode:String?, baseURL:String, username:String, password:String){
         self.baseURL = NSURL(string: baseURL)!
         self.username = username
@@ -90,7 +102,8 @@ public final class PIService: NSObject {
     
 	lazy var backgroundServiceSession:NSURLSession = {
 
-		let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(NSUUID().UUIDString)
+		let identifier = "com.ibm.PI." + NSUUID().UUIDString
+		let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
 
 		configuration.discretionary = false
 		configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
@@ -100,7 +113,11 @@ public final class PIService: NSObject {
 		configuration.URLCache = nil
 		configuration.allowsCellularAccess = true
 
-		return NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+		let session =  NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+
+		session.sessionDescription = "com.ibm.PI \(NSDate().description)"
+
+		return session
 
 	}()
 
@@ -123,7 +140,9 @@ extension PIService : NSURLSessionDelegate {
     
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
-        
+
+		DDLogVerbose("PIService.didReceiveChallenge for task \(task.taskIdentifier) \(task.taskDescription ?? "")")
+
         // If previous challenge failed, reject the handshake
         if challenge.previousFailureCount > 0 {
             DDLogError("Wrong credentials")
@@ -155,9 +174,11 @@ extension PIService : NSURLSessionDelegate {
     
     public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
         
+		DDLogVerbose("PIService.didReceiveChallenge for session description \(session.sessionDescription ?? "No Desc")")
+
         if challenge.previousFailureCount > 0 {
             completionHandler(.CancelAuthenticationChallenge,nil)
-            DDLogError("Wrong SSL certificate")
+			DDLogError("Wrong SSL certificate",asynchronous:false)
             return
         }
         
@@ -185,7 +206,7 @@ extension PIService : NSURLSessionDelegate {
                             return
                     }
                 #endif
-                DDLogError("Self Signed SSL certificate rejected")
+				DDLogError("Self Signed SSL certificate rejected",asynchronous:false)
                 challenge.sender?.cancelAuthenticationChallenge(challenge)
             }
             completionHandler(.RejectProtectionSpace,nil)
@@ -195,6 +216,65 @@ extension PIService : NSURLSessionDelegate {
         completionHandler(.PerformDefaultHandling,nil)
     }
     
-    
+	public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
+		DDLogInfo("PIService.URLSessionDidFinishEventsForBackgroundURLSession",asynchronous:false)
+		self.backgroundPendingSessions.remove(session)
+		dispatch_async(dispatch_get_main_queue()) {
+			let completionHandler = self.backgroundURLSessionCompletionHandler
+			self.backgroundURLSessionCompletionHandler = nil
+			completionHandler?()
+		}
+	}
+
+	public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
+		DDLogError("PIService.didBecomeInvalidWithError session description \(session.sessionDescription ?? "No session description") , error \(error)",asynchronous:false)
+	}
+}
+
+extension PIService : NSURLSessionDownloadDelegate {
+
+	public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+
+		guard totalBytesExpectedToWrite > 0 else {
+			DDLogWarn("NSURLSessionDownloadDelegate.didWriteData totalBytesExpectedToWrite == 0!")
+			return
+		}
+
+		let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
+		dispatch_async(dispatch_get_main_queue()) {
+			self.delegate?.didProgress(session, downloadTask: downloadTask, progress: progress)
+		}
+
+	}
+
+	public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
+		DDLogError("PIService.didFinishDownloadingToURL session description \(session.sessionDescription ?? "No session description") , task identifier \(downloadTask.taskIdentifier) , task description \(downloadTask.taskDescription ?? "No task description")",asynchronous:false)
+		let libraryURL = PIOutdoorUtils.libraryDirectory
+		let geojsonURL = NSURL(fileURLWithPath: NSUUID().UUIDString+".json", relativeToURL: libraryURL)
+		do {
+			let _ = try? NSFileManager.defaultManager().removeItemAtURL(geojsonURL)
+			try NSFileManager.defaultManager().moveItemAtURL(location, toURL: geojsonURL)
+			DDLogInfo("Did Received file \(geojsonURL)",asynchronous:false)
+
+			dispatch_async(dispatch_get_main_queue()) {
+				self.delegate?.didReceiveFile(session, downloadTask: downloadTask, geofencesURL: geojsonURL)
+			}
+		} catch {
+			DDLogError("Can't move the background download \(error)",asynchronous:false)
+		}
+
+	}
+
+	public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+		if let error = error {
+			DDLogError("PIService.didCompleteWithError session description \(session.sessionDescription ?? "No session description") , task identifier \(task.taskIdentifier) , task description \(task.taskDescription ?? "No task description") , error \(error)",asynchronous:false)
+		}
+
+		dispatch_async(dispatch_get_main_queue()) {
+			self.delegate?.didCompleteWithError(session, task: task, didCompleteWithError: error)
+		}
+	}
+
+
 }
 

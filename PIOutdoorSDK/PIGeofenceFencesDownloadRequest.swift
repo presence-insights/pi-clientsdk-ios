@@ -27,12 +27,17 @@ public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 
 	public func executeDownload(service:PIService) -> DownloadResponse? {
 
-
+		DDLogVerbose("PIGeofenceFencesDownloadRequest.executeDownload")
+		
 		let path = "pi-config/v2/tenants/\(service.tenantCode)/orgs/\(service.orgCode!)/geofences"
 		let url = NSURL(string:path,relativeToURL:service.baseURL)
 		let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
 
-		let task = service.backgroundServiceSession.downloadTaskWithURL(URLComponents.URL!)
+		let request = NSMutableURLRequest(URL: URLComponents.URL!)
+		PIOutdoorUtils.setBasicAuthHeader(request, username: service.username, password: service.password)
+
+		let task = service.backgroundServiceSession.downloadTaskWithRequest(request)
+		task.taskDescription = "PIGeofenceFencesDownloadRequest"
 		task.resume()
 		let taskIdentifier = task.taskIdentifier
 		guard let backgroundSessionIdentifier = service.backgroundServiceSession.configuration.identifier else {

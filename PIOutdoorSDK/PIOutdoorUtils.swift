@@ -33,6 +33,12 @@ class PIOutdoorUtils {
     }()
     
     
+	static let libraryDirectory: NSURL = {
+		let urls = NSFileManager.defaultManager().URLsForDirectory(.LibraryDirectory, inDomains: .UserDomainMask)
+		return urls.first!
+	}()
+
+
     static let applicationCachesDirectory:NSURL = {
         
         return NSFileManager.defaultManager().URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask).first!
@@ -46,6 +52,17 @@ class PIOutdoorUtils {
 		return "\(appVersionName) (\(appBuildNumber))"
 
 	}()
+
+	static func setBasicAuthHeader(request:NSMutableURLRequest,username:String,password:String) -> Bool {
+		let authorization = username + ":" + password
+		guard let authorizationData = authorization.dataUsingEncoding(NSUTF8StringEncoding) else {
+			return false
+		}
+		let authorizationbase64 = authorizationData.base64EncodedStringWithOptions([])
+		request.setValue("Basic " + authorizationbase64, forHTTPHeaderField: "Authorization")
+
+		return true
+	}
 
 }
 

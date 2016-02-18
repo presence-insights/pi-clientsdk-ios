@@ -57,11 +57,11 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         data["geofenceCode"] = self.geofenceCode
 		data["geofenceName"] = self.geofenceName
         data["crossingType"] = self.event.rawValue
-		data["sdkVersion"] = PIOutdoorUtils.version
         notification["data"] = data
         
         json["notifications"] = [notification]
-        
+		json["sdkVersion"] = PIOutdoorUtils.version
+
         
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!

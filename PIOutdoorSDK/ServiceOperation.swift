@@ -19,6 +19,7 @@
 
 
 import Foundation
+import CocoaLumberjack
 
 class ServiceOperation: AsynchronousOperation {
     
@@ -90,14 +91,11 @@ class ServiceOperation: AsynchronousOperation {
     
     
     func setBasicAuthHeader(request:NSMutableURLRequest) {
-        let authorization = service.username + ":" + service.password
-        guard let authorizationData = authorization.dataUsingEncoding(NSUTF8StringEncoding) else {
-            self.executing = false
-            self.finished = true
-            return
-        }
-        let authorizationbase64 = authorizationData.base64EncodedStringWithOptions([])
-        request.setValue("Basic " + authorizationbase64, forHTTPHeaderField: "Authorization")
+
+		guard PIOutdoorUtils.setBasicAuthHeader(request, username: service.username, password: service.password) == true else {
+			DDLogError("Couldn't set the basic authentication header",asynchronous:false)
+			return
+		}
     }
     
 }

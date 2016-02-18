@@ -135,6 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 					piGeofencingManager.service.orgCode = orgCode
                     dispatch_async(dispatch_get_main_queue()) {
 						NSNotificationCenter.defaultCenter().postNotificationName(kOrgCodeDidChange, object: self)
+						piGeofencingManager.synchronize()
                     }
 
                 case .Cancelled?:
@@ -178,7 +179,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				}
             }
             service.executeRequest(request)
-        }
+		} else {
+			piGeofencingManager.synchronize()
+
+		}
 
 
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
@@ -241,7 +245,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        print("didBecomeActive")
+        DDLogVerbose("AppDelegate.didBecomeActive")
     }
 
     func applicationWillTerminate(application: UIApplication) {
@@ -251,18 +255,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
         let state = UIApplication .sharedApplication().applicationState
         if state == .Active {
-            let alertController = UIAlertController(
-                title: NSLocalizedString("Alert.LocalNotification.Title",comment:""),
-                message: notification.alertBody!,
-                preferredStyle: .Alert)
-            
-            let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
-            }
-            alertController.addAction(okAction)
-            
-            
-            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
-            
+
+			let title = NSLocalizedString("Alert.LocalNotification.Title",comment:"")
+			let message = notification.alertBody ?? NSLocalizedString("Alert.LocalNotification.MissingBody",comment:"")
+			self.showAlert(title, message: message)
+
         }
         
     }
@@ -312,19 +309,11 @@ extension AppDelegate {
     private func manageAuthorizations() {
         
         if !CLLocationManager.isMonitoringAvailableForClass(CLCircularRegion) {
-            let alertController = UIAlertController(
-                title: NSLocalizedString("Alert.NoMonitoring.Title",comment:""),
-                message: NSLocalizedString("Alert.NoMonitoring.Message",comment:""),
-                preferredStyle: .Alert)
-            
-            let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
-            }
-            alertController.addAction(okAction)
-            
-            
             dispatch_async(dispatch_get_main_queue()) {
-                self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
-                
+				let title = NSLocalizedString("Alert.NoMonitoring.Title",comment:"")
+				let message = NSLocalizedString("Alert.NoMonitoring.Message",comment:"")
+				self.showAlert(title, message: message)
+
             }
             
         } else {
@@ -499,6 +488,24 @@ extension AppDelegate {
 
 	func privacyDidChange(notification:NSNotification) {
 		piGeofencingManager.privacy = Settings.privacy
+	}
+}
+
+extension AppDelegate {
+
+	func showAlert(title:String,message:String) {
+
+		let alertController = UIAlertController(
+			title: NSLocalizedString(title,comment:""),
+			message: NSLocalizedString(message,comment:""),
+			preferredStyle: .Alert)
+
+		let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
+		}
+		alertController.addAction(okAction)
+
+
+		self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
 	}
 }
 

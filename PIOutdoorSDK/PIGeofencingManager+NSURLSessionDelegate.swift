@@ -1,7 +1,8 @@
 /**
 *  PIOutdoorSDK
-*  PIDownload+CoreDataProperties
+*  PIGeofencingManager+NSURLSessionDelegate.swift
 *
+*  Performs all communication to the PI Rest API.
 *
 *  © Copyright 2016 IBM Corp.
 *
@@ -16,15 +17,11 @@
 *  limitations under the License.
 **/
 
+
+
 import Foundation
-import CoreData
 
-extension PIDownload {
 
-    @NSManaged public var taskIdentifier: NSNumber
-	@NSManaged public var timestamp: NSDate
-    @NSManaged public var sessionIdentifier: String
-	@NSManaged public var progress: NSNumber
-	@NSManaged var primitiveProgressStatus: NSNumber
-
+extension PIGeofencingManager:NSURLSessionDelegate {
+	
 }
