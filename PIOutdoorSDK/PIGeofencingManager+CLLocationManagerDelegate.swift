@@ -44,7 +44,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 
 	public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 		DDLogVerbose("didUpdateLocations")
-		self.updateGeofenceMonitoring()
+		self.updateMonitoredGeofences()
 	}
 
 	public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion){

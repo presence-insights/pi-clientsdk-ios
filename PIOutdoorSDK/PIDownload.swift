@@ -26,7 +26,8 @@ public enum PIDownloadProgressStatus:Int16 {
 	case InProgress
 	case Received
 	case Processed
-	case Error
+	case ProcessingError
+	case NetworkError
 }
 
 extension PIDownloadProgressStatus:CustomStringConvertible {
@@ -36,7 +37,8 @@ extension PIDownloadProgressStatus:CustomStringConvertible {
 		case .InProgress: return "InProgress"
 		case .Received: return "Received"
 		case .Processed : return "Processed"
-		case .Error: return "Error"
+		case .ProcessingError: return "ProcessingError"
+		case .NetworkError: return "NetworkError"
 		}
 	}
 }

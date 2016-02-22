@@ -299,7 +299,7 @@ class MoreController: UITableViewController {
 					self.tableView.reloadData()
 					MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
 				}
-
+				piGeofencingManager.startMonitoringRegions()
 			} else {
 				self.tableView.reloadData()
 				MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)

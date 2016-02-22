@@ -111,7 +111,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 					DDLogError("PIGeofencingManager.didReceiveFile more than one download!",asynchronous:false)
 					return
 				}
-				download.progressStatus = .Error
+				download.progressStatus = .NetworkError
 				download.endDate = NSDate()
 
 				try moc.save()
@@ -129,6 +129,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 			}
 		}
 	}
+	
 	public func didReceiveFile(session: NSURLSession, downloadTask: NSURLSessionDownloadTask,geofencesURL:NSURL) {
 
 		let application = UIApplication.sharedApplication()
@@ -147,6 +148,9 @@ extension PIGeofencingManager: PIServiceDelegate {
 
 		let moc = dataController.writerContext
 		moc.performBlock {
+			defer {
+				moc.reset()
+			}
 			let request = PIDownload.fetchRequest
 			request.predicate = NSPredicate(format: "sessionIdentifier = %@ and taskIdentifier = %lu", session.configuration.identifier!,downloadTask.taskIdentifier)
 			do {
@@ -163,12 +167,30 @@ extension PIGeofencingManager: PIServiceDelegate {
 				download.progress = 1
 				download.endDate = NSDate()
 				download.url = geofencesURL.absoluteString
-
 				try moc.save()
-				
+				do {
+					let data = try NSData(contentsOfURL: geofencesURL, options: .DataReadingMappedAlways)
+					if let jsonObject = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] {
+						if let _ = self.seedGeojson(moc, geojson: jsonObject)  {
+							download.progressStatus = .ProcessingError
+						} else {
+							download.progressStatus = .Processed
+							DDLogInfo("PIGeofencingManager.updateGeofences OK!!!",asynchronous:false)
+						}
+					} else {
+						DDLogError("PIGeofencingManager.updateGeofences Can't read json file",asynchronous:false)
+						download.progressStatus = .ProcessingError
+					}
+				} catch {
+					DDLogError("PIGeofencingManager.updateGeofences error \(error)",asynchronous:false)
+					download.progressStatus = .ProcessingError
+				}
+				try moc.save()
+
 			} catch {
 				DDLogError("PIGeofencingManager.didReceiveFile error \(error)",asynchronous:false)
 			}
+			self.updateMonitoredGeofencesWithMoc(moc)
 			dispatch_async(dispatch_get_main_queue()) {
 				if bkgTaskId != UIBackgroundTaskInvalid {
 					DDLogVerbose("****** PIGeofencingManager.didReceiveFile endBackgroundTask \(bkgTaskId)",asynchronous:false)

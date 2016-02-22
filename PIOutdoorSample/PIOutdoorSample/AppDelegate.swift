@@ -215,7 +215,7 @@ extension AppDelegate {
             }
             do {
                 try piGeofencingManager.seedGeojson(url,propertiesGenerator:fenceProperties) { error in
-                    print(error)
+					DDLogError("(error)",asynchronous:false)
                     NSNotificationCenter.defaultCenter().postNotificationName(kSeedDidComplete, object: nil)
                 }
             } catch {
