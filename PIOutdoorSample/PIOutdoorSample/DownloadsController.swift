@@ -20,6 +20,7 @@
 import UIKit
 import CoreData
 import PIOutdoorSDK
+import MBProgressHUD
 
 class DownloadsController: UITableViewController {
 
@@ -31,7 +32,7 @@ class DownloadsController: UITableViewController {
 
 		if _fetchedResultsController == nil {
 			let fetchRequest = PIDownload.fetchRequest
-			let timeSortDescriptor = NSSortDescriptor(key:"timestamp",ascending:false)
+			let timeSortDescriptor = NSSortDescriptor(key:"startDate",ascending:false)
 			fetchRequest.sortDescriptors = [timeSortDescriptor]
 
 			fetchRequest.fetchBatchSize = 25
@@ -201,4 +202,26 @@ extension DownloadsController {
 		self.tableView.reloadData()
 	}
 
+}
+
+extension DownloadsController {
+	
+	@IBAction func refresh(sender: AnyObject) {
+		MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
+		piGeofencingManager.synchronize { success in
+			MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
+			if success == false {
+				let title = NSLocalizedString("Alert.Refresh.Error.Title",comment:"")
+				let message = NSLocalizedString("Alert.Refresh.Error.Message",comment:"")
+				self.showError(title, message: message)
+
+			}
+		}
+	}
+	private func showError(title:String,message:String) {
+
+		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		app.showAlert(title, message: message)
+	}
+	
 }

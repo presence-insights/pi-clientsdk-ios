@@ -19,6 +19,7 @@
 		7D3084361C75BE8F00CF59A4 /* DownloadsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3084351C75BE8F00CF59A4 /* DownloadsController.swift */; };
 		7D3084391C75BF5000CF59A4 /* DownloadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3084371C75BF5000CF59A4 /* DownloadCell.swift */; };
 		7D30843A1C75BF5000CF59A4 /* DownloadCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D3084381C75BF5000CF59A4 /* DownloadCell.xib */; };
+		7D40DA7A1C7B5F8F007B88F0 /* Utils+Org.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D40DA791C7B5F8F007B88F0 /* Utils+Org.swift */; };
 		7D4510A91C5A66FE007BA047 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D4510A81C5A66FE007BA047 /* Settings.bundle */; };
 		7DAD42CA1C6E7F520012CE25 /* UIDevice+machineName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAD42C91C6E7F520012CE25 /* UIDevice+machineName.swift */; };
 		7DDC91A01C479609002A5113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DDC919F1C479609002A5113 /* Assets.xcassets */; };
@@ -90,6 +91,7 @@
 		7D3084351C75BE8F00CF59A4 /* DownloadsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadsController.swift; sourceTree = "<group>"; };
 		7D3084371C75BF5000CF59A4 /* DownloadCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadCell.swift; sourceTree = "<group>"; };
 		7D3084381C75BF5000CF59A4 /* DownloadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DownloadCell.xib; sourceTree = "<group>"; };
+		7D40DA791C7B5F8F007B88F0 /* Utils+Org.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Utils+Org.swift"; sourceTree = "<group>"; };
 		7D4510A81C5A66FE007BA047 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		7DAD42C91C6E7F520012CE25 /* UIDevice+machineName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+machineName.swift"; sourceTree = "<group>"; };
 		7DDC91951C479609002A5113 /* PIOutdoorSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PIOutdoorSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -224,6 +226,7 @@
 				7DDC91A41C479609002A5113 /* Info.plist */,
 				7DDC91F61C479A07002A5113 /* Localizable.strings */,
 				7DDC91F41C4799FE002A5113 /* Utils.swift */,
+				7D40DA791C7B5F8F007B88F0 /* Utils+Org.swift */,
 				7DAD42C91C6E7F520012CE25 /* UIDevice+machineName.swift */,
 				7DDC91F81C479A13002A5113 /* referentiel-gares-voyageurs.geojson.zip */,
 				7D4510A81C5A66FE007BA047 /* Settings.bundle */,
@@ -320,7 +323,7 @@
 						DevelopmentTeam = 67DBV735VF;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -443,6 +446,7 @@
 				7DDC91F11C4799C4002A5113 /* AppDelegate.swift in Sources */,
 				7DDC91E71C479993002A5113 /* GeofenceNameCell.swift in Sources */,
 				7DDC91E51C479993002A5113 /* NewGeofenceController.swift in Sources */,
+				7D40DA7A1C7B5F8F007B88F0 /* Utils+Org.swift in Sources */,
 				7D3084361C75BE8F00CF59A4 /* DownloadsController.swift in Sources */,
 				7DDC91EB1C479993002A5113 /* GeofenceRadiusPickerCell.swift in Sources */,
 				7DDC91E91C479993002A5113 /* GeofenceRadiusCell.swift in Sources */,

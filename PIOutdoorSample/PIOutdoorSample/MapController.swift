@@ -48,8 +48,18 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
 
         self.addFences()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "seedDidComplete:", name: kSeedDidComplete, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(
+			self,
+			selector: "seedDidComplete:",
+			name: kSeedDidComplete,
+			object: nil)
         
+		NSNotificationCenter.defaultCenter().addObserver(
+			self,
+			selector: "didResetOrganization:",
+			name: kDidResetOrganization,
+			object: nil)
+
         self.zoomToFitMapOverlays(self.mapView)
         self.first = false
         
@@ -197,7 +207,23 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
         self.addFences()
     }
     
-        
+	func didResetOrganization(notification:NSNotification) {
+		let annotations = self.mapView.annotations
+		self.mapView.removeAnnotations(annotations)
+
+		let overlays = self.mapView.overlays.filter {
+			if let _ = $0 as? MKCircle {
+				return true
+			} else {
+				return false
+			}
+		}
+
+		self.mapView.removeOverlays(overlays)
+
+	}
+
+
 }
 
 extension MapController:CLLocationManagerDelegate {

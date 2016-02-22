@@ -132,11 +132,13 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 			case nil:
 				break
 			}
-			if bkgTaskId != UIBackgroundTaskInvalid {
-				DDLogInfo("****** PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)")
-				let id = bkgTaskId
-				bkgTaskId = UIBackgroundTaskInvalid
-				application.endBackgroundTask(id)
+			dispatch_async(dispatch_get_main_queue()) {
+				if bkgTaskId != UIBackgroundTaskInvalid {
+					DDLogInfo("****** PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)")
+					let id = bkgTaskId
+					bkgTaskId = UIBackgroundTaskInvalid
+					application.endBackgroundTask(id)
+				}
 			}
 		}
 

@@ -24,7 +24,8 @@ import CoreData
 public enum PIDownloadProgressStatus:Int16 {
 	case NoStarted
 	case InProgress
-	case OK
+	case Received
+	case Processed
 	case Error
 }
 
@@ -33,7 +34,8 @@ extension PIDownloadProgressStatus:CustomStringConvertible {
 		switch self {
 		case .NoStarted: return "NoStarted"
 		case .InProgress: return "InProgress"
-		case .OK: return "OK"
+		case .Received: return "Received"
+		case .Processed : return "Processed"
 		case .Error: return "Error"
 		}
 	}

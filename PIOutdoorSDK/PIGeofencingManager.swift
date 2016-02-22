@@ -169,7 +169,7 @@ public final class PIGeofencingManager:NSObject {
 			download.sessionIdentifier = response.backgroundSessionIdentifier
 			download.taskIdentifier = response.taskIdentifier
 			download.progressStatus = .InProgress
-			download.timestamp = NSDate()
+			download.startDate = NSDate()
 			do {
 				try moc.save()
 				dispatch_async(dispatch_get_main_queue()) {
@@ -459,12 +459,15 @@ public final class PIGeofencingManager:NSObject {
 
 	}
 
-	public func reset() {
+	public func reset(completionHandler: ((Void) -> Void)? = nil) {
 		self.stopMonitoringAllRegions {
 			do {
 				try self.dataController.removeStore()
+				completionHandler?()
 			} catch {
 				DDLogError("Core Data Error \(error)")
+				assertionFailure()
+				completionHandler?()
 			}
 
 		}

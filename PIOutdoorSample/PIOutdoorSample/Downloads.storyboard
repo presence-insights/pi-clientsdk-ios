@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="We9-bf-eI4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10109" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="We9-bf-eI4">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10083"/>
     </dependencies>
     <scenes>
         <!--Downloads-->
@@ -18,7 +18,13 @@
                             <outlet property="delegate" destination="U34-mb-ra5" id="tbY-UV-9nh"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Downloads" id="9H0-Vw-2pF"/>
+                    <navigationItem key="navigationItem" title="Downloads" id="9H0-Vw-2pF">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="k3j-IQ-24G">
+                            <connections>
+                                <action selector="refresh:" destination="U34-mb-ra5" id="fQK-P1-kQK"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GUw-Kh-nkk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

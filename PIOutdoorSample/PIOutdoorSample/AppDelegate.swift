@@ -86,15 +86,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		piGeofencingManager.privacy = Settings.privacy
 
 		SSKeychain.setAccessibilityType(kSecAttrAccessibleAlwaysThisDeviceOnly)
-		let data: NSData?
-		if piGeofencingManager.firstTime {
-			data = nil
-			DDLogInfo("First time after installation")
-		} else {
-			DDLogInfo("Look into the keychain")
-			data = SSKeychain.passwordDataForService(hostname, account: tenantCode)
-		}
-
+		DDLogInfo("Look into the keychain")
+		let data = SSKeychain.passwordDataForService(hostname, account: tenantCode)
 
         if let data = data {
             do {
@@ -110,75 +103,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 		if piGeofencingManager.service.orgCode == nil {
-			MBProgressHUD.showHUDAddedTo(self.window?.rootViewController?.view,animated:true)
-            let service = piGeofencingManager.service
-            let orgName = UIDevice.currentDevice().name + "-" + NSUUID().UUIDString
-            DDLogVerbose("Start PIServiceCreateOrgRequest: \(orgName)")
-            let request = PIServiceCreateOrgRequest(orgName:orgName) { response in
-				MBProgressHUD.hideHUDForView(self.window?.rootViewController?.view, animated: true)
-                switch response.result {
-                case .OK?:
-                    DDLogVerbose("PIServiceCreateOrgRequest OK \(response.orgCode)")
-                    guard let orgCode = response.orgCode else {
-                        DDLogError("PIServiceCreateOrgRequest Missing org code")
-                        assertionFailure("Programming error")
-                        return
-                    }
-                    var json =  [String:AnyObject]()
-                    json["orgCode"] = orgCode
-					guard let data = try? NSJSONSerialization.dataWithJSONObject(json, options: []) else {
-						DDLogError("Programming Error")
-						return
-					}
-
-                    SSKeychain.setPasswordData(data, forService: hostname, account: tenantCode)
-					piGeofencingManager.service.orgCode = orgCode
-                    dispatch_async(dispatch_get_main_queue()) {
-						NSNotificationCenter.defaultCenter().postNotificationName(kOrgCodeDidChange, object: self)
-						piGeofencingManager.synchronize()
-                    }
-
-                case .Cancelled?:
-                    DDLogVerbose("PIServiceCreateOrgRequest cancelled")
-                case let .Error(error)?:
-                    DDLogError("PIServiceCreateOrgRequest error \(error)")
-                case let .Exception(error)?:
-                    DDLogError("PIServiceCreateOrgRequest exception \(error)")
-                case let .HTTPStatus(status, _)?:
-                    DDLogError("PIServiceCreateOrgRequest status \(status)")
-                case nil:
-                    assertionFailure("Programming Error")
-                    break
-                }
-				if let _ = piGeofencingManager.service.orgCode {
-					let alertController = UIAlertController(
-						title: NSLocalizedString("Alert.OrgCreation.Title",comment:""),
-						message: NSLocalizedString("Alert.OrgCreation.Message",comment:""),
-						preferredStyle: .Alert)
-
-					let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
-					}
-					alertController.addAction(okAction)
-
-
-					self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
-				} else {
-					let alertController = UIAlertController(
-						title: NSLocalizedString("Alert.OrgCreation.Error.Title",comment:""),
-						message: NSLocalizedString("Alert.OrgCreation.Error.Message",comment:""),
-						preferredStyle: .Alert)
-
-					let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
-					}
-					alertController.addAction(okAction)
-
-
-					self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
-					
-
-				}
-            }
-            service.executeRequest(request)
+			Utils.createPIOrg(hostname, tenantCode: tenantCode)
 		} else {
 			piGeofencingManager.synchronize()
 
@@ -469,12 +394,14 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 			case nil:
 				DDLogError("****** SlackOperation cancelled nil")
             }
-            if bkgTaskId != UIBackgroundTaskInvalid {
-                DDLogVerbose("****** SlackOperation endBackgroundTask \(bkgTaskId)")
-                let id = bkgTaskId
-                bkgTaskId = UIBackgroundTaskInvalid
-                application.endBackgroundTask(id)
-            }
+			dispatch_async(dispatch_get_main_queue()) {
+				if bkgTaskId != UIBackgroundTaskInvalid {
+					DDLogVerbose("****** SlackOperation endBackgroundTask \(bkgTaskId)")
+					let id = bkgTaskId
+					bkgTaskId = UIBackgroundTaskInvalid
+					application.endBackgroundTask(id)
+				}
+			}
 
         }
 

@@ -38,6 +38,8 @@
 
 "More.PIOutdoorSample.ContactUs" = "Contact Us";
 
+"More.Reset.Reset" = "Reset";
+
 "NoMail.Message.ContactUs" = "No mail account available to contact us.";
 "NoMail.Message.Title" = "No Mail";
 
@@ -58,6 +60,10 @@
 "Alert.Refresh.Error.Title" = "Error";
 "Alert.Refresh.Error.Message" = "An error occured when creating the geofence";
 
+"Alert.Reset.Title" = "PI Outdoor Sample";
+"Alert.Reset.Message" = "Are you sure you want to reset?\
+All the geofences will be deleted and a new org will be created.";
+"Alert.Reset.Reset" = "Reset";
 
 "More.Settings.TenantCode" = "PI Tenant";
 "More.Settings.OrgCode" = "PI Organization";

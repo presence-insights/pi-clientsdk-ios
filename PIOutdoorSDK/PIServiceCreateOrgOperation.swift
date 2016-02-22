@@ -47,7 +47,8 @@ final class PIServiceCreateOrgOperation:ServiceOperation {
         DDLogVerbose("\(URLComponents.URL)")
         
         let request = NSMutableURLRequest(URL:URLComponents.URL!)
-        
+        request.timeoutInterval = 10
+		
         setBasicAuthHeader(request)
         
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(json, options: [])

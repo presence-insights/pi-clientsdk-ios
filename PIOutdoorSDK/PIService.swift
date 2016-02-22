@@ -112,6 +112,8 @@ public final class PIService: NSObject {
 		configuration.HTTPAdditionalHeaders = self.defaultHTTPHeaders()
 		configuration.URLCache = nil
 		configuration.allowsCellularAccess = true
+		// 1 day max
+		configuration.timeoutIntervalForResource = 60 * 60 * 24
 
 		let session =  NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
 

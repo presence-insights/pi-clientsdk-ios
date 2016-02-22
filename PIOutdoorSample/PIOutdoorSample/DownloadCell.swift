@@ -39,12 +39,13 @@ class DownloadCell: UITableViewCell {
 
 
 
-	@IBOutlet weak var date: UILabel!
+	@IBOutlet weak var startDate: UILabel!
 
-	@IBOutlet weak var time: UILabel!
+	@IBOutlet weak var startTime: UILabel!
 
-	@IBOutlet weak var progress: UIProgressView!
+	@IBOutlet weak var endDate: UILabel!
 
+	@IBOutlet weak var endTime: UILabel!
 	
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -55,18 +56,32 @@ class DownloadCell: UITableViewCell {
 	func configure(download:PIDownload) {
 		self.updateFonts()
 
-		self.date.text = self.dynamicType.dateFormatter.stringFromDate(download.timestamp)
-		self.time.text = self.dynamicType.timeFormatter.stringFromDate(download.timestamp)
+		self.startDate.text = self.dynamicType.dateFormatter.stringFromDate(download.startDate)
+		self.startTime.text = self.dynamicType.timeFormatter.stringFromDate(download.startDate)
 
-		print("progress",download.progress.floatValue)
-		self.progress.progress = download.progress.floatValue
+		if let endDate = download.endDate {
+			self.endDate.text = self.dynamicType.dateFormatter.stringFromDate(endDate)
+			self.endTime.text = self.dynamicType.timeFormatter.stringFromDate(endDate)
+		} else {
+			self.endDate.text = nil
+			self.endTime.text = nil
+		}
 
+		if download.progressStatus == .Error {
+			self.endDate.tintColor = UIColor.redColor()
+			self.endTime.tintColor = UIColor.redColor()
+		} else {
+			self.endDate.tintColor = nil
+			self.endTime.tintColor = nil
+		}
 	}
 	
 	private func updateFonts() {
 
-		Utils.updateTextStyle(self.time)
-		Utils.updateTextStyle(self.date)
+		Utils.updateTextStyle(self.startDate)
+		Utils.updateTextStyle(self.startTime)
+		Utils.updateTextStyle(self.endDate)
+		Utils.updateTextStyle(self.endTime)
 
 	}
 

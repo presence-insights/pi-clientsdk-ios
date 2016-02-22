@@ -100,3 +100,8 @@ extension Utils {
 
 }
 
+extension Utils {
+	// MARK: - System Colors
+	static let systemRedColor = UIColor(red:1,green:59/255,blue:48/255,alpha:1)
+
+}

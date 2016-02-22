@@ -24,6 +24,22 @@ extension PIGeofencingManager: PIServiceDelegate {
 
 	public func didProgress(session: NSURLSession, downloadTask: NSURLSessionDownloadTask,progress:Float) {
 
+		let application = UIApplication.sharedApplication()
+		var bkgTaskId = UIBackgroundTaskInvalid
+		bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
+			if bkgTaskId != UIBackgroundTaskInvalid {
+				DDLogError("****** PIGeofencingManager.didProgress ExpirationHandler \(bkgTaskId)",asynchronous:false)
+				let id = bkgTaskId
+				bkgTaskId = UIBackgroundTaskInvalid
+				application.endBackgroundTask(id)
+			}
+		}
+		if bkgTaskId == UIBackgroundTaskInvalid {
+			DDLogError("****** No background time for PIGeofencingManager.didProgress!!!",asynchronous:false)
+		}
+
+		DDLogVerbose("PIGeofencingManager.didProgress beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+
 		DDLogVerbose("PIGeofencingManager.didProgress \(progress)")
 
 		let moc = dataController.writerContext
@@ -47,11 +63,40 @@ extension PIGeofencingManager: PIServiceDelegate {
 			} catch {
 				DDLogError("PIGeofencingManager.didReceiveFile error \(error)",asynchronous:false)
 			}
+			dispatch_async(dispatch_get_main_queue()) {
+				if bkgTaskId != UIBackgroundTaskInvalid {
+					DDLogVerbose("****** PIGeofencingManager.didProgress endBackgroundTask \(bkgTaskId)",asynchronous:false)
+					let id = bkgTaskId
+					bkgTaskId = UIBackgroundTaskInvalid
+					application.endBackgroundTask(id)
+				}
+			}
+
 		}
 	}
-	
+
 	public func didCompleteWithError(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
 
+		guard let _ = error else {
+			return
+		}
+
+		let application = UIApplication.sharedApplication()
+		var bkgTaskId = UIBackgroundTaskInvalid
+		bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
+			if bkgTaskId != UIBackgroundTaskInvalid {
+				DDLogError("****** PIGeofencingManager.didCompleteWithError ExpirationHandler \(bkgTaskId)",asynchronous:false)
+				let id = bkgTaskId
+				bkgTaskId = UIBackgroundTaskInvalid
+				application.endBackgroundTask(id)
+			}
+		}
+		if bkgTaskId == UIBackgroundTaskInvalid {
+			DDLogError("****** No background time for PIGeofencingManager.didCompleteWithError!!!",asynchronous:false)
+		}
+
+		DDLogVerbose("PIGeofencingManager.didCompleteWithError beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+		
 		let moc = dataController.writerContext
 		moc.performBlock {
 			let request = PIDownload.fetchRequest
@@ -67,15 +112,38 @@ extension PIGeofencingManager: PIServiceDelegate {
 					return
 				}
 				download.progressStatus = .Error
+				download.endDate = NSDate()
 
 				try moc.save()
 
 			} catch {
 				DDLogError("PIGeofencingManager.didReceiveFile error \(error)",asynchronous:false)
 			}
+			dispatch_async(dispatch_get_main_queue()) {
+				if bkgTaskId != UIBackgroundTaskInvalid {
+					DDLogVerbose("****** PIGeofencingManager.didCompleteWithError endBackgroundTask \(bkgTaskId)",asynchronous:false)
+					let id = bkgTaskId
+					bkgTaskId = UIBackgroundTaskInvalid
+					application.endBackgroundTask(id)
+				}
+			}
 		}
 	}
 	public func didReceiveFile(session: NSURLSession, downloadTask: NSURLSessionDownloadTask,geofencesURL:NSURL) {
+
+		let application = UIApplication.sharedApplication()
+		var bkgTaskId = UIBackgroundTaskInvalid
+		bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
+			if bkgTaskId != UIBackgroundTaskInvalid {
+				DDLogError("****** PIGeofencingManager.didReceiveFile ExpirationHandler \(bkgTaskId)",asynchronous:false)
+				let id = bkgTaskId
+				bkgTaskId = UIBackgroundTaskInvalid
+				application.endBackgroundTask(id)
+			}
+		}
+		if bkgTaskId == UIBackgroundTaskInvalid {
+			DDLogError("****** No background time for PIGeofencingManager.didReceiveFile!!!",asynchronous:false)
+		}
 
 		let moc = dataController.writerContext
 		moc.performBlock {
@@ -91,16 +159,25 @@ extension PIGeofencingManager: PIServiceDelegate {
 					DDLogError("PIGeofencingManager.didReceiveFile more than one download!",asynchronous:false)
 					return
 				}
-				download.progressStatus = .OK
+				download.progressStatus = .Received
 				download.progress = 1
-				
+				download.endDate = NSDate()
+				download.url = geofencesURL.absoluteString
+
 				try moc.save()
 				
 			} catch {
 				DDLogError("PIGeofencingManager.didReceiveFile error \(error)",asynchronous:false)
 			}
+			dispatch_async(dispatch_get_main_queue()) {
+				if bkgTaskId != UIBackgroundTaskInvalid {
+					DDLogVerbose("****** PIGeofencingManager.didReceiveFile endBackgroundTask \(bkgTaskId)",asynchronous:false)
+					let id = bkgTaskId
+					bkgTaskId = UIBackgroundTaskInvalid
+					application.endBackgroundTask(id)
+				}
+			}
 		}
 	}
-
 
 }

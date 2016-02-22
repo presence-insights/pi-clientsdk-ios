@@ -22,9 +22,11 @@ import CoreData
 extension PIDownload {
 
     @NSManaged public var taskIdentifier: NSNumber
-	@NSManaged public var timestamp: NSDate
+	@NSManaged public var startDate: NSDate
+	@NSManaged public var endDate: NSDate?
     @NSManaged public var sessionIdentifier: String
 	@NSManaged public var progress: NSNumber
 	@NSManaged var primitiveProgressStatus: NSNumber
+	@NSManaged public var url: String?
 
 }

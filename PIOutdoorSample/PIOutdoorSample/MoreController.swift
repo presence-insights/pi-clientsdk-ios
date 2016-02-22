@@ -20,10 +20,15 @@ import UIKit
 import MessageUI
 import CocoaLumberjack
 import PIOutdoorSDK
+import MBProgressHUD
+import SSKeychain
+
+public let kDidResetOrganization = "com.ibm.PI.DidResetOrganization"
 
 enum MoreSections: Int {
     case Settings
 	case PIOutdoorSample
+	case Reset
 }
 
 enum MoreSettings: Int {
@@ -36,6 +41,9 @@ enum MorePIOutdoorSample: Int {
 	case ContactUs
 }
 
+enum MoreReset: Int {
+	case Reset
+}
 
 
 class MoreController: UITableViewController {
@@ -81,6 +89,8 @@ class MoreController: UITableViewController {
             return maximum(MoreSettings)
 		case .PIOutdoorSample:
 			return maximum(MorePIOutdoorSample)
+		case .Reset:
+			return maximum(MoreReset)
 
         }
     }
@@ -92,7 +102,8 @@ class MoreController: UITableViewController {
             return NSLocalizedString("More.Section.Settings",comment:"")
 		case .PIOutdoorSample:
 			return NSLocalizedString("More.Section.PIOutdoorSample",comment:"")
-
+		case .Reset:
+			return ""
 
         }
     }
@@ -101,7 +112,7 @@ class MoreController: UITableViewController {
         
         let s = MoreSections(rawValue: section)
         
-        if case .PIOutdoorSample? = s {
+        if case .Reset? = s {
 
             let footer = "Copyright ⓒ 2016 IBM \(Utils.version)"
             
@@ -124,7 +135,7 @@ class MoreController: UITableViewController {
                 cell.updateFonts()
                 cell.leftLabel?.text = NSLocalizedString("More.Settings.Privacy",comment:"")
                 cell.switchOn.on = Settings.privacy
-                cell.switchOn?.addTarget(self, action: "onChanged:", forControlEvents: UIControlEvents.ValueChanged)
+                cell.switchOn?.addTarget(self, action: "onPrivacySwitchChanged:", forControlEvents: UIControlEvents.ValueChanged)
                 return cell
 			case .TenantCode:
 				let cell = self.dequeueBasicCellForIndexPath(indexPath)
@@ -146,8 +157,19 @@ class MoreController: UITableViewController {
 			switch row! {
 			case .ContactUs:
 				let cell = self.dequeueBasicCellForIndexPath(indexPath)
+				cell.selectionStyle = .Default
 				cell.textLabel?.text = NSLocalizedString("More.PIOutdoorSample.ContactUs",comment:"")
 
+				return cell
+			}
+		case .Reset:
+			let row = MoreReset(rawValue: indexPath.row)
+			switch row! {
+			case .Reset:
+				let cell = self.dequeueBasicCellForIndexPath(indexPath)
+				cell.textLabel?.text = NSLocalizedString("More.Reset.Reset",comment:"")
+				cell.textLabel?.textColor = Utils.systemRedColor
+				cell.selectionStyle = .Default
 				return cell
 			}
 
@@ -166,6 +188,12 @@ class MoreController: UITableViewController {
 			case .ContactUs:
 				sendLogFiles()
 			}
+		case .Reset:
+			let row = MoreReset(rawValue: indexPath.row)!
+			switch row {
+			case .Reset:
+				self.confirmReset()
+			}
 
 		}
 	}
@@ -178,12 +206,16 @@ class MoreController: UITableViewController {
 		cell.imageView?.image = nil
 		cell.detailTextLabel?.text = nil
 		cell.textLabel?.textColor = nil
+		cell.selectionStyle = .None
 		Utils.updateBodyTextStyle(cell.textLabel!)
 		Utils.updateBodyTextStyle(cell.detailTextLabel!)
 		return cell
 	}
 
 	private func sendLogFiles() {
+		if let ip = self.tableView.indexPathForSelectedRow {
+			self.tableView.deselectRowAtIndexPath(ip, animated: true)
+		}
 
 		if !MFMailComposeViewController.canSendMail() {
 			let message = NSLocalizedString("NoMail.Message.ContactUs", comment: "")
@@ -228,7 +260,54 @@ class MoreController: UITableViewController {
 
 	}
 
-    func onChanged(sender: UISwitch) {
+
+	private func confirmReset() {
+		if let ip = self.tableView.indexPathForSelectedRow {
+			self.tableView.deselectRowAtIndexPath(ip, animated: true)
+		}
+
+		let message = NSLocalizedString("Alert.Reset.Message", comment: "")
+		let alert = UIAlertController(title: NSLocalizedString("Alert.Reset.Title",comment:""), message: message, preferredStyle: .Alert)
+		alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel",comment:"Cancel"), style: .Cancel, handler: { (alertAction) -> Void in
+
+			}))
+		alert.addAction(UIAlertAction(title: NSLocalizedString("Alert.Reset.Reset",comment:""), style: .Destructive, handler: { [unowned self] (alertAction) -> Void in
+
+			self.doReset()
+
+			}))
+
+		self.presentViewController(alert, animated: true, completion: nil)
+
+
+	}
+
+	private func doReset() {
+		MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
+		piGeofencingManager.reset {
+			NSNotificationCenter.defaultCenter().postNotificationName(kDidResetOrganization, object: nil)
+			if
+
+
+				let tenantCode = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as? String,
+				let hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as? String {
+
+				SSKeychain.deletePasswordForService(hostname, account: tenantCode)
+				piGeofencingManager.service.orgCode = nil
+
+				Utils.createPIOrg(hostname, tenantCode: tenantCode) {
+					self.tableView.reloadData()
+					MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
+				}
+
+			} else {
+				self.tableView.reloadData()
+				MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
+			}
+		}
+	}
+
+    func onPrivacySwitchChanged(sender: UISwitch) {
         Settings.privacy = sender.on
     }
 
