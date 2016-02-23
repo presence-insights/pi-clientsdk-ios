@@ -170,6 +170,7 @@ extension PIGeofencingManager {
 						continue
 					}
 
+					// LEGACY
 					if let deleted = properties["@deleted"] as? Bool where deleted {
 						if let geofenceCode = properties["@code"] as? String {
 							DDLogInfo("Deleted Geofence \(geofenceCode)")
@@ -229,11 +230,32 @@ extension PIGeofencingManager {
 						let properties = propertiesGenerator(properties)
 						name = properties.name
 						radius = properties.radius
-						geofenceCode = properties.code ??  NSUUID().UUIDString
+						guard let code = properties.code else {
+							DDLogError("\(i) Missing geofence code",asynchronous:false)
+							nbErrors += 1
+							continue
+						}
+						geofenceCode = code
 					} else {
 						name = properties["name"] as? String ?? "???!!!"
 						radius = properties["radius"] as? Int ?? 100
-						geofenceCode = properties["@code"] as? String ?? NSUUID().UUIDString
+						guard let code = properties["@code"] as? String else {
+							DDLogError("\(i) Missing geofence code",asynchronous:false)
+							nbErrors += 1
+							continue
+						}
+						geofenceCode = code
+					}
+
+					guard let orgCode = properties["@org"] as? String else {
+						DDLogError("\(i) Missing org code")
+						nbErrors += 1
+						continue
+					}
+					if orgCode != self.service.orgCode {
+						DDLogError("\(i) Wrong org code \(geofenceCode), current org code is \(self.service.orgCode)",asynchronous:false)
+						nbErrors += 1
+						continue
 					}
 
 					var newFence = true
