@@ -24,6 +24,9 @@ import CoreData
 import MapKit
 import CocoaLumberjack
 
+
+public let kGeofenceManagerDidSynchronize = "com.ibm.PI.GeofenceManagerDidSynchronize"
+
 public enum PIOutdoorError:ErrorType {
     case UnzipOpenFile(String)
     case UnzipFileTo(String)
@@ -56,11 +59,17 @@ public struct PIGeofenceProperties {
 
 public typealias GeofencePropertiesGenerator = ([String:AnyObject]) -> PIGeofenceProperties
 
+@objc
 public protocol PIGeofencingManagerDelegate:class {
     /// The device enters into a geofence
     func geofencingManager(manager: PIGeofencingManager, didEnterGeofence geofence: PIGeofence? )
     /// The device exits a geofence
     func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? )
+
+	optional func geofencingManager(manager: PIGeofencingManager, didStartDownload download: PIDownload)
+	optional func geofencingManager(manager: PIGeofencingManager, didReceiveDownload download: PIDownload)
+
+
 }
 
 /// `PIGeofencingManager` is your entry point to the PI Geofences.
@@ -171,7 +180,10 @@ public final class PIGeofencingManager:NSObject {
 			download.startDate = NSDate()
 			do {
 				try moc.save()
+				let downloadURI = download.objectID.URIRepresentation()
 				dispatch_async(dispatch_get_main_queue()) {
+					let download = self.dataController.managedObjectWithURI(downloadURI) as! PIDownload
+					self.delegate?.geofencingManager?(self, didStartDownload: download)
 					completionHandler?(true)
 				}
 			} catch {
@@ -210,85 +222,6 @@ public final class PIGeofencingManager:NSObject {
         self.service.cancelAll()
     }
     
-	public func startMonitoringRegions() {
-		self.locationManager.startMonitoringSignificantLocationChanges()
-
-	}
-	
-
-	public func stopMonitoringAllRegions(completionHandler: (()-> Void)? = nil) {
-
-		locationManager.stopMonitoringSignificantLocationChanges()
-
-		let moc = self.dataController.writerContext
-
-		moc.performBlock {
-			do {
-				// find the regions currently being monitored
-				DDLogVerbose("Stop monitoring all the regions")
-				let fetchMonitoredRegionsRequest = PIGeofence.fetchRequest
-
-				fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == true")
-				guard let monitoredGeofences = try moc.executeFetchRequest(fetchMonitoredRegionsRequest) as? [PIGeofence] else {
-					DDLogError("Programming error",asynchronous:false)
-					assertionFailure("Programming error")
-					dispatch_async(dispatch_get_main_queue()) {
-						completionHandler?()
-					}
-					return
-				}
-
-				if monitoredGeofences.count == 0 {
-					DDLogVerbose("No region to stop!")
-					dispatch_async(dispatch_get_main_queue()) {
-						completionHandler?()
-					}
-					return
-				}
-
-				var regionsToStop: [CLRegion] = []
-				for geofence in monitoredGeofences {
-					geofence.monitored = false
-					if let region = self.regions?[geofence.code] {
-						regionsToStop.append(region)
-					}
-				}
-
-				try moc.save()
-
-				self.regions = nil
-
-				dispatch_async(dispatch_get_main_queue()) {
-					for region in regionsToStop {
-						self.locationManager.stopMonitoringForRegion(region)
-						DDLogVerbose("Stop monitoring \(region.identifier)")
-					}
-					completionHandler?()
-				}
-
-			} catch {
-				DDLogError("Core Data Error \(error)")
-				dispatch_async(dispatch_get_main_queue()) {
-					completionHandler?()
-				}
-			}
-		}
-
-	}
-
-	public func reset(completionHandler: ((Void) -> Void)? = nil) {
-		self.stopMonitoringAllRegions {
-			do {
-				try self.dataController.removeStore()
-				completionHandler?()
-			} catch {
-				DDLogError("Core Data Error \(error)")
-				assertionFailure()
-				completionHandler?()
-			}
-
-		}
-	}
     ///
     /// - parameter code:   The code of the geofence to remove
 	/// - parameter completionHandler: closure invoked on completion
@@ -313,7 +246,7 @@ public final class PIGeofencingManager:NSObject {
                             DDLogError("Programming error",asynchronous:false)
                             fatalError("Programming error")
                         }
-                        DDLogInfo("delete fence \(geofence.name)")
+                        DDLogInfo("Delete fence \(geofence.name) \(geofence.code)")
                         moc.deleteObject(geofence)
                         
                         try moc.save()

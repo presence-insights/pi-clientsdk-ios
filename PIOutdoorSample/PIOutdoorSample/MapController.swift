@@ -21,6 +21,7 @@ import UIKit
 import MapKit
 import CoreLocation
 import MBProgressHUD
+import PIOutdoorSDK
 
 class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
 
@@ -51,7 +52,7 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
         NSNotificationCenter.defaultCenter().addObserver(
 			self,
 			selector: "seedDidComplete:",
-			name: kSeedDidComplete,
+			name: kGeofenceManagerDidSynchronize,
 			object: nil)
         
 		NSNotificationCenter.defaultCenter().addObserver(

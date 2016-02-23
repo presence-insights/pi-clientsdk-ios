@@ -30,7 +30,6 @@ let slackToken: String? = "xoxb-16384356389-QhQvfBrIrUgne6CLza7fRkx5"
 
 var piGeofencingManager: PIGeofencingManager!
 
-let kSeedDidComplete = "com.ibm.PI.SeedDidComplete"
 
 let kOrgCodeDidChange = "com.ibm.PI.OrgCodeDidChange"
 
@@ -42,6 +41,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private let locationManager = CLLocationManager()
 
     private let slackQueue: NSOperationQueue = NSOperationQueue()
+
+	private static let dateFormatter:NSDateFormatter = {
+		let dateFormatter = NSDateFormatter()
+		dateFormatter.dateStyle = .MediumStyle
+		dateFormatter.timeStyle = .MediumStyle
+		return dateFormatter
+	}()
 
     func application(application: UIApplication,
 		didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -86,7 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		piGeofencingManager.privacy = Settings.privacy
 
 		SSKeychain.setAccessibilityType(kSecAttrAccessibleAlwaysThisDeviceOnly)
-		DDLogInfo("Look into the keychain")
+		DDLogInfo("Look into the keychain \(hostname) \(tenantCode)")
+
 		let data = SSKeychain.passwordDataForService(hostname, account: tenantCode)
 
         if let data = data {
@@ -96,12 +103,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 						piGeofencingManager.service.orgCode = orgCode
 						DDLogVerbose("OrgCode \(orgCode)")
                 } else {
-                    DDLogError("orgCode missing in the JSON from the KeyChain")
+                    DDLogError("orgCode missing in the JSON from the KeyChain",asynchronous:false)
                 }
             } catch {
-                DDLogError("Can't read JSON in the KeyChain \(error)")
+                DDLogError("Can't read JSON in the KeyChain \(error)",asynchronous:false)
             }
-        }
+		} else {
+			DDLogError("Empty keychain",asynchronous:false)
+		}
+
 		if piGeofencingManager.service.orgCode == nil {
 			Utils.createPIOrg(hostname, tenantCode: tenantCode)
 		} else {
@@ -216,7 +226,6 @@ extension AppDelegate {
             do {
                 try piGeofencingManager.seedGeojson(url,propertiesGenerator:fenceProperties) { error in
 					DDLogError("(error)",asynchronous:false)
-                    NSNotificationCenter.defaultCenter().postNotificationName(kSeedDidComplete, object: nil)
                 }
             } catch {
                 print(error)
@@ -303,42 +312,7 @@ extension AppDelegate {
 }
 
 extension AppDelegate:PIGeofencingManagerDelegate {
-    func geofencingManager(manager: PIGeofencingManager, didEnterGeofence geofence: PIGeofence? ) {
-        
-        let geofenceName = geofence?.name ?? "Error,unknown fence"
-        print("Did Enter",geofenceName)
-        sendSlackMessage("enter", geofence: geofence)
-        
-        let notification = UILocalNotification()
-        notification.alertBody = String(format:NSLocalizedString("Region.Notification.Enter %@", comment: ""),geofenceName)
-        
-        notification.soundName = UILocalNotificationDefaultSoundName
-        if let geofence = geofence {
-            notification.userInfo = ["uuid":geofence.code]
-        }
-        
-        UIApplication.sharedApplication().presentLocalNotificationNow(notification)
-        
-    }
-    
-    func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? ) {
-        
-        let geofenceName = geofence?.name ?? "Error,unknown fence"
-        print("Did Exit",geofenceName)
-        sendSlackMessage("exit", geofence: geofence)
-        
-        let notification = UILocalNotification()
-        notification.alertBody = String(format:NSLocalizedString("Region.Notification.Exit %@", comment: ""),geofenceName)
-        
-        notification.soundName = UILocalNotificationDefaultSoundName
-        if let geofence = geofence {
-            notification.userInfo = ["uuid":geofence.code]
-        }
-        
-        UIApplication.sharedApplication().presentLocalNotificationNow(notification)
-    }
-    
-    
+
     private func sendSlackMessage(event:String,geofence: PIGeofence?) {
         
         guard Settings.privacy == false else {
@@ -356,7 +330,7 @@ extension AppDelegate:PIGeofencingManagerDelegate {
         let geofenceName = geofence?.name ?? "unknown fence"
         var params:[String:String] = [:]
         params["channel"] = "#geo-spam"
-        params["text"] = ":iphone: \(event) : \(geofenceName)"
+        params["text"] = ":iphone: \(event) : /\(piGeofencingManager.service.orgCode ?? "?")/\(geofence?.code ?? "?")/\(geofenceName)"
         
         let chatPostMessage = SlackOperation(session:session,slackAPI:"chat.postMessage",params:params,token:slackToken)
         // https://developer.apple.com/library/ios/technotes/tn2277/_index.html
@@ -413,6 +387,82 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 
 extension AppDelegate {
 
+	// MARK: - PIGeofencingManagerDelegate
+
+	func geofencingManager(manager: PIGeofencingManager, didEnterGeofence geofence: PIGeofence? ) {
+
+		let geofenceName = geofence?.name ?? "Error,unknown fence"
+		DDLogVerbose("Did Enter \(geofenceName)")
+		sendSlackMessage("enter", geofence: geofence)
+
+		let notification = UILocalNotification()
+		notification.alertBody = String(format:NSLocalizedString("Region.Notification.Enter %@", comment: ""),geofenceName)
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		if let geofence = geofence {
+			notification.userInfo = ["geofence.code":geofence.code]
+		}
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+
+	}
+
+	func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? ) {
+
+		let geofenceName = geofence?.name ?? "Error,unknown fence"
+		DDLogVerbose("Did Exit \(geofenceName)")
+		sendSlackMessage("exit", geofence: geofence)
+
+		let notification = UILocalNotification()
+		notification.alertBody = String(format:NSLocalizedString("Region.Notification.Exit %@", comment: ""),geofenceName)
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		if let geofence = geofence {
+			notification.userInfo = ["geofence.code":geofence.code]
+		}
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+	}
+
+	func geofencingManager(manager: PIGeofencingManager, didStartDownload download: PIDownload) {
+		let notification = UILocalNotification()
+		let startDate = self.dynamicType.dateFormatter.stringFromDate(download.startDate)
+		notification.alertBody = String(format:NSLocalizedString("Download.Notification.Start %@", comment: ""),startDate)
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		notification.userInfo = ["download.startDate":download.startDate]
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+
+	}
+
+	func geofencingManager(manager: PIGeofencingManager, didReceiveDownload download: PIDownload) {
+		let notification = UILocalNotification()
+		let startDate = self.dynamicType.dateFormatter.stringFromDate(download.startDate)
+		if let endDate = download.endDate {
+			let endDate = self.dynamicType.dateFormatter.stringFromDate(endDate)
+			notification.alertBody = String(format:NSLocalizedString("Download.Notification.End %@ %@ %@", comment: ""),startDate,endDate,"\(download.progressStatus)")
+		} else {
+			notification.alertBody = String(format:NSLocalizedString("Download.Notification.End %@ %@", comment: ""),startDate, "\(download.progressStatus)")
+		}
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		if let endDate = download.endDate {
+			notification.userInfo = ["download.endDate":endDate]
+		} else {
+
+		}
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+
+	}
+
+	
+
+}
+
+extension AppDelegate {
+
 	func privacyDidChange(notification:NSNotification) {
 		piGeofencingManager.privacy = Settings.privacy
 	}
@@ -421,6 +471,10 @@ extension AppDelegate {
 extension AppDelegate {
 
 	func showAlert(title:String,message:String) {
+
+		if let _ = self.window?.rootViewController?.presentedViewController {
+			self.window?.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+		}
 
 		let alertController = UIAlertController(
 			title: NSLocalizedString(title,comment:""),

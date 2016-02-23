@@ -96,6 +96,7 @@ extension PIGeofencingManager {
 					propertiesGenerator: propertiesGenerator)
 				self.updateMonitoredGeofencesWithMoc(moc)
 				dispatch_async(dispatch_get_main_queue()) {
+					NSNotificationCenter.defaultCenter().postNotificationName(kGeofenceManagerDidSynchronize, object: nil)
 					completionHandler?(error:error)
 				}
 			}
@@ -114,86 +115,205 @@ extension PIGeofencingManager {
 			}
 
 
-			guard let geofences = geojson["features"] as? [[String:AnyObject]] else {
+			guard var geofences = geojson["features"] as? [[String:AnyObject]] else {
 				return PIOutdoorError.GeoJsonNoFeature
 			}
 
-			var nbErrors = 0
-			for (i,fence) in geofences.enumerate() {
-				guard let type = fence["type"] as? String else {
-					DDLogError("\(i) Missing type property",asynchronous:false)
-					nbErrors += 1
-					continue
+			geofences.sortInPlace { (fencea, fenceb) -> Bool in
+				guard let propertiesa = fencea["properties"] as? [String:AnyObject] else {
+					return true
 				}
-				guard type == "Feature" else {
-					DDLogError("\(i) Wrong type \(type)",asynchronous:false)
-					nbErrors += 1
-					continue
+				guard let propertiesb = fenceb["properties"] as? [String:AnyObject] else {
+					return true
 				}
-				guard let geometry = fence["geometry"] as? [String:AnyObject] else {
-					DDLogError("\(i) Missing geometry",asynchronous:false)
-					nbErrors += 1
-					continue
+				guard let geofenceCodea = propertiesa["@code"] as? String else {
+					return true
+				}
+				guard let geofenceCodeb = propertiesb["@code"] as? String else {
+					return true
 				}
 
-				guard let geometry_type = geometry["type"] as? String else {
-					DDLogError("\(i) Missing geometry type",asynchronous:false)
-					nbErrors += 1
-					continue
-				}
-				guard geometry_type == "Point" else {
-					DDLogError("\(i) Does not support geometry \(geometry_type)")
-					nbErrors += 1
-					continue
-				}
-
-				guard let coordinates = geometry["coordinates"] as? [NSNumber] else {
-					DDLogError("\(i) Missing coordinates",asynchronous:false)
-					nbErrors += 1
-					continue
-				}
-
-				guard coordinates.count == 2 else {
-					DDLogError("\(i) Wrong number of coordinates")
-					nbErrors += 1
-					continue
-				}
-
-				let latitude = coordinates[1]
-				let longitude = coordinates[0]
-
-				guard let properties = fence["properties"] as? [String:AnyObject] else {
-					DDLogError("\(i) Missing properties",asynchronous:false)
-					nbErrors += 1
-					continue
-				}
-
-				let name:String
-				let radius:Int
-				let geofenceCode:String
-
-				if let propertiesGenerator = propertiesGenerator {
-					let properties = propertiesGenerator(properties)
-					name = properties.name
-					radius = properties.radius
-					geofenceCode = properties.code ??  NSUUID().UUIDString
-				} else {
-					name = properties["name"] as? String ?? "???!!!"
-					radius = properties["radius"] as? Int ?? 100
-					geofenceCode = properties["uuid"] as? String ?? NSUUID().UUIDString
-				}
-
-				let geofence:PIGeofence = moc.insertObject()
-
-				geofence.name = name
-				geofence.radius = radius
-				geofence.code = geofenceCode
-				geofence.latitude = latitude
-				geofence.longitude = longitude
+				return geofenceCodea < geofenceCodeb
 			}
 
+			for fence in geofences {
+				guard let properties = fence["properties"] as? [String:AnyObject] else {
+					continue
+				}
+				guard let code = properties["@code"] as? String else {
+					continue
+				}
+
+				DDLogVerbose(code)
+			}
+			DDLogVerbose("---")
+
 			do {
+				let request = PIGeofence.fetchRequest
+				request.sortDescriptors = [NSSortDescriptor(key: "code", ascending: true)]
+				
+				let existingFences = try moc.executeFetchRequest(request) as! [PIGeofence]
+				for fence in existingFences {
+					DDLogVerbose(fence.code)
+				}
+
+				var nbErrors = 0
+				var iCurrentFence = 0
+				var nbDeleted = 0
+				var nbInserted = 0
+				var nbUpdated = 0
+
+				for (i,fence) in geofences.enumerate() {
+					guard let properties = fence["properties"] as? [String:AnyObject] else {
+						DDLogError("\(i) Missing properties",asynchronous:false)
+						nbErrors += 1
+						continue
+					}
+
+					if let deleted = properties["@deleted"] as? Bool where deleted {
+						if let geofenceCode = properties["@code"] as? String {
+							DDLogInfo("Deleted Geofence \(geofenceCode)")
+						} else {
+							DDLogError("Deleted Geofence Unknown")
+						}
+						continue
+					}
+
+					guard let type = fence["type"] as? String else {
+						DDLogError("\(i) Missing type property",asynchronous:false)
+						nbErrors += 1
+						continue
+					}
+					guard type == "Feature" else {
+						DDLogError("\(i) Wrong type \(type)",asynchronous:false)
+						nbErrors += 1
+						continue
+					}
+					guard let geometry = fence["geometry"] as? [String:AnyObject] else {
+						DDLogError("\(i) Missing geometry",asynchronous:false)
+						nbErrors += 1
+						continue
+					}
+
+					guard let geometry_type = geometry["type"] as? String else {
+						DDLogError("\(i) Missing geometry type",asynchronous:false)
+						nbErrors += 1
+						continue
+					}
+					guard geometry_type == "Point" else {
+						DDLogError("\(i) Does not support geometry \(geometry_type)")
+						nbErrors += 1
+						continue
+					}
+
+					guard let coordinates = geometry["coordinates"] as? [NSNumber] else {
+						DDLogError("\(i) Missing coordinates",asynchronous:false)
+						nbErrors += 1
+						continue
+					}
+
+					guard coordinates.count == 2 else {
+						DDLogError("\(i) Wrong number of coordinates")
+						nbErrors += 1
+						continue
+					}
+
+					let latitude = coordinates[1]
+					let longitude = coordinates[0]
+
+					let name:String
+					let radius:Int
+					let geofenceCode:String
+
+					if let propertiesGenerator = propertiesGenerator {
+						let properties = propertiesGenerator(properties)
+						name = properties.name
+						radius = properties.radius
+						geofenceCode = properties.code ??  NSUUID().UUIDString
+					} else {
+						name = properties["name"] as? String ?? "???!!!"
+						radius = properties["radius"] as? Int ?? 100
+						geofenceCode = properties["@code"] as? String ?? NSUUID().UUIDString
+					}
+
+					var newFence = true
+
+					while iCurrentFence < existingFences.count {
+						let currentFence = existingFences[iCurrentFence]
+						if currentFence.code == geofenceCode {
+							// Fence already here
+							var updated = false
+							if name != currentFence.name {
+								DDLogVerbose("old name \(currentFence.name), new Name \(name)")
+								currentFence.name = name
+								updated = true
+							}
+							if latitude != currentFence.latitude {
+								DDLogVerbose("old latitude \(currentFence.latitude), new latitude \(latitude)")
+								currentFence.latitude = latitude
+								updated = true
+							}
+							if longitude != currentFence.longitude {
+								DDLogVerbose("old longitude \(currentFence.longitude), new longitude \(longitude)")
+								currentFence.longitude = longitude
+								updated = true
+							}
+							if radius != currentFence.radius {
+								DDLogVerbose("old radius \(currentFence.radius), new radius \(radius)")
+								currentFence.radius = radius
+								updated = true
+							}
+							if updated {
+								DDLogVerbose("Update Geofence \(name) \(geofenceCode)")
+								nbUpdated += 1
+							}
+							iCurrentFence += 1
+							newFence = false
+							break
+						}
+						if currentFence.code < geofenceCode {
+
+							DDLogVerbose("Delete Geofence \(currentFence.name) \(currentFence.code)")
+							moc.deleteObject(currentFence)
+							nbDeleted += 1
+							iCurrentFence += 1
+							continue
+						}
+
+						// new geofence
+						break
+
+					}
+
+					if newFence {
+
+						let geofence:PIGeofence = moc.insertObject()
+
+						geofence.name = name
+						geofence.radius = radius
+						geofence.code = geofenceCode
+						geofence.latitude = latitude
+						geofence.longitude = longitude
+						nbInserted++
+						DDLogVerbose("Insert Geofence \(name) \(geofenceCode)")
+					}
+
+				}
+
+				// Remaining local hazard events we didn't iterate over
+				while iCurrentFence < existingFences.count {
+					let currentFence = existingFences[iCurrentFence]
+					iCurrentFence++
+
+					moc.deleteObject(currentFence)
+					nbDeleted++
+				}
+
 				try moc.save()
+
+				DDLogVerbose("Inserted \(nbInserted)")
+				DDLogVerbose("Deleted \(nbDeleted)")
+				DDLogVerbose("Updated \(nbUpdated)")
 
 				if nbErrors == 0 {
 					return nil

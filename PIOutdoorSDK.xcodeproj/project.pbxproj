@@ -22,6 +22,7 @@
 		7D9198371C7377AD001640E0 /* NSURLRequest+PIOutdoor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9198361C7377AD001640E0 /* NSURLRequest+PIOutdoor.swift */; };
 		7DAD42C61C6CD40E0012CE25 /* DownloadResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAD42C51C6CD40E0012CE25 /* DownloadResponse.swift */; };
 		7DAD42C81C6CD4EE0012CE25 /* DownloadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAD42C71C6CD4EE0012CE25 /* DownloadRequest.swift */; };
+		7DD37CFF1C7C7FF200ED3B72 /* PIGeofencingManager+LifeCycleMonitoringRegions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD37CFE1C7C7FF200ED3B72 /* PIGeofencingManager+LifeCycleMonitoringRegions.swift */; };
 		7DDC91611C469BCC002A5113 /* PIOutdoorSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DDC91601C469BCC002A5113 /* PIOutdoorSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7DDC91B21C47980D002A5113 /* NetworkActivityIndicatorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91AE1C47980D002A5113 /* NetworkActivityIndicatorManager.swift */; };
 		7DDC91B31C47980D002A5113 /* HTTPOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC91AF1C47980D002A5113 /* HTTPOperation.swift */; };
@@ -66,6 +67,7 @@
 		7D9198361C7377AD001640E0 /* NSURLRequest+PIOutdoor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLRequest+PIOutdoor.swift"; sourceTree = "<group>"; };
 		7DAD42C51C6CD40E0012CE25 /* DownloadResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadResponse.swift; sourceTree = "<group>"; };
 		7DAD42C71C6CD4EE0012CE25 /* DownloadRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadRequest.swift; sourceTree = "<group>"; };
+		7DD37CFE1C7C7FF200ED3B72 /* PIGeofencingManager+LifeCycleMonitoringRegions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PIGeofencingManager+LifeCycleMonitoringRegions.swift"; sourceTree = "<group>"; };
 		7DDC915D1C469BCC002A5113 /* PIOutdoorSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PIOutdoorSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DDC91601C469BCC002A5113 /* PIOutdoorSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PIOutdoorSDK.h; sourceTree = "<group>"; };
 		7DDC91621C469BCC002A5113 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				7D30843B1C75EFCF00CF59A4 /* PIGeofencingManager+CLLocationManagerDelegate.swift */,
 				7D30842E1C74CF0500CF59A4 /* PIGeofencingManager+PIServiceDelegate.swift */,
 				7D0690BE1C7B7A5500574386 /* PIGeofencingManager+UpdateMonitoredGeofences.swift */,
+				7DD37CFE1C7C7FF200ED3B72 /* PIGeofencingManager+LifeCycleMonitoringRegions.swift */,
 				7D0690C01C7B84E400574386 /* PIGeofencingManager+Seeding.swift */,
 				7DDC91C11C47982E002A5113 /* PIGeofenceMonitoringRequest.swift */,
 				7DDC91C21C47982E002A5113 /* PIGeofenceMonitoringOperation.swift */,
@@ -372,6 +375,7 @@
 				7D0C39261C4D6A6E00BD7798 /* NSManagedObjectContext+Extensions.swift in Sources */,
 				7DDC91CF1C479846002A5113 /* PIOutdoor.xcdatamodel in Sources */,
 				7D4510A71C5A60A9007BA047 /* PIServiceCreateOrgResponse.swift in Sources */,
+				7DD37CFF1C7C7FF200ED3B72 /* PIGeofencingManager+LifeCycleMonitoringRegions.swift in Sources */,
 				7DF9101C1C60F7D8008FA84C /* PIGeofenceCreateOperation.swift in Sources */,
 				7DDC91BC1C479821002A5113 /* Response.swift in Sources */,
 				7D0690C11C7B84E400574386 /* PIGeofencingManager+Seeding.swift in Sources */,

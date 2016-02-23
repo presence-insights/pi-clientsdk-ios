@@ -69,12 +69,20 @@ class DownloadCell: UITableViewCell {
 
 		switch download.progressStatus {
 		case .NetworkError:
-			self.endDate.tintColor = UIColor.redColor()
-			self.endTime.tintColor = UIColor.redColor()
+			self.endDate.textColor = Utils.systemRedColor
+			self.endTime.textColor = Utils.systemRedColor
+
+		case .ProcessingError:
+			self.endDate.textColor = Utils.systemOrangeColor
+			self.endTime.textColor = Utils.systemOrangeColor
+
+		case .Processed:
+			self.endDate.textColor = Utils.systemGreenColor
+			self.endTime.textColor = Utils.systemGreenColor
 
 		default:
-			self.endDate.tintColor = nil
-			self.endTime.tintColor = nil
+			self.endDate.textColor = nil
+			self.endTime.textColor = nil
 
 		}
 	}

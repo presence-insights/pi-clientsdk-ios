@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10109" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10083"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -23,7 +23,7 @@
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="11:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hK5-9g-ZE2">
                         <rect key="frame" x="15" y="35" width="38.5" height="19.5"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RuP-Hl-4K9">
@@ -34,15 +34,15 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="samedi 2 février 2016" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cuW-rs-nyX">
-                        <rect key="frame" x="15" y="63" width="157" height="20"/>
+                        <rect key="frame" x="15" y="63" width="157" height="19.5"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gPT-XC-Aaf">
-                        <rect key="frame" x="15" y="91" width="40.5" height="19.5"/>
+                        <rect key="frame" x="15" y="90.5" width="40.5" height="19.5"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
@@ -54,6 +54,7 @@
                     <constraint firstAttribute="topMargin" secondItem="RuP-Hl-4K9" secondAttribute="top" id="IDb-zG-MnX"/>
                     <constraint firstItem="gPT-XC-Aaf" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="H2p-sc-9uM" secondAttribute="bottomMargin" id="MOe-eX-QO8"/>
                     <constraint firstItem="RuP-Hl-4K9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Fsx-Jf-U35" secondAttribute="trailing" constant="8" symbolic="YES" id="Mw8-yz-I9H"/>
+                    <constraint firstItem="RuP-Hl-4K9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cuW-rs-nyX" secondAttribute="trailing" constant="8" symbolic="YES" id="UmU-eJ-3DJ"/>
                     <constraint firstAttribute="trailingMargin" secondItem="RuP-Hl-4K9" secondAttribute="trailing" id="Zxv-Vk-492"/>
                     <constraint firstAttribute="leadingMargin" secondItem="gPT-XC-Aaf" secondAttribute="leading" id="axo-WW-74B"/>
                     <constraint firstItem="hK5-9g-ZE2" firstAttribute="top" secondItem="Fsx-Jf-U35" secondAttribute="bottom" constant="8" symbolic="YES" id="bw8-9h-AJS"/>

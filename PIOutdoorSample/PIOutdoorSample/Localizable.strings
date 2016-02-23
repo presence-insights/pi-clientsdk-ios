@@ -72,3 +72,11 @@ All the geofences will be deleted and a new org will be created.";
 "MailFooter.Device %@ %@" = "Device: %@ (%@)\n";
 "MailFooter.Locale %@" = "Locale: %@";
 
+"Download.Notification.Start %@" = "Download started at \n%@";
+"Download.Notification.End %@ %@ %@" = "Download started at \n%@, \nended at %@, \nstatus %@";
+"Download.Notification.End %@ %@" = "Download started at \n%@, \nstatus %@";
+
+
+
+
+
