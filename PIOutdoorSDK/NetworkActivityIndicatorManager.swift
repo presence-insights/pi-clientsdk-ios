@@ -71,7 +71,7 @@ public class NetworkActivityIndicatorManager: NSObject {
         
     }
     
-    private func refreshNetworkActivityIndicator() {
+    public func refreshNetworkActivityIndicator() {
         
         if !NSThread.isMainThread() {
             dispatch_async(dispatch_get_main_queue()) { () -> Void in

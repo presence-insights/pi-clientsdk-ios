@@ -113,7 +113,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		}
 
 		if piGeofencingManager.service.orgCode == nil {
-			Utils.createPIOrg(hostname, tenantCode: tenantCode)
+			let vc = self.window!.rootViewController!
+			MBProgressHUD.showHUDAddedTo(vc.view, animated: true)
+			Utils.createPIOrg(hostname, tenantCode: tenantCode,vc:vc) {
+				success in
+				MBProgressHUD.hideHUDForView(vc.view, animated: true)
+			}
 		} else {
 			piGeofencingManager.synchronize()
 
@@ -180,6 +185,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+		NetworkActivityIndicatorManager.sharedInstance.refreshNetworkActivityIndicator()
         DDLogVerbose("AppDelegate.didBecomeActive")
     }
 

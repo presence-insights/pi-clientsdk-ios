@@ -295,11 +295,10 @@ class MoreController: UITableViewController {
 				SSKeychain.deletePasswordForService(hostname, account: tenantCode)
 				piGeofencingManager.service.orgCode = nil
 
-				Utils.createPIOrg(hostname, tenantCode: tenantCode) {
-					self.tableView.reloadData()
+					Utils.createPIOrg(hostname, tenantCode: tenantCode,vc:self.tabBarController!) { success in
 					MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
+					piGeofencingManager.startMonitoringRegions()
 				}
-				piGeofencingManager.startMonitoringRegions()
 			} else {
 				self.tableView.reloadData()
 				MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)

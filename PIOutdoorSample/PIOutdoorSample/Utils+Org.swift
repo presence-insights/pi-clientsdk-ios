@@ -26,39 +26,32 @@ import SSKeychain
 extension Utils {
 
 
-	static func createPIOrg(hostname:String,tenantCode:String,completionHandler: (() -> Void)? = nil ) {
+	static func createPIOrg(hostname:String,tenantCode:String,vc:UIViewController,completionHandler: ((Bool) -> Void)? = nil ) {
 
-		let window = UIApplication.sharedApplication().delegate!.window!
 
-		MBProgressHUD.showHUDAddedTo(nil,animated:true)
 		let service = piGeofencingManager.service
 		let orgName = UIDevice.currentDevice().name + "-" + NSUUID().UUIDString
 		DDLogVerbose("Start PIServiceCreateOrgRequest: \(orgName)")
 		let request = PIServiceCreateOrgRequest(orgName:orgName) { response in
-			MBProgressHUD.hideHUDForView(nil, animated: true)
 			switch response.result {
 			case .OK?:
 				DDLogVerbose("PIServiceCreateOrgRequest OK \(response.orgCode)")
 				guard let orgCode = response.orgCode else {
 					DDLogError("PIServiceCreateOrgRequest Missing org code")
 					assertionFailure("Programming error")
-					completionHandler?()
+					completionHandler?(false)
 					return
 				}
 				var json =  [String:AnyObject]()
 				json["orgCode"] = orgCode
 				guard let data = try? NSJSONSerialization.dataWithJSONObject(json, options: []) else {
 					DDLogError("Programming Error")
-					completionHandler?()
+					completionHandler?(false)
 					return
 				}
 
 				SSKeychain.setPasswordData(data, forService: hostname, account: tenantCode)
 				piGeofencingManager.service.orgCode = orgCode
-				dispatch_async(dispatch_get_main_queue()) {
-					NSNotificationCenter.defaultCenter().postNotificationName(kOrgCodeDidChange, object: self)
-					piGeofencingManager.synchronize()
-				}
 
 			case .Cancelled?:
 				DDLogVerbose("PIServiceCreateOrgRequest cancelled")
@@ -79,12 +72,15 @@ extension Utils {
 					preferredStyle: .Alert)
 
 				let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
-					completionHandler?()
+					dispatch_async(dispatch_get_main_queue()) {
+						completionHandler?(true)
+						piGeofencingManager.synchronize()
+					}
 				}
 				alertController.addAction(okAction)
 
 
-				window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+				vc.presentViewController(alertController, animated: true, completion: nil)
 			} else {
 				let alertController = UIAlertController(
 					title: NSLocalizedString("Alert.OrgCreation.Error.Title",comment:""),
@@ -92,12 +88,14 @@ extension Utils {
 					preferredStyle: .Alert)
 
 				let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
-					completionHandler?()
+					dispatch_async(dispatch_get_main_queue()) {
+						completionHandler?(false)
+					}
 				}
 				alertController.addAction(okAction)
 
 
-				window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+				vc.presentViewController(alertController, animated: true, completion: nil)
 
 
 			}
