@@ -55,8 +55,8 @@ final class PIServiceCreateOrgOperation:ServiceOperation {
         request.HTTPMethod = "POST"
         
         let string = NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding)
-        DDLogVerbose("\(string)")
-        
+		DDLogVerbose("PIServiceCreateOrgOperation payload: \(string)",asynchronous:false)
+
         performRequest(request) {
             self.executing = false
             self.finished = true

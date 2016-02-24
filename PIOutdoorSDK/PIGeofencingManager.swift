@@ -128,9 +128,9 @@ public final class PIGeofencingManager:NSObject {
 
 		self.service.delegate = self
 		
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didBecomeActive:", name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PIGeofencingManager.didBecomeActive(_:)), name: UIApplicationWillEnterForegroundNotification, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "willResignActive:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PIGeofencingManager.willResignActive(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
         
     }
     /// Enables or disables the logging

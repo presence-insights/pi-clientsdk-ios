@@ -48,7 +48,18 @@ public final class PIGeofenceDeleteRequest:Request {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 switch operation.result {
                 case let .OK(data)?:
-                    response.result = .OK(data)
+					guard let data = data else {
+						response.result = .OK(nil)
+						break
+					}
+					do {
+						let json = try NSJSONSerialization.JSONObjectWithData(data,options:[])
+						response.result = .OK(json)
+						print(json)
+					} catch {
+						DDLogError("PIGeofenceCreateRequest,Json parsing error \(error)")
+						response.result = .OK(nil)
+					}
                 case .Cancelled?:
                     response.result = .Cancelled
                 case let .HTTPStatus(status, data)?:

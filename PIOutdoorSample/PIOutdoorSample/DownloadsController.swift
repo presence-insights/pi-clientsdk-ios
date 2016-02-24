@@ -64,9 +64,10 @@ class DownloadsController: UITableViewController {
 
 		NSNotificationCenter.defaultCenter().addObserver(
 			self,
-			selector:"contentSizeChanged:",
-			name:UIContentSizeCategoryDidChangeNotification,
-			object:nil)
+			selector: #selector(DownloadsController.contentsSizeChanged(_:)),
+			name: UIContentSizeCategoryDidChangeNotification,
+			object: nil)
+
 
 
     }

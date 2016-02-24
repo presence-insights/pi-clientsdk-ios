@@ -45,8 +45,8 @@ public class NetworkActivityIndicatorManager: NSObject {
     
     public func enableActivityIndicator(enable:Bool) {
         if enable {
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "didStartRequest:", name: NetworkDidStartRequest, object: nil)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "didEndRequest:", name: NetworkDidEndRequest, object: nil)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NetworkActivityIndicatorManager.didStartRequest(_:)), name: NetworkDidStartRequest, object: nil)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NetworkActivityIndicatorManager.didEndRequest(_:)), name: NetworkDidEndRequest, object: nil)
         } else {
             NSNotificationCenter.defaultCenter().removeObserver(self)
         }

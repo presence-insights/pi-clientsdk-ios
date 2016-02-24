@@ -51,13 +51,13 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
         
         NSNotificationCenter.defaultCenter().addObserver(
 			self,
-			selector: "seedDidComplete:",
+			selector: #selector(MapController.seedDidComplete(_:)),
 			name: kGeofenceManagerDidSynchronize,
 			object: nil)
         
 		NSNotificationCenter.defaultCenter().addObserver(
 			self,
-			selector: "didResetOrganization:",
+			selector: #selector(MapController.didResetOrganization(_:)),
 			name: kDidResetOrganization,
 			object: nil)
 

@@ -316,7 +316,7 @@ extension PIGeofencingManager {
 						geofence.code = geofenceCode
 						geofence.latitude = latitude
 						geofence.longitude = longitude
-						nbInserted++
+						nbInserted += 1
 						DDLogVerbose("Insert Geofence \(name) \(geofenceCode)")
 					}
 
@@ -325,10 +325,10 @@ extension PIGeofencingManager {
 				// Remaining local hazard events we didn't iterate over
 				while iCurrentFence < existingFences.count {
 					let currentFence = existingFences[iCurrentFence]
-					iCurrentFence++
+					iCurrentFence += 1
 
 					moc.deleteObject(currentFence)
-					nbDeleted++
+					nbDeleted += 1
 				}
 
 				try moc.save()

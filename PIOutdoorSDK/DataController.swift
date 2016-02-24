@@ -75,7 +75,7 @@ public class DataController:NSObject {
                 self._writerContext.persistentStoreCoordinator = coordinator
                 self._writerContext.undoManager = nil
                 
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: "contextChanged:", name: NSManagedObjectContextDidSaveNotification, object: self._writerContext)
+                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DataController.contextChanged(_:)), name: NSManagedObjectContextDidSaveNotification, object: self._writerContext)
             }
         }
         

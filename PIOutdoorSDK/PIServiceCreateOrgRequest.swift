@@ -33,7 +33,9 @@ final public class PIServiceCreateOrgRequest:Request {
     }
     
     public func execute(service:PIService) -> Response {
-        
+
+		DDLogInfo("PIServiceCreateOrgRequest.execute",asynchronous:false)
+
         let operation = PIServiceCreateOrgOperation(service:service,orgName:orgName)
         
         let response = PIServiceCreateOrgResponse(piRequest: self,operation:operation)
@@ -52,12 +54,13 @@ final public class PIServiceCreateOrgRequest:Request {
                         let json = try NSJSONSerialization.JSONObjectWithData(data,options:[])
                         response.result = .OK(json)
                         guard let orgCode = json["@code"] as? String else {
-                            DDLogError("PIServiceCreateOrgRequest,Missing Org")
+							DDLogError("PIServiceCreateOrgRequest,Missing Org",asynchronous:false)
                             break
                         }
                         response.orgCode = orgCode
+						DDLogInfo("PIServiceCreateOrgRequest Org:\(orgCode)",asynchronous:false)
                     } catch {
-                        DDLogError("PIServiceCreateOrgRequest,Json parsing error \(error)")
+						DDLogError("PIServiceCreateOrgRequest,Json parsing error \(error)",asynchronous:false)
                         response.result = .OK(nil)
                     }
                 case .Cancelled?:

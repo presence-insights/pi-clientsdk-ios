@@ -72,9 +72,9 @@ class NewGeofenceController: UITableViewController,GeofenceRadiusPickerCellDeleg
         self.tableView.registerNib(UINib(nibName: "GeofenceRadiusCell", bundle: nil), forCellReuseIdentifier: "GeofenceRadiusCellID")
         self.tableView.registerNib(UINib(nibName: "GeofenceRadiusPickerCell", bundle: nil), forCellReuseIdentifier: "GeofenceRadiusPickerCellID")
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "contentsSizeChanged:", name: UIContentSizeCategoryDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NewGeofenceController.contentsSizeChanged(_:)), name: UIContentSizeCategoryDidChangeNotification, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "textDidChange:", name: UITextFieldTextDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UITextInputDelegate.textDidChange(_:)), name: UITextFieldTextDidChangeNotification, object: nil)
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false

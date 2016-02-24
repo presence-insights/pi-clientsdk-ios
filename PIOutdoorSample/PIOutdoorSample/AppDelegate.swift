@@ -49,9 +49,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		return dateFormatter
 	}()
 
+	var firstTime = false
+
     func application(application: UIApplication,
 		didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+
+		self.postSlack("\(UIDevice.currentDevice().name) : didFinishLaunching")
 
         registerDefaultSettings()
 
@@ -91,8 +95,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 		piGeofencingManager.privacy = Settings.privacy
 
+		self.firstTime = piGeofencingManager.firstTime
+
 		SSKeychain.setAccessibilityType(kSecAttrAccessibleAlwaysThisDeviceOnly)
-		DDLogInfo("Look into the keychain \(hostname) \(tenantCode)")
+		DDLogInfo("Look into the keychain \(hostname) \(tenantCode)",asynchronous:false)
 
 		let data = SSKeychain.passwordDataForService(hostname, account: tenantCode)
 
@@ -116,7 +122,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let vc = self.window!.rootViewController!
 			MBProgressHUD.showHUDAddedTo(vc.view, animated: true)
 			Utils.createPIOrg(hostname, tenantCode: tenantCode,vc:vc) {
-				success in
+				orgCode in
 				MBProgressHUD.hideHUDForView(vc.view, animated: true)
 			}
 		} else {
@@ -139,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		NSNotificationCenter.defaultCenter().addObserver(
 			self,
-			selector: "privacyDidChange:",
+			selector: #selector(AppDelegate.privacyDidChange(_:)),
 			name: kPrivacyDidChange,
 			object: nil)
 
@@ -264,7 +270,7 @@ extension AppDelegate {
             case .AuthorizedAlways:
                 fallthrough
             case .AuthorizedWhenInUse:
-                break
+                self.checkNoMonitoringRegions()
             case .Restricted, .Denied:
                 let alertController = UIAlertController(
                     title: NSLocalizedString("Alert.Monitoring.Title",comment:""),
@@ -315,65 +321,94 @@ extension AppDelegate {
         }
 
     }
+
+	private func checkNoMonitoringRegions() {
+		if self.firstTime && locationManager.monitoredRegions.isEmpty == false {
+			DDLogError("After installation, already monitoring \(locationManager.monitoredRegions.count)",asynchronous:false)
+			postSlack("After installation, already monitoring \(locationManager.monitoredRegions.count)")
+			for region in locationManager.monitoredRegions {
+				DDLogError("Monitoring unknow region \(region.identifier)",asynchronous:false)
+				locationManager.stopMonitoringForRegion(region)
+			}
+
+		}
+
+	}
 }
 
 extension AppDelegate:PIGeofencingManagerDelegate {
 
-    private func sendSlackMessage(event:String,geofence: PIGeofence?) {
+	func postSlackCreateOrg(orgCode:String?) {
+		let message = ":iphone: New Org Code : \(orgCode ?? "No Org Code!")"
+
+		postSlack(message)
+
+	}
+
+    func postSlackGeofenceEvent(event:String,geofence: PIGeofence?) {
         
-        guard Settings.privacy == false else {
-			DDLogVerbose("sendSlackMessage, privacyOn !!!")
-            return
-        }
-        
-        guard let slackToken = slackToken else {
-			DDLogVerbose("sendSlackMessage, No slack token !!!")
-            return
-        }
-        
-        let session = NSURLSession.sharedSession()
-        
+
         let geofenceName = geofence?.name ?? "unknown fence"
-        var params:[String:String] = [:]
-        params["channel"] = "#geo-spam"
-        params["text"] = ":iphone: \(event) : /\(piGeofencingManager.service.orgCode ?? "?")/\(geofence?.code ?? "?")/\(geofenceName)"
-        
-        let chatPostMessage = SlackOperation(session:session,slackAPI:"chat.postMessage",params:params,token:slackToken)
-        // https://developer.apple.com/library/ios/technotes/tn2277/_index.html
-        let application = UIApplication.sharedApplication()
-        var bkgTaskId = UIBackgroundTaskInvalid
-        bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
-            if bkgTaskId != UIBackgroundTaskInvalid {
+        let message = ":iphone: \(event) : /\(piGeofencingManager.service.orgCode ?? "?")/\(geofence?.code ?? "?")/\(geofenceName)"
+
+		postSlack(message)
+
+    }
+
+	func postSlack(text:String) {
+
+		guard Settings.privacy == false else {
+			DDLogVerbose("sendSlackMessage, privacyOn !!!")
+			return
+		}
+
+		guard let slackToken = slackToken else {
+			DDLogVerbose("sendSlackMessage, No slack token !!!")
+			return
+		}
+
+		let session = NSURLSession.sharedSession()
+
+		var params:[String:String] = [:]
+		params["channel"] = "#geo-spam"
+		params["text"] = text
+
+		let chatPostMessage = SlackOperation(session:session,slackAPI:"chat.postMessage",params:params,token:slackToken)
+		// https://developer.apple.com/library/ios/technotes/tn2277/_index.html
+		let application = UIApplication.sharedApplication()
+		var bkgTaskId = UIBackgroundTaskInvalid
+		bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
+			if bkgTaskId != UIBackgroundTaskInvalid {
 				DDLogError("****** SlackOperation ExpirationHandler \(bkgTaskId)")
-                self.slackQueue.cancelAllOperations()
-                let id = bkgTaskId
-                bkgTaskId = UIBackgroundTaskInvalid
-                application.endBackgroundTask(id)
-            }
-        }
+				self.slackQueue.cancelAllOperations()
+				let id = bkgTaskId
+				bkgTaskId = UIBackgroundTaskInvalid
+				application.endBackgroundTask(id)
+			}
+		}
 		if bkgTaskId == UIBackgroundTaskInvalid {
 			DDLogError("****** No background time for SlackOperation!!!")
 		}
 
 		DDLogVerbose("SlackOperation beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
 
-        chatPostMessage.completionBlock = {
-            chatPostMessage.completionBlock = nil
-            
-            switch chatPostMessage.result {
-            case let .HTTPStatus(status, _)?:
-                DDLogError("****** SlackOperation HTTPStatus \(status)")
-            case let .Error(error)?:
-                DDLogError("****** SlackOperation Error \(error)")
-            case let .Exception(exception)?:
+		chatPostMessage.completionBlock = {
+			chatPostMessage.completionBlock = nil
+
+			switch chatPostMessage.result {
+			case let .HTTPStatus(status, _)?:
+				DDLogError("****** SlackOperation HTTPStatus \(status)")
+			case let .Error(error)?:
+				DDLogError("****** SlackOperation Error \(error)")
+			case let .Exception(exception)?:
 				DDLogError("****** SlackOperation Exception \(exception)")
-            case .Cancelled?:
+			case .Cancelled?:
 				DDLogError("****** SlackOperation cancelled")
-            case .OK?:
-                DDLogVerbose("SlackOperation OK")
+			case .OK?:
+				DDLogVerbose("SlackOperation OK")
 			case nil:
 				DDLogError("****** SlackOperation cancelled nil")
-            }
+			}
 			dispatch_async(dispatch_get_main_queue()) {
 				if bkgTaskId != UIBackgroundTaskInvalid {
 					DDLogVerbose("****** SlackOperation endBackgroundTask \(bkgTaskId)")
@@ -383,11 +418,11 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 				}
 			}
 
-        }
+		}
 
-        slackQueue.addOperation(chatPostMessage)
-        
-    }
+		slackQueue.addOperation(chatPostMessage)
+
+	}
 
 }
 
@@ -399,7 +434,7 @@ extension AppDelegate {
 
 		let geofenceName = geofence?.name ?? "Error,unknown fence"
 		DDLogVerbose("Did Enter \(geofenceName)")
-		sendSlackMessage("enter", geofence: geofence)
+		postSlackGeofenceEvent("enter", geofence: geofence)
 
 		let notification = UILocalNotification()
 		notification.alertBody = String(format:NSLocalizedString("Region.Notification.Enter %@", comment: ""),geofenceName)
@@ -417,7 +452,7 @@ extension AppDelegate {
 
 		let geofenceName = geofence?.name ?? "Error,unknown fence"
 		DDLogVerbose("Did Exit \(geofenceName)")
-		sendSlackMessage("exit", geofence: geofence)
+		postSlackGeofenceEvent("exit", geofence: geofence)
 
 		let notification = UILocalNotification()
 		notification.alertBody = String(format:NSLocalizedString("Region.Notification.Exit %@", comment: ""),geofenceName)

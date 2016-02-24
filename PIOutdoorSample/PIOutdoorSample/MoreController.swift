@@ -58,13 +58,13 @@ class MoreController: UITableViewController {
 
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "contentsSizeChanged:",
+            selector: #selector(MoreController.contentsSizeChanged(_:)),
             name: UIContentSizeCategoryDidChangeNotification,
             object: nil)
         
 		NSNotificationCenter.defaultCenter().addObserver(
 			self,
-			selector: "orgCodeDidChange:",
+			selector: #selector(MoreController.orgCodeDidChange(_:)),
 			name: kOrgCodeDidChange,
 			object: nil)
 
@@ -135,7 +135,7 @@ class MoreController: UITableViewController {
                 cell.updateFonts()
                 cell.leftLabel?.text = NSLocalizedString("More.Settings.Privacy",comment:"")
                 cell.switchOn.on = Settings.privacy
-                cell.switchOn?.addTarget(self, action: "onPrivacySwitchChanged:", forControlEvents: UIControlEvents.ValueChanged)
+                cell.switchOn?.addTarget(self, action: #selector(MoreController.onPrivacySwitchChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
                 return cell
 			case .TenantCode:
 				let cell = self.dequeueBasicCellForIndexPath(indexPath)
@@ -227,7 +227,7 @@ class MoreController: UITableViewController {
 			let picker = MFMailComposeViewController()
 			picker.mailComposeDelegate = self
 
-			let subject = "PIOutdoorSample \(Utils.version))"
+			let subject = "PIOutdoorSample \(Utils.version)"
 			picker.setSubject(subject)
 
 			// Set up recipients
@@ -295,7 +295,8 @@ class MoreController: UITableViewController {
 				SSKeychain.deletePasswordForService(hostname, account: tenantCode)
 				piGeofencingManager.service.orgCode = nil
 
-					Utils.createPIOrg(hostname, tenantCode: tenantCode,vc:self.tabBarController!) { success in
+				Utils.createPIOrg(hostname, tenantCode: tenantCode,vc:self.tabBarController!) { orgCode in
+					self.tableView.reloadData()
 					MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
 					piGeofencingManager.startMonitoringRegions()
 				}

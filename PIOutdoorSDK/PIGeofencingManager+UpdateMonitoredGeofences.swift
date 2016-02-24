@@ -40,7 +40,8 @@ extension PIGeofencingManager {
 
 	}
 
-	func compareGeofence(currentPosition:CLLocation)(a:PIGeofence,b:PIGeofence) -> Bool {
+	func compareGeofence(currentPosition:CLLocation) -> (a:PIGeofence,b:PIGeofence) -> Bool {
+		return { (a:PIGeofence,b:PIGeofence) -> Bool in
 		let aLocation = CLLocation(latitude: a.latitude.doubleValue, longitude: a.longitude.doubleValue)
 		var aDistance = currentPosition.distanceFromLocation(aLocation)
 		if aDistance > a.radius.doubleValue {
@@ -53,6 +54,7 @@ extension PIGeofencingManager {
 		}
 
 		return aDistance < bDistance
+		}
 
 	}
 
