@@ -15,7 +15,7 @@ extension PIGeofencingManager {
 
 
 	public func startMonitoringRegions() {
-		DDLogInfo("Start Monitoring")
+		DDLogInfo("Start Monitoring",asynchronous:false)
 		self.locationManager.startMonitoringSignificantLocationChanges()
 
 	}
@@ -23,7 +23,7 @@ extension PIGeofencingManager {
 
 	public func stopMonitoringRegions(completionHandler: (()-> Void)? = nil) {
 
-		DDLogInfo("Stop Monitoring")
+		DDLogInfo("Stop Monitoring",asynchronous:false)
 		locationManager.stopMonitoringSignificantLocationChanges()
 
 		let moc = self.dataController.writerContext
@@ -40,7 +40,7 @@ extension PIGeofencingManager {
 	func stopMonitoringRegionsWithMoc(moc:NSManagedObjectContext) {
 		do {
 			// find the regions currently being monitored
-			DDLogVerbose("Stop monitoring all the regions")
+			DDLogVerbose("Stop monitoring all the regions",asynchronous:false)
 			let fetchMonitoredRegionsRequest = PIGeofence.fetchRequest
 
 			fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == true")
@@ -51,7 +51,7 @@ extension PIGeofencingManager {
 			}
 
 			if monitoredGeofences.count == 0 {
-				DDLogVerbose("No region to stop!")
+				DDLogVerbose("No region to stop!",asynchronous:false)
 				return
 			}
 
@@ -70,12 +70,12 @@ extension PIGeofencingManager {
 			dispatch_async(dispatch_get_main_queue()) {
 				for region in regionsToStop {
 					self.locationManager.stopMonitoringForRegion(region)
-					DDLogVerbose("Stop monitoring \(region.identifier)")
+					DDLogVerbose("Stop monitoring \(region.identifier)",asynchronous:false)
 				}
 			}
 
 		} catch {
-			DDLogError("Core Data Error \(error)")
+			DDLogError("Core Data Error \(error)",asynchronous:false)
 		}
 
 	}
@@ -87,7 +87,7 @@ extension PIGeofencingManager {
 				try self.dataController.removeStore()
 				completionHandler?()
 			} catch {
-				DDLogError("Core Data Error \(error)")
+				DDLogError("Core Data Error \(error)",asynchronous:false)
 				assertionFailure()
 				completionHandler?()
 			}

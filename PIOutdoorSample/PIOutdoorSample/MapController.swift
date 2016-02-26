@@ -71,7 +71,10 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
     }
 
     func addFences(){
-        let geofences = piGeofencingManager.queryAllGeofences()
+		guard let geofences = piGeofencingManager?.queryAllGeofences() else {
+			return
+		}
+
         for geofence in geofences  {
             let annotation = GeofenceAnnotation(geofence: geofence)
             self.mapView.addAnnotation(annotation)
@@ -155,9 +158,14 @@ class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
     
     // MARK: - NewGeofenceDelegate
     func newGeofence(newGeofence:NewGeofenceController,center:CLLocationCoordinate2D,name:String,radius:Int) {
+
+		guard piGeofencingManager != nil else {
+			return
+		}
+
         MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
         
-        piGeofencingManager.addGeofence(name, center: center, radius: radius) { geofence in
+        piGeofencingManager?.addGeofence(name, center: center, radius: radius) { geofence in
             
             MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
             
@@ -326,7 +334,11 @@ extension MapController:MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView,calloutAccessoryControlTapped control: UIControl) {
-        
+
+		guard piGeofencingManager != nil else {
+			return
+		}
+		
         if let geofenceAnnotation = view.annotation as? GeofenceAnnotation where control.tag == removeButtonTag {
             
             let geofenceCode = geofenceAnnotation.geofenceCode
@@ -336,7 +348,7 @@ extension MapController:MKMapViewDelegate {
             
             MBProgressHUD.showHUDAddedTo(self.view,animated:true)
             
-            piGeofencingManager.removeGeofence(geofenceCode) {
+            piGeofencingManager?.removeGeofence(geofenceCode) {
                 success in
                 MBProgressHUD.hideHUDForView(self.view, animated: true)
                 if success == false {
@@ -352,8 +364,12 @@ extension MapController:MKMapViewDelegate {
     
 	@IBAction func refresh(sender: AnyObject) {
 
+		guard piGeofencingManager != nil else {
+			return
+		}
+		
 		MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
-		piGeofencingManager.synchronize { success in
+		piGeofencingManager?.synchronize { success in
 			MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
 			if success == false {
 				let title = NSLocalizedString("Alert.Refresh.Error.Title",comment:"")

@@ -114,16 +114,18 @@ public final class PIGeofencingManager:NSObject {
     /// - parameter maxRegions: The maximum number of regions being monitored at any time. The system
     /// limit is 20 regions per app. Default is 15
     public init(tenantCode:String, orgCode:String?, baseURL:String, username:String, password:String,maxDistance:Int = 10_000, maxRegions:Int = DefaultMaxRegions ) {
-        
+
+
         self.maxDistance = maxDistance
         if (1...20).contains(maxRegions) {
             self.maxRegions = maxRegions
         } else {
-            DDLogError("maxRegions \(maxRegions) is out of range")
+            DDLogError("maxRegions \(maxRegions) is out of range",asynchronous:false)
             self.maxRegions = self.dynamicType.DefaultMaxRegions
         }
         self.service = PIService(tenantCode:tenantCode,orgCode:orgCode,baseURL:baseURL,username:username,password:password)
         super.init()
+		
         self.locationManager.delegate = self
 
 		self.service.delegate = self
@@ -133,6 +135,8 @@ public final class PIGeofencingManager:NSObject {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PIGeofencingManager.willResignActive(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
         
     }
+
+
     /// Enables or disables the logging
     /// - parameter enable: `true` to enable the logging
     public static func enableLogging(enable:Bool) {
@@ -231,7 +235,7 @@ public final class PIGeofencingManager:NSObject {
             response in
             switch response.result {
             case .OK?:
-                DDLogInfo("PIGeofenceDeleteRequest OK")
+                DDLogInfo("PIGeofenceDeleteRequest OK",asynchronous:false)
                 let moc = self.dataController.writerContext
                 moc.performBlock {
                     do {
@@ -246,7 +250,7 @@ public final class PIGeofencingManager:NSObject {
                             DDLogError("Programming error",asynchronous:false)
                             fatalError("Programming error")
                         }
-                        DDLogInfo("Delete fence \(geofence.name) \(geofence.code)")
+                        DDLogInfo("Delete fence \(geofence.name) \(geofence.code)",asynchronous:false)
                         moc.deleteObject(geofence)
                         
                         try moc.save()
@@ -255,7 +259,7 @@ public final class PIGeofencingManager:NSObject {
 						if let region = self.regions?[code] {
 							self.regions?.removeValueForKey(code)
 							self.locationManager.stopMonitoringForRegion(region)
-							DDLogVerbose("Stop monitoring \(region.identifier)")
+							DDLogVerbose("Stop monitoring \(region.identifier)",asynchronous:false)
 						}
 						
 						self.updateMonitoredGeofencesWithMoc(moc)
@@ -264,28 +268,28 @@ public final class PIGeofencingManager:NSObject {
                         }
                         
                     } catch {
-                        DDLogError("Core Data Error \(error)")
+                        DDLogError("Core Data Error \(error)",asynchronous:false)
                         assertionFailure("Core Data Error \(error)")
                     }
                 }
                 
             case .Cancelled?:
-                DDLogVerbose("PIGeofenceDeleteRequest cancelled")
+                DDLogVerbose("PIGeofenceDeleteRequest cancelled",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(false)
                 }
             case let .Error(error)?:
-                DDLogError("PIGeofenceDeleteRequest error \(error)")
+                DDLogError("PIGeofenceDeleteRequest error \(error)",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(false)
                 }
             case let .Exception(error)?:
-                DDLogError("PIGeofenceDeleteRequest exception \(error)")
+                DDLogError("PIGeofenceDeleteRequest exception \(error)",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(false)
                 }
             case let .HTTPStatus(status,_)?:
-                DDLogError("PIGeofenceDeleteRequest status \(status)")
+                DDLogError("PIGeofenceDeleteRequest status \(status)",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(false)
                 }
@@ -311,7 +315,7 @@ public final class PIGeofencingManager:NSObject {
     public func addGeofence(name:String,center:CLLocationCoordinate2D,radius:Int,completionHandler: ((PIGeofence?) -> Void)? = nil) {
         
         guard let _ = service.orgCode else {
-            DDLogError("No Organization Code")
+            DDLogError("No Organization Code",asynchronous:false)
             completionHandler?(nil)
             return
         }
@@ -321,9 +325,9 @@ public final class PIGeofencingManager:NSObject {
             response in
             switch response.result {
             case .OK?:
-                DDLogVerbose("PIGeofenceCreateRequest OK \(response.geofenceCode)")
+                DDLogVerbose("PIGeofenceCreateRequest OK \(response.geofenceCode)",asynchronous:false)
                 guard let geofenceCode = response.geofenceCode else {
-                    DDLogError("PIGeofenceCreateRequest Missing fence Id")
+                    DDLogError("PIGeofenceCreateRequest Missing fence Id",asynchronous:false)
                     completionHandler?(nil)
                     return
                 }
@@ -359,22 +363,22 @@ public final class PIGeofencingManager:NSObject {
                 
                 
             case .Cancelled?:
-                DDLogVerbose("PIGeofenceCreateRequest Cancelled")
+                DDLogVerbose("PIGeofenceCreateRequest Cancelled",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(nil)
                 }
             case let .Error(error)?:
-                DDLogError("PIGeofenceCreateRequest Error \(error)")
+                DDLogError("PIGeofenceCreateRequest Error \(error)",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(nil)
                 }
             case let .Exception(error)?:
-                DDLogError("PIGeofenceCreateRequest Exception \(error)")
+                DDLogError("PIGeofenceCreateRequest Exception \(error)",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(nil)
                 }
             case let .HTTPStatus(status,_)?:
-                DDLogError("PIGeofenceCreateRequest Status \(status)")
+                DDLogError("PIGeofenceCreateRequest Status \(status)",asynchronous:false)
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(nil)
                 }

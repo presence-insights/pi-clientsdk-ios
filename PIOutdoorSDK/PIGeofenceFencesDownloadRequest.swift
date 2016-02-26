@@ -27,11 +27,17 @@ public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 
 	public func executeDownload(service:PIService) -> DownloadResponse? {
 
-		DDLogVerbose("PIGeofenceFencesDownloadRequest.executeDownload")
-		
-		let path = "pi-config/v2/tenants/\(service.tenantCode)/orgs/\(service.orgCode!)/geofences"
+		DDLogVerbose("PIGeofenceFencesDownloadRequest.executeDownload",asynchronous:false)
+
+		guard let orgCode = service.orgCode else {
+			DDLogError("Missing orgCode for executing the download",asynchronous:false)
+			return nil
+		}
+		let path = "pi-config/v2/tenants/\(service.tenantCode)/orgs/\(orgCode)/geofences"
 		let url = NSURL(string:path,relativeToURL:service.baseURL)
 		let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
+
+		DDLogInfo("PIGeofenceFencesDownloadRequest \(URLComponents.URL!)",asynchronous:false)
 
 		let request = NSMutableURLRequest(URL: URLComponents.URL!)
 		PIOutdoorUtils.setBasicAuthHeader(request, username: service.username, password: service.password)

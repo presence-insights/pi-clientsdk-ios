@@ -28,10 +28,14 @@ import MBProgressHUD
 
 let slackToken: String? = "xoxb-16384356389-QhQvfBrIrUgne6CLza7fRkx5"
 
-var piGeofencingManager: PIGeofencingManager!
+var piGeofencingManager: PIGeofencingManager?
 
 
 let kOrgCodeDidChange = "com.ibm.PI.OrgCodeDidChange"
+let kProtectedDataDidBecomeAvailable = "com.ibm.PI.ProtectedDataDidBecomeAvailable"
+
+let kPIService = "com.ibm.PI"
+let kPIGeofenceAccount = "PIGeofence"
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -55,86 +59,157 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
 
+		PIGeofencingManager.enableLogging(true)
+
 		self.postSlack("\(UIDevice.currentDevice().name) : didFinishLaunching")
 
         registerDefaultSettings()
 
-		guard let tenantCode = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as? String else {
-				assertionFailure("Programming Error")
-				return true
-			}
-		guard let hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as? String else {
-			assertionFailure("Programming Error")
-			return true
-			}
-		guard let username = NSUserDefaults.standardUserDefaults().objectForKey("PIUsername") as? String else {
-			assertionFailure("Programming Error")
-			return true
-			}
-		guard let password = NSUserDefaults.standardUserDefaults().objectForKey("PIPassword") as? String else {
-				assertionFailure("Programming Error")
-			return true
+		var tenantCode:String?
+		var hostname:String?
+		var username:String?
+		var password:String?
+		var orgCode:String?
+
+		if let location = launchOptions?[UIApplicationLaunchOptionsLocationKey] {
+			DDLogInfo("didFinishLaunchingWithOptions locationOptions \(location)",asynchronous:false)
+		} else {
+			DDLogInfo("didFinishLaunchingWithOptions empty",asynchronous:false)
 		}
 
-        PIGeofencingManager.enableLogging(true)
-        
-        DDLogVerbose("tenant \(tenantCode)")
-        DDLogVerbose("hostname \(hostname)")
-        DDLogVerbose("username \(username)")
-        DDLogVerbose("password \(password)")
-        
-        NetworkActivityIndicatorManager.sharedInstance.enableActivityIndicator(true)
-        
+		DDLogInfo(
+			"applicationState: \(UIApplication.sharedApplication().applicationState.rawValue)",
+			asynchronous:false)
 
-        piGeofencingManager = PIGeofencingManager(
-            tenantCode: tenantCode,
-            orgCode: nil,
-            baseURL: hostname,
-            username: username,
-            password: password)
-        
-		piGeofencingManager.privacy = Settings.privacy
+		if UIApplication.sharedApplication().applicationState != .Background {
+			tenantCode = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as? String
+			hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as? String
+			username = NSUserDefaults.standardUserDefaults().objectForKey("PIUsername") as? String
+			password = NSUserDefaults.standardUserDefaults().objectForKey("PIPassword") as? String
+		}
 
-		self.firstTime = piGeofencingManager.firstTime
+
+		DDLogVerbose("tenant \(tenantCode ?? "?")",asynchronous:false)
+        DDLogVerbose("hostname \(hostname ?? "?")",asynchronous:false)
+        DDLogVerbose("username \(username ?? "?")",asynchronous:false)
+        DDLogVerbose("password \(password ?? "?")",asynchronous:false)
 
 		SSKeychain.setAccessibilityType(kSecAttrAccessibleAlwaysThisDeviceOnly)
-		DDLogInfo("Look into the keychain \(hostname) \(tenantCode)",asynchronous:false)
 
-		let data = SSKeychain.passwordDataForService(hostname, account: tenantCode)
+		let data = SSKeychain.passwordDataForService(kPIService, account: kPIGeofenceAccount)
 
-        if let data = data {
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-                if let orgCode = json["orgCode"] as? String {
-						piGeofencingManager.service.orgCode = orgCode
-						DDLogVerbose("OrgCode \(orgCode)")
-                } else {
-                    DDLogError("orgCode missing in the JSON from the KeyChain",asynchronous:false)
-                }
-            } catch {
-                DDLogError("Can't read JSON in the KeyChain \(error)",asynchronous:false)
-            }
-		} else {
-			DDLogError("Empty keychain",asynchronous:false)
-		}
+		var json: [String:AnyObject]?
+		if let data = data {
+			do {
+				json = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]
 
-		if piGeofencingManager.service.orgCode == nil {
-			let vc = self.window!.rootViewController!
-			MBProgressHUD.showHUDAddedTo(vc.view, animated: true)
-			Utils.createPIOrg(hostname, tenantCode: tenantCode,vc:vc) {
-				orgCode in
-				MBProgressHUD.hideHUDForView(vc.view, animated: true)
+				orgCode = json?["orgCode"] as? String
+				if let orgCode = orgCode {
+					DDLogVerbose("OrgCode \(orgCode)",asynchronous:false)
+				} else {
+					DDLogError("orgCode missing in the JSON from the KeyChain",asynchronous:false)
+				}
+				if let tenantCode = tenantCode {
+					json?["tenantCode"] = tenantCode
+				} else {
+					tenantCode = json?["tenantCode"] as? String
+					DDLogVerbose("Keychain tenantCode \(tenantCode)",asynchronous:false)
+				}
+				if let username = username {
+					json?["username"] = username
+				} else {
+					username = json?["username"] as? String
+					DDLogVerbose("Keychain username \(username)",asynchronous:false)
+				}
+				if let password = password {
+					json?["password"] = password
+				} else {
+					password = json?["password"] as? String
+					DDLogVerbose("Keychain password \(password)",asynchronous:false)
+				}
+				if let hostname = hostname {
+					json?["hostname"] = hostname
+				} else {
+					hostname = json?["hostname"] as? String
+					DDLogVerbose("Keychain hostname \(hostname)",asynchronous:false)
+				}
+
+			} catch {
+				DDLogError("Can't read JSON in the KeyChain \(error)",asynchronous:false)
 			}
 		} else {
-			piGeofencingManager.synchronize()
+			DDLogInfo("Empty keychain",asynchronous:false)
+			json = [:]
+			json?["tenantCode"] = tenantCode
+			json?["username"] = username
+			json?["password"] = password
+			json?["hostname"] = hostname
 
 		}
 
+        NetworkActivityIndicatorManager.sharedInstance.enableActivityIndicator(true)
+
+		if
+			let tenantCode = tenantCode,
+			let hostname = hostname,
+			let username = username,
+			let password = password {
+
+			piGeofencingManager = PIGeofencingManager(
+				tenantCode: tenantCode,
+				orgCode: nil,
+				baseURL: hostname,
+				username: username,
+				password: password)
+			
+		} else {
+			DDLogError("Fail to create PIGeofencingManager",asynchronous:false)
+			return true
+		}
+
+		piGeofencingManager?.privacy = Settings.privacy
+
+		self.firstTime = piGeofencingManager?.firstTime ?? true
+
+		if let orgCode = orgCode {
+			if
+				let json = json,
+				let data = try? NSJSONSerialization.dataWithJSONObject(json, options: [])  {
+				SSKeychain.setPasswordData(
+					data,
+					forService: kPIService,
+					account: kPIGeofenceAccount)
+			} else {
+				DDLogError("didFinishLaunchingWithOptions Programming Error",asynchronous:false)
+			}
+			piGeofencingManager?.service.orgCode = orgCode
+			piGeofencingManager?.synchronize()
+		} else {
+			let vc = self.window!.rootViewController!
+			MBProgressHUD.showHUDAddedTo(vc.view, animated: true)
+			Utils.createPIOrg(hostname!, tenantCode: tenantCode!,vc:vc) {
+				orgCode in
+				json?["orgCode"] = orgCode
+				if
+					let json = json,
+					let data = try? NSJSONSerialization.dataWithJSONObject(json, options: [])  {
+					SSKeychain.setPasswordData(
+						data,
+						forService: kPIService,
+						account: kPIGeofenceAccount)
+				} else {
+					DDLogError("didFinishLaunchingWithOptions Programming Error",asynchronous:false)
+				}
+				piGeofencingManager?.service.orgCode = orgCode
+				piGeofencingManager?.synchronize()
+				MBProgressHUD.hideHUDForView(vc.view, animated: true)
+			}
+		}
 
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(settings)
 
-        piGeofencingManager.delegate = self
+        piGeofencingManager?.delegate = self
 
         slackQueue.qualityOfService = .Utility
         slackQueue.name = "com.ibm.PI.slackQueue"
@@ -173,7 +248,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultsToRegister)
         
     }
-    
+
+	func applicationProtectedDataDidBecomeAvailable(application: UIApplication) {
+
+		// http://stackoverflow.com/questions/20269116/nsuserdefaults-loosing-its-keys-values-when-phone-is-rebooted-but-not-unlocked
+		
+		DDLogInfo("applicationProtectedDataDidBecomeAvailable",asynchronous:false)
+
+		NSUserDefaults.resetStandardUserDefaults()
+		registerDefaultSettings()
+
+		piGeofencingManager?.privacy = Settings.privacy
+		
+		NSNotificationCenter.defaultCenter().postNotificationName(
+			kProtectedDataDidBecomeAvailable,
+			object: nil)
+
+	}
+
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -191,8 +283,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+
+		DDLogVerbose("AppDelegate.didBecomeActive",asynchronous:false)
+
 		NetworkActivityIndicatorManager.sharedInstance.refreshNetworkActivityIndicator()
-        DDLogVerbose("AppDelegate.didBecomeActive")
     }
 
     func applicationWillTerminate(application: UIApplication) {
@@ -221,7 +315,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
 
-		piGeofencingManager.handleEventsForBackgroundURLSession(identifier, completionHandler: completionHandler)
+		piGeofencingManager?.handleEventsForBackgroundURLSession(identifier, completionHandler: completionHandler)
     }
 
 }
@@ -231,12 +325,12 @@ extension AppDelegate {
     
     private func seeding(){
         
-        if piGeofencingManager.firstTime {
+		if piGeofencingManager?.firstTime == true {
             guard let url = NSBundle.mainBundle().URLForResource("referentiel-gares-voyageurs.geojson", withExtension: "zip") else {
                 fatalError("file not found")
             }
             do {
-                try piGeofencingManager.seedGeojson(url,propertiesGenerator:fenceProperties) { error in
+                try piGeofencingManager?.seedGeojson(url,propertiesGenerator:fenceProperties) { error in
 					DDLogError("(error)",asynchronous:false)
                 }
             } catch {
@@ -349,7 +443,7 @@ extension AppDelegate:PIGeofencingManagerDelegate {
         
 
         let geofenceName = geofence?.name ?? "unknown fence"
-        let message = ":iphone: \(event) : /\(piGeofencingManager.service.orgCode ?? "?")/\(geofence?.code ?? "?")/\(geofenceName)"
+        let message = ":iphone: \(event) : /\(piGeofencingManager?.service.orgCode ?? "?")/\(geofence?.code ?? "?")/\(geofenceName)"
 
 		postSlack(message)
 
@@ -358,12 +452,12 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 	func postSlack(text:String) {
 
 		guard Settings.privacy == false else {
-			DDLogVerbose("sendSlackMessage, privacyOn !!!")
+			DDLogVerbose("sendSlackMessage, privacyOn !!!",asynchronous:false)
 			return
 		}
 
 		guard let slackToken = slackToken else {
-			DDLogVerbose("sendSlackMessage, No slack token !!!")
+			DDLogVerbose("sendSlackMessage, No slack token !!!",asynchronous:false)
 			return
 		}
 
@@ -379,7 +473,7 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 		var bkgTaskId = UIBackgroundTaskInvalid
 		bkgTaskId = application.beginBackgroundTaskWithExpirationHandler {
 			if bkgTaskId != UIBackgroundTaskInvalid {
-				DDLogError("****** SlackOperation ExpirationHandler \(bkgTaskId)")
+				DDLogError("****** SlackOperation ExpirationHandler \(bkgTaskId)",asynchronous:false)
 				self.slackQueue.cancelAllOperations()
 				let id = bkgTaskId
 				bkgTaskId = UIBackgroundTaskInvalid
@@ -387,31 +481,31 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 			}
 		}
 		if bkgTaskId == UIBackgroundTaskInvalid {
-			DDLogError("****** No background time for SlackOperation!!!")
+			DDLogError("****** No background time for SlackOperation!!!",asynchronous:false)
 		}
 
-		DDLogVerbose("SlackOperation beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+		DDLogVerbose("SlackOperation beginBackgroundTaskWithExpirationHandler \(bkgTaskId)",asynchronous:false)
 
 		chatPostMessage.completionBlock = {
 			chatPostMessage.completionBlock = nil
 
 			switch chatPostMessage.result {
 			case let .HTTPStatus(status, _)?:
-				DDLogError("****** SlackOperation HTTPStatus \(status)")
+				DDLogError("****** SlackOperation HTTPStatus \(status)",asynchronous:false)
 			case let .Error(error)?:
-				DDLogError("****** SlackOperation Error \(error)")
+				DDLogError("****** SlackOperation Error \(error)",asynchronous:false)
 			case let .Exception(exception)?:
-				DDLogError("****** SlackOperation Exception \(exception)")
+				DDLogError("****** SlackOperation Exception \(exception)",asynchronous:false)
 			case .Cancelled?:
-				DDLogError("****** SlackOperation cancelled")
+				DDLogError("****** SlackOperation cancelled",asynchronous:false)
 			case .OK?:
-				DDLogVerbose("SlackOperation OK")
+				DDLogVerbose("SlackOperation OK",asynchronous:false)
 			case nil:
-				DDLogError("****** SlackOperation cancelled nil")
+				DDLogError("****** SlackOperation cancelled nil",asynchronous:false)
 			}
 			dispatch_async(dispatch_get_main_queue()) {
 				if bkgTaskId != UIBackgroundTaskInvalid {
-					DDLogVerbose("****** SlackOperation endBackgroundTask \(bkgTaskId)")
+					DDLogVerbose("****** SlackOperation endBackgroundTask \(bkgTaskId)",asynchronous:false)
 					let id = bkgTaskId
 					bkgTaskId = UIBackgroundTaskInvalid
 					application.endBackgroundTask(id)
@@ -433,7 +527,7 @@ extension AppDelegate {
 	func geofencingManager(manager: PIGeofencingManager, didEnterGeofence geofence: PIGeofence? ) {
 
 		let geofenceName = geofence?.name ?? "Error,unknown fence"
-		DDLogVerbose("Did Enter \(geofenceName)")
+		DDLogVerbose("Did Enter \(geofenceName)",asynchronous:false)
 		postSlackGeofenceEvent("enter", geofence: geofence)
 
 		let notification = UILocalNotification()
@@ -451,7 +545,7 @@ extension AppDelegate {
 	func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? ) {
 
 		let geofenceName = geofence?.name ?? "Error,unknown fence"
-		DDLogVerbose("Did Exit \(geofenceName)")
+		DDLogVerbose("Did Exit \(geofenceName)",asynchronous:false)
 		postSlackGeofenceEvent("exit", geofence: geofence)
 
 		let notification = UILocalNotification()
@@ -505,7 +599,7 @@ extension AppDelegate {
 extension AppDelegate {
 
 	func privacyDidChange(notification:NSNotification) {
-		piGeofencingManager.privacy = Settings.privacy
+		piGeofencingManager?.privacy = Settings.privacy
 	}
 }
 

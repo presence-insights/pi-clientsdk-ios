@@ -30,7 +30,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 			fallthrough
 		case .AuthorizedWhenInUse:
 			self.locationManager.startMonitoringSignificantLocationChanges()
-			DDLogVerbose("startMonitoringSignificantLocationChanges")
+			DDLogVerbose("startMonitoringSignificantLocationChanges",asynchronous:false)
 		case .Denied:
 			break
 		case .NotDetermined:
@@ -49,12 +49,12 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 
 	public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion){
 		guard let geofence = self.queryGeofence(region.identifier) else {
-			DDLogError("didEnterRegion Region \(region.identifier) not found")
+			DDLogError("didEnterRegion Region \(region.identifier) not found",asynchronous:false)
 			self.delegate?.geofencingManager(self, didEnterGeofence: nil)
 			return
 		}
 
-		DDLogVerbose("didEnterRegion \(region.identifier) \(geofence.name)")
+		DDLogVerbose("didEnterRegion \(region.identifier) \(geofence.name)",asynchronous:false)
 
 		self.sendPIGeofenceEvent(.Enter, geofence: geofence)
 
@@ -65,12 +65,12 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 	public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion){
 
 		guard let geofence = self.queryGeofence(region.identifier) else {
-			DDLogError("didExitRegion Region \(region.identifier) not found")
+			DDLogError("didExitRegion Region \(region.identifier) not found",asynchronous:false)
 			self.delegate?.geofencingManager(self, didExitGeofence: nil)
 			return
 		}
 
-		DDLogVerbose("didExitRegion \(region.identifier) \(geofence.name)")
+		DDLogVerbose("didExitRegion \(region.identifier) \(geofence.name)",asynchronous:false)
 
 		self.sendPIGeofenceEvent(.Exit, geofence: geofence)
 
@@ -82,7 +82,7 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 	private func sendPIGeofenceEvent(event:PIGeofenceEvent,geofence: PIGeofence?) {
 
 		guard privacy == false else {
-			DDLogVerbose("sendPIGeofenceEvent \(geofence?.name) \(event), privacyOn !!!")
+			DDLogVerbose("sendPIGeofenceEvent \(geofence?.name) \(event), privacyOn !!!",asynchronous:false)
 			return
 		}
 
@@ -111,9 +111,9 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 			DDLogError("****** No background time for PIGeofenceMonitoringRequest",asynchronous:false)
 		}
 
-		DDLogInfo("PIGeofenceMonitoringRequest beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+		DDLogInfo("PIGeofenceMonitoringRequest beginBackgroundTaskWithExpirationHandler \(bkgTaskId)",asynchronous:false)
 
-		DDLogInfo("Create PIGeofenceMonitoringRequest \(geofence.code) , \(geofence.name), \(event.rawValue)")
+		DDLogInfo("Create PIGeofenceMonitoringRequest \(geofence.code) , \(geofence.name), \(event.rawValue)",asynchronous:false)
 
 		let piRequest = PIGeofenceMonitoringRequest(geofenceCode:geofence.code,eventTime:NSDate(),event:event,geofenceName: geofence.name) {
 			response in
@@ -126,15 +126,15 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 			case let .Exception(exception)?:
 				DDLogError("****** PIGeofenceMonitoringRequest exception \(exception)",asynchronous:false)
 			case .Cancelled?:
-				DDLogVerbose("****** PIGeofenceMonitoringRequest cancelled")
+				DDLogVerbose("****** PIGeofenceMonitoringRequest cancelled",asynchronous:false)
 			case .OK?:
-				DDLogInfo("PIGeofenceMonitoringRequest OK \(event.rawValue) : \(geofence.code)")
+				DDLogInfo("PIGeofenceMonitoringRequest OK \(event.rawValue) : \(geofence.code)",asynchronous:false)
 			case nil:
 				break
 			}
 			dispatch_async(dispatch_get_main_queue()) {
 				if bkgTaskId != UIBackgroundTaskInvalid {
-					DDLogInfo("****** PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)")
+					DDLogInfo("****** PIGeofenceMonitoringRequest endBackgroundTask \(bkgTaskId)",asynchronous:false)
 					let id = bkgTaskId
 					bkgTaskId = UIBackgroundTaskInvalid
 					application.endBackgroundTask(id)

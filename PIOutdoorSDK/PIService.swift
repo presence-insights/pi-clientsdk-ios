@@ -143,11 +143,11 @@ extension PIService : NSURLSessionDelegate {
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
 
-		DDLogVerbose("PIService.didReceiveChallenge for task \(task.taskIdentifier) \(task.taskDescription ?? "")")
+		DDLogVerbose("PIService.didReceiveChallenge for task \(task.taskIdentifier) \(task.taskDescription ?? "")",asynchronous:false)
 
         // If previous challenge failed, reject the handshake
         if challenge.previousFailureCount > 0 {
-            DDLogError("Wrong credentials")
+            DDLogError("Wrong credentials",asynchronous:false)
             completionHandler(.RejectProtectionSpace,nil)
             return
         }
@@ -162,11 +162,11 @@ extension PIService : NSURLSessionDelegate {
                 password:self.password,
                 persistence:.None)
             completionHandler(.UseCredential,credential)
-            DDLogInfo("Challenge Basic Authentication")
+            DDLogInfo("Challenge Basic Authentication",asynchronous:false)
             return
         }
         
-        DDLogError("Cancel Authentication Method \(challenge.protectionSpace.authenticationMethod)")
+        DDLogError("Cancel Authentication Method \(challenge.protectionSpace.authenticationMethod)",asynchronous:false)
         completionHandler(.CancelAuthenticationChallenge,nil)
         
     }
@@ -176,7 +176,7 @@ extension PIService : NSURLSessionDelegate {
     
     public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
         
-		DDLogVerbose("PIService.didReceiveChallenge for session description \(session.sessionDescription ?? "No Desc")")
+		DDLogVerbose("PIService.didReceiveChallenge for session description \(session.sessionDescription ?? "No Desc")",asynchronous:false)
 
         if challenge.previousFailureCount > 0 {
             completionHandler(.CancelAuthenticationChallenge,nil)
@@ -238,7 +238,7 @@ extension PIService : NSURLSessionDownloadDelegate {
 	public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
 
 		guard totalBytesExpectedToWrite > 0 else {
-			DDLogWarn("NSURLSessionDownloadDelegate.didWriteData totalBytesExpectedToWrite == 0!")
+			DDLogWarn("NSURLSessionDownloadDelegate.didWriteData totalBytesExpectedToWrite == 0!",asynchronous:false)
 			return
 		}
 

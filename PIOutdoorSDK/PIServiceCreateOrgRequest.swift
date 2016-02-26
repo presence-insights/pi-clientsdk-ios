@@ -47,7 +47,7 @@ final public class PIServiceCreateOrgRequest:Request {
                 case .OK(let data)?:
                     guard let data = data else {
                         response.result = .OK(nil)
-                        DDLogError("PIServiceCreateOrgRequest,OK but No data")
+                        DDLogError("PIServiceCreateOrgRequest,OK but No data",asynchronous:false)
                         break
                     }
                     do {

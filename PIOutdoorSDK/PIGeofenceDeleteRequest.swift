@@ -57,7 +57,7 @@ public final class PIGeofenceDeleteRequest:Request {
 						response.result = .OK(json)
 						print(json)
 					} catch {
-						DDLogError("PIGeofenceCreateRequest,Json parsing error \(error)")
+						DDLogError("PIGeofenceCreateRequest,Json parsing error \(error)",asynchronous:false)
 						response.result = .OK(nil)
 					}
                 case .Cancelled?:

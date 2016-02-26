@@ -143,13 +143,13 @@ public class DataController:NSObject {
         let psc = NSPersistentStoreCoordinator(managedObjectModel: self.mom)
         
         do {
-            try psc.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: nil)
+			try psc.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: [NSPersistentStoreFileProtectionKey:NSFileProtectionNone])
         } catch {
             fatalError("Can't create Persistent Store Coordinator \(error)")
         }
         
         
-        return psc;
+        return psc
         
     }
     

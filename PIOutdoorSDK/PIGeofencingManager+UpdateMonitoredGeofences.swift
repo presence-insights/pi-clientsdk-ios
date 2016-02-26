@@ -73,11 +73,11 @@ extension PIGeofencingManager {
 
 
 		guard let currentPosition = locationManager.location else {
-			DDLogError("A significant location change occurred, but there is no location data")
+			DDLogError("A significant location change occurred, but there is no location data",asynchronous:false)
 			return
 		}
 
-		DDLogVerbose("Current position \(currentPosition.coordinate)")
+		DDLogVerbose("Current position \(currentPosition.coordinate)",asynchronous:false)
 
 		// Compute North East and South West coordinates of the bbox of the regions
 		// which could be monitored
@@ -95,7 +95,7 @@ extension PIGeofencingManager {
 			if self.regions == nil {
 				// either the first time we monitor or the app has been unloaded
 				// find the regions currently being monitored
-				DDLogVerbose("Initialize the regions to monitor")
+				DDLogVerbose("Initialize the regions to monitor",asynchronous:false)
 				let fetchMonitoredRegionsRequest = PIGeofence.fetchRequest
 
 				fetchMonitoredRegionsRequest.predicate = NSPredicate(format: "monitored == true")
@@ -106,19 +106,19 @@ extension PIGeofencingManager {
 				}
 
 				if monitoredGeofences.count == 0 {
-					DDLogVerbose("No region to monitor!")
+					DDLogVerbose("No region to monitor!",asynchronous:false)
 				}
 
 				self.regions = [:]
 				for geofence in monitoredGeofences {
 					let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.code)
-					DDLogVerbose("already monitoring \(geofence.name) \(geofence.code)")
+					DDLogVerbose("already monitoring \(geofence.name) \(geofence.code)",asynchronous:false)
 					self.regions?[geofence.code] = region
 					let monitoredRegions = self.locationManager.monitoredRegions.filter {
 						$0.identifier == region.identifier
 					}
 					if monitoredRegions.isEmpty {
-						DDLogError("Error \(geofence.name) \(geofence.code) not found in CLLocationManager.monitoredRegions")
+						DDLogError("Error \(geofence.name) \(geofence.code) not found in CLLocationManager.monitoredRegions",asynchronous:false)
 					}
 
 				}
@@ -158,9 +158,9 @@ extension PIGeofencingManager {
 					let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence]
 					if let geofence = geofences?.first {
 						geofence.monitored = false
-						DDLogVerbose("Too far, will stopMonitoringForRegion \(geofence.name) \(geofenceCode)")
+						DDLogVerbose("Too far, will stopMonitoringForRegion \(geofence.name) \(geofenceCode)",asynchronous:false)
 					} else {
-						DDLogError("Region \(geofenceCode) not found, can't stopMonitoringForRegion")
+						DDLogError("Region \(geofenceCode) not found, can't stopMonitoringForRegion",asynchronous:false)
 					}
 				} else {
 					// keep the region
@@ -181,22 +181,22 @@ extension PIGeofencingManager {
 				let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue), radius: geofence.radius.doubleValue, identifier: geofence.code)
 				regionsToStart.append(region)
 				self.regions?[geofence.code] = region
-				DDLogVerbose("will startMonitoringForRegion \(geofence.name) \(region.identifier)")
+				DDLogVerbose("will startMonitoringForRegion \(geofence.name) \(region.identifier)",asynchronous:false)
 			}
 
 			try moc.save()
 
 			for region in regionsToStop {
 				self.locationManager.stopMonitoringForRegion(region)
-				DDLogVerbose("did stopMonitoringForRegion \(region.identifier)")
+				DDLogVerbose("did stopMonitoringForRegion \(region.identifier)",asynchronous:false)
 			}
 			for region in regionsToStart {
 				self.locationManager.startMonitoringForRegion(region)
-				DDLogVerbose("did startMonitoringForRegion \(region.identifier)")
+				DDLogVerbose("did startMonitoringForRegion \(region.identifier)",asynchronous:false)
 			}
 
 		} catch {
-			DDLogError("Core Data Error \(error)")
+			DDLogError("Core Data Error \(error)",asynchronous:false)
 			assertionFailure("Core Data Error \(error)")
 		}
 

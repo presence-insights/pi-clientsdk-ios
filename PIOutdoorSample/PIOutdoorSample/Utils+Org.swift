@@ -28,10 +28,15 @@ extension Utils {
 
 	static func createPIOrg(hostname:String,tenantCode:String,vc:UIViewController,completionHandler: ((String?) -> Void)? = nil ) {
 
+		var orgCode:String?
 
-		let service = piGeofencingManager.service
+		guard let service = piGeofencingManager?.service else {
+			completionHandler?(nil)
+			return
+		}
+
 		let orgName = UIDevice.currentDevice().name + "-" + NSUUID().UUIDString
-		DDLogVerbose("Start PIServiceCreateOrgRequest: \(orgName)")
+		DDLogVerbose("Start PIServiceCreateOrgRequest: \(orgName)",asynchronous:false)
 		
 		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		appDelegate.postSlack("\(UIDevice.currentDevice().name) : Refresh, asking a new org!")
@@ -39,27 +44,12 @@ extension Utils {
 		let request = PIServiceCreateOrgRequest(orgName:orgName) { response in
 			switch response.result {
 			case .OK?:
-				DDLogVerbose("PIServiceCreateOrgRequest OK \(response.orgCode)")
-				guard let orgCode = response.orgCode else {
-					DDLogError("PIServiceCreateOrgRequest Missing org code",asynchronous:false)
-					assertionFailure("Programming error")
-					completionHandler?(nil)
-					return
-				}
+				DDLogVerbose("PIServiceCreateOrgRequest OK \(response.orgCode)",asynchronous:false)
+				orgCode = response.orgCode
 				appDelegate.postSlackCreateOrg(orgCode)
-				var json =  [String:AnyObject]()
-				json["orgCode"] = orgCode
-				guard let data = try? NSJSONSerialization.dataWithJSONObject(json, options: []) else {
-					DDLogError("Programming Error",asynchronous:false)
-					completionHandler?(nil)
-					return
-				}
-
-				SSKeychain.setPasswordData(data, forService: hostname, account: tenantCode)
-				piGeofencingManager.service.orgCode = orgCode
 
 			case .Cancelled?:
-				DDLogVerbose("PIServiceCreateOrgRequest cancelled")
+				DDLogVerbose("PIServiceCreateOrgRequest cancelled",asynchronous:false)
 			case let .Error(error)?:
 				DDLogError("PIServiceCreateOrgRequest error \(error)",asynchronous:false)
 			case let .Exception(error)?:
@@ -71,7 +61,7 @@ extension Utils {
 				assertionFailure("Programming Error")
 				break
 			}
-			if let orgCode = piGeofencingManager.service.orgCode {
+			if let orgCode = orgCode {
 				let alertController = UIAlertController(
 					title: NSLocalizedString("Alert.OrgCreation.Title",comment:""),
 					message: NSLocalizedString("Alert.OrgCreation.Message",comment:""),
@@ -80,7 +70,6 @@ extension Utils {
 				let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
 					dispatch_async(dispatch_get_main_queue()) {
 						completionHandler?(orgCode)
-						piGeofencingManager.synchronize()
 					}
 				}
 				alertController.addAction(okAction)

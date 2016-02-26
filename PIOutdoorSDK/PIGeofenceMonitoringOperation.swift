@@ -39,13 +39,13 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         super.init(service: service)
         self.name = "com.ibm.PI.GeofenceMonitoringOperation"
 
-		DDLogVerbose("Create PIGeofenceMonitoringOperation \(geofenceCode) , \(geofenceName)")
+		DDLogVerbose("Create PIGeofenceMonitoringOperation \(geofenceCode) , \(geofenceName)",asynchronous:false)
     }
     
     override func main() {
         let path = "conn-geofence/v1/tenants/\(service.tenantCode)/orgs/\(service.orgCode!)"
         
-		DDLogVerbose("Main PIGeofenceMonitoringOperation \(path)")
+		DDLogVerbose("Main PIGeofenceMonitoringOperation \(path)",asynchronous:false)
 
         var json:[String:AnyObject] = [:]
         var notification:[String:AnyObject] = [:]
@@ -79,7 +79,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         performRequest(request) {
             self.executing = false
             self.finished = true
-			DDLogVerbose("End PIGeofenceMonitoringOperation \(path)")
+			DDLogVerbose("End PIGeofenceMonitoringOperation \(path)",asynchronous:false)
         }
         
         

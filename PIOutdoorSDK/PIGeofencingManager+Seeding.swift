@@ -58,7 +58,7 @@ extension PIGeofencingManager {
 			}
 
 			for file in unzippedFiles {
-				DDLogVerbose("geojson \(file)")
+				DDLogVerbose("geojson \(file)",asynchronous:false)
 				let url = NSURL(fileURLWithPath: file)
 				let data = try NSData(contentsOfURL: url, options: .DataReadingMappedAlways)
 				guard let jsonObject = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] else {
@@ -144,9 +144,9 @@ extension PIGeofencingManager {
 					continue
 				}
 
-				DDLogVerbose(code)
+				DDLogVerbose(code,asynchronous:false)
 			}
-			DDLogVerbose("---")
+			DDLogVerbose("---",asynchronous:false)
 
 			do {
 				let request = PIGeofence.fetchRequest
@@ -154,7 +154,7 @@ extension PIGeofencingManager {
 				
 				let existingFences = try moc.executeFetchRequest(request) as! [PIGeofence]
 				for fence in existingFences {
-					DDLogVerbose(fence.code)
+					DDLogVerbose(fence.code,asynchronous:false)
 				}
 
 				var nbErrors = 0
@@ -173,9 +173,9 @@ extension PIGeofencingManager {
 					// LEGACY
 					if let deleted = properties["@deleted"] as? Bool where deleted {
 						if let geofenceCode = properties["@code"] as? String {
-							DDLogInfo("Deleted Geofence \(geofenceCode)")
+							DDLogInfo("Deleted Geofence \(geofenceCode)",asynchronous:false)
 						} else {
-							DDLogError("Deleted Geofence Unknown")
+							DDLogError("Deleted Geofence Unknown",asynchronous:false)
 						}
 						continue
 					}
@@ -202,7 +202,7 @@ extension PIGeofencingManager {
 						continue
 					}
 					guard geometry_type == "Point" else {
-						DDLogError("\(i) Does not support geometry \(geometry_type)")
+						DDLogError("\(i) Does not support geometry \(geometry_type)",asynchronous:false)
 						nbErrors += 1
 						continue
 					}
@@ -214,7 +214,7 @@ extension PIGeofencingManager {
 					}
 
 					guard coordinates.count == 2 else {
-						DDLogError("\(i) Wrong number of coordinates")
+						DDLogError("\(i) Wrong number of coordinates",asynchronous:false)
 						nbErrors += 1
 						continue
 					}
@@ -248,7 +248,7 @@ extension PIGeofencingManager {
 					}
 
 					guard let orgCode = properties["@org"] as? String else {
-						DDLogError("\(i) Missing org code")
+						DDLogError("\(i) Missing org code",asynchronous:false)
 						nbErrors += 1
 						continue
 					}
@@ -266,27 +266,27 @@ extension PIGeofencingManager {
 							// Fence already here
 							var updated = false
 							if name != currentFence.name {
-								DDLogVerbose("old name \(currentFence.name), new Name \(name)")
+								DDLogVerbose("old name \(currentFence.name), new Name \(name)",asynchronous:false)
 								currentFence.name = name
 								updated = true
 							}
 							if latitude != currentFence.latitude {
-								DDLogVerbose("old latitude \(currentFence.latitude), new latitude \(latitude)")
+								DDLogVerbose("old latitude \(currentFence.latitude), new latitude \(latitude)",asynchronous:false)
 								currentFence.latitude = latitude
 								updated = true
 							}
 							if longitude != currentFence.longitude {
-								DDLogVerbose("old longitude \(currentFence.longitude), new longitude \(longitude)")
+								DDLogVerbose("old longitude \(currentFence.longitude), new longitude \(longitude)",asynchronous:false)
 								currentFence.longitude = longitude
 								updated = true
 							}
 							if radius != currentFence.radius {
-								DDLogVerbose("old radius \(currentFence.radius), new radius \(radius)")
+								DDLogVerbose("old radius \(currentFence.radius), new radius \(radius)",asynchronous:false)
 								currentFence.radius = radius
 								updated = true
 							}
 							if updated {
-								DDLogVerbose("Update Geofence \(name) \(geofenceCode)")
+								DDLogVerbose("Update Geofence \(name) \(geofenceCode)",asynchronous:false)
 								nbUpdated += 1
 							}
 							iCurrentFence += 1
@@ -295,7 +295,7 @@ extension PIGeofencingManager {
 						}
 						if currentFence.code < geofenceCode {
 
-							DDLogVerbose("Delete Geofence \(currentFence.name) \(currentFence.code)")
+							DDLogVerbose("Delete Geofence \(currentFence.name) \(currentFence.code)",asynchronous:false)
 							moc.deleteObject(currentFence)
 							nbDeleted += 1
 							iCurrentFence += 1
@@ -317,7 +317,7 @@ extension PIGeofencingManager {
 						geofence.latitude = latitude
 						geofence.longitude = longitude
 						nbInserted += 1
-						DDLogVerbose("Insert Geofence \(name) \(geofenceCode)")
+						DDLogVerbose("Insert Geofence \(name) \(geofenceCode)",asynchronous:false)
 					}
 
 				}
@@ -333,9 +333,9 @@ extension PIGeofencingManager {
 
 				try moc.save()
 
-				DDLogVerbose("Inserted \(nbInserted)")
-				DDLogVerbose("Deleted \(nbDeleted)")
-				DDLogVerbose("Updated \(nbUpdated)")
+				DDLogVerbose("Inserted \(nbInserted)",asynchronous:false)
+				DDLogVerbose("Deleted \(nbDeleted)",asynchronous:false)
+				DDLogVerbose("Updated \(nbUpdated)",asynchronous:false)
 
 				if nbErrors == 0 {
 					return nil

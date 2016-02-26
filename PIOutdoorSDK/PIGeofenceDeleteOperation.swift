@@ -39,7 +39,7 @@ final class PIGeofenceDeleteOperation:ServiceOperation {
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
         let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
         
-        DDLogVerbose("\(URLComponents.URL)")
+        DDLogVerbose("\(URLComponents.URL)",asynchronous:false)
         
         let request = NSMutableURLRequest(URL:URLComponents.URL!,cachePolicy:.ReloadIgnoringLocalCacheData,timeoutInterval:service.timeout)
         

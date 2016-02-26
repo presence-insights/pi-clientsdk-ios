@@ -38,7 +38,7 @@ class DownloadsController: UITableViewController {
 			fetchRequest.fetchBatchSize = 25
 			fetchRequest.returnsObjectsAsFaults = false
 
-			let dataController = piGeofencingManager.dataController
+			let dataController = PIOutdoor.dataController
 			_fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.mainContext, sectionNameKeyPath: nil, cacheName: nil)
 			_fetchedResultsController?.delegate = self
 			do {
@@ -208,8 +208,12 @@ extension DownloadsController {
 extension DownloadsController {
 	
 	@IBAction func refresh(sender: AnyObject) {
+		guard piGeofencingManager != nil else {
+			return
+		}
+
 		MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
-		piGeofencingManager.synchronize { success in
+		piGeofencingManager?.synchronize { success in
 			MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
 			if success == false {
 				let title = NSLocalizedString("Alert.Refresh.Error.Title",comment:"")

@@ -64,6 +64,12 @@ class MoreController: UITableViewController {
         
 		NSNotificationCenter.defaultCenter().addObserver(
 			self,
+			selector: #selector(MoreController.protectedDataDidBecomeAvailable(_:)),
+			name: kProtectedDataDidBecomeAvailable,
+			object: nil)
+
+		NSNotificationCenter.defaultCenter().addObserver(
+			self,
 			selector: #selector(MoreController.orgCodeDidChange(_:)),
 			name: kOrgCodeDidChange,
 			object: nil)
@@ -141,14 +147,14 @@ class MoreController: UITableViewController {
 				let cell = self.dequeueBasicCellForIndexPath(indexPath)
 				cell.textLabel?.text = NSLocalizedString("More.Settings.TenantCode",comment:"")
 
-				cell.detailTextLabel?.text = piGeofencingManager.service.tenantCode
+				cell.detailTextLabel?.text = piGeofencingManager?.service.tenantCode
 
 				return cell
 			case .OrgCode:
 				let cell = self.dequeueBasicCellForIndexPath(indexPath)
 				cell.textLabel?.text = NSLocalizedString("More.Settings.OrgCode",comment:"")
 
-				cell.detailTextLabel?.text = piGeofencingManager.service.orgCode
+				cell.detailTextLabel?.text = piGeofencingManager?.service.orgCode
 				
 				return cell
             }
@@ -283,8 +289,12 @@ class MoreController: UITableViewController {
 	}
 
 	private func doReset() {
+		guard piGeofencingManager != nil else {
+			return
+		}
+		
 		MBProgressHUD.showHUDAddedTo(self.tabBarController?.view,animated:true)
-		piGeofencingManager.reset {
+		piGeofencingManager?.reset {
 			NSNotificationCenter.defaultCenter().postNotificationName(kDidResetOrganization, object: nil)
 			if
 
@@ -292,13 +302,36 @@ class MoreController: UITableViewController {
 				let tenantCode = NSUserDefaults.standardUserDefaults().objectForKey("PITenant") as? String,
 				let hostname = NSUserDefaults.standardUserDefaults().objectForKey("PIHostName") as? String {
 
-				SSKeychain.deletePasswordForService(hostname, account: tenantCode)
-				piGeofencingManager.service.orgCode = nil
+				piGeofencingManager?.service.orgCode = nil
 
 				Utils.createPIOrg(hostname, tenantCode: tenantCode,vc:self.tabBarController!) { orgCode in
+
+
+					let data = SSKeychain.passwordDataForService(
+						kPIService,
+						account: kPIGeofenceAccount)
+
+					if let data = data {
+						do {
+							var json = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject]
+
+							json?["orgCode"] = orgCode
+							if
+								let json = json,
+								let data = try? NSJSONSerialization.dataWithJSONObject(json, options: [])  {
+								SSKeychain.setPasswordData(data, forService: kPIService, account: kPIGeofenceAccount)
+								piGeofencingManager?.service.orgCode = orgCode
+								piGeofencingManager?.synchronize()
+							}
+						} catch {
+							DDLogError("Can't read JSON in the KeyChain \(error)",asynchronous:false)
+						}
+					}
+
+
 					self.tableView.reloadData()
 					MBProgressHUD.hideHUDForView(self.tabBarController?.view, animated: true)
-					piGeofencingManager.startMonitoringRegions()
+					piGeofencingManager?.startMonitoringRegions()
 				}
 			} else {
 				self.tableView.reloadData()
@@ -314,6 +347,10 @@ class MoreController: UITableViewController {
     func contentsSizeChanged(notification:NSNotification){
         self.tableView.reloadData()
     }
+
+	func protectedDataDidBecomeAvailable(notification:NSNotification){
+		self.tableView.reloadData()
+	}
 
 	func orgCodeDidChange(notification:NSNotification){
 		self.tableView.reloadData()

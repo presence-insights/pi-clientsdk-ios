@@ -38,9 +38,9 @@ extension PIGeofencingManager: PIServiceDelegate {
 			DDLogError("****** No background time for PIGeofencingManager.didProgress!!!",asynchronous:false)
 		}
 
-		DDLogVerbose("PIGeofencingManager.didProgress beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+		DDLogVerbose("PIGeofencingManager.didProgress beginBackgroundTaskWithExpirationHandler \(bkgTaskId)",asynchronous:false)
 
-		DDLogVerbose("PIGeofencingManager.didProgress \(progress)")
+		DDLogVerbose("PIGeofencingManager.didProgress \(progress)",asynchronous:false)
 
 		let moc = dataController.writerContext
 		moc.performBlock {
@@ -49,11 +49,11 @@ extension PIGeofencingManager: PIServiceDelegate {
 			do {
 				let downloads = try moc.executeFetchRequest(request) as! [PIDownload]
 				guard let download = downloads.first  else {
-					DDLogError("PIGeofencingManager.didReceiveFile download not found")
+					DDLogError("PIGeofencingManager.didReceiveFile download not found",asynchronous:false)
 					return
 				}
 				guard downloads.count == 1 else {
-					DDLogError("PIGeofencingManager.didReceiveFile more than one download!")
+					DDLogError("PIGeofencingManager.didReceiveFile more than one download!",asynchronous:false)
 					return
 				}
 				download.progress = progress
@@ -95,7 +95,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 			DDLogError("****** No background time for PIGeofencingManager.didCompleteWithError!!!",asynchronous:false)
 		}
 
-		DDLogVerbose("PIGeofencingManager.didCompleteWithError beginBackgroundTaskWithExpirationHandler \(bkgTaskId)")
+		DDLogVerbose("PIGeofencingManager.didCompleteWithError beginBackgroundTaskWithExpirationHandler \(bkgTaskId)",asynchronous:false)
 		
 		let moc = dataController.writerContext
 		moc.performBlock {

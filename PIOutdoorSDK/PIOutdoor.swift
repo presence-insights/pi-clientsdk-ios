@@ -21,11 +21,11 @@
 import Foundation
 
 
-class PIOutdoor {
+public class PIOutdoor {
     
-    static let dataController = DataController(fileName:"PIOutdoor")
+    static public let dataController = DataController(fileName:"PIOutdoor")
     
-    static let userDefaults = NSUserDefaults(suiteName: dataController.groupIdentifier)!
+    static public let userDefaults = NSUserDefaults(suiteName: dataController.groupIdentifier)!
     
     
 }

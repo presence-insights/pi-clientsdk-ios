@@ -74,18 +74,18 @@ public final class PIGeofenceCreateRequest:Request {
                         let json = try NSJSONSerialization.JSONObjectWithData(data,options:[])
                         response.result = .OK(json)
                         guard let properties = json["properties"] as? [String:AnyObject] else {
-                            DDLogError("PIGeofenceCreateRequest,Missing properties")
+                            DDLogError("PIGeofenceCreateRequest,Missing properties",asynchronous:false)
                             break
                         }
                         
                         guard let geofenceCode = properties["@code"] as? String else {
-                            DDLogError("PIGeofenceCreateRequest,Missing Fence ID")
+                            DDLogError("PIGeofenceCreateRequest,Missing Fence ID",asynchronous:false)
                             break
                         }
                         
                         response.geofenceCode = geofenceCode
                     } catch {
-                        DDLogError("PIGeofenceCreateRequest,Json parsing error \(error)")
+                        DDLogError("PIGeofenceCreateRequest,Json parsing error \(error)",asynchronous:false)
                         response.result = .OK(nil)
                     }
                 case .Cancelled?:

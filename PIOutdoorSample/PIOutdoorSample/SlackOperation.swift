@@ -43,7 +43,7 @@ public class SlackOperation: HTTPOperation {
         super.init(session:session, url: url,maxRetry:1)
         
         self.name = "com.ibm.PI.SlackOperation"
-		DDLogVerbose("Create SlackOperation \(params)")
+		DDLogVerbose("Create SlackOperation \(params)",asynchronous:false)
     }
     
     
@@ -72,7 +72,7 @@ public class SlackOperation: HTTPOperation {
             return
         }
         
-        DDLogVerbose("Main Slack Operation \(urlAPI)")
+        DDLogVerbose("Main Slack Operation \(urlAPI)",asynchronous:false)
         
         let request = NSMutableURLRequest(URL:urlAPI,cachePolicy:.UseProtocolCachePolicy,timeoutInterval:self.timeout)
         
@@ -84,7 +84,7 @@ public class SlackOperation: HTTPOperation {
             self.result = result
 			self.executing = false
             self.finished = true
-			DDLogVerbose("End SlackOperation \(self.params)")
+			DDLogVerbose("End SlackOperation \(self.params)",asynchronous:false)
         }
     }
     
