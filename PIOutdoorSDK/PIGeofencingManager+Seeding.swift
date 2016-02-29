@@ -44,17 +44,17 @@ extension PIGeofencingManager {
 			let tmpDirectoryURL = NSURL.fileURLWithPath(NSTemporaryDirectory(), isDirectory: true)
 
 			guard zip.UnzipOpenFile(url.path!) else {
-				throw PIOutdoorError.UnzipOpenFile(url.path!)
+				throw PIGeofencingError.UnzipOpenFile(url.path!)
 			}
 			guard zip.UnzipFileTo(tmpDirectoryURL.path!, overWrite: true) else {
-				throw PIOutdoorError.UnzipFileTo(tmpDirectoryURL.path!)
+				throw PIGeofencingError.UnzipFileTo(tmpDirectoryURL.path!)
 
 			}
 
 			let unzippedFiles = zip.unzippedFiles as! [String]
 
 			guard zip.UnzipCloseFile() else {
-				throw PIOutdoorError.UnzipCloseFile
+				throw PIGeofencingError.UnzipCloseFile
 			}
 
 			for file in unzippedFiles {
@@ -107,17 +107,28 @@ extension PIGeofencingManager {
 		propertiesGenerator:GeofencePropertiesGenerator? = nil) -> ErrorType? {
 
 			guard let type = geojson["type"] as? String else {
-				return PIOutdoorError.GeoJsonMissingType
+				return PIGeofencingError.GeoJsonMissingType
 			}
 
 			guard type == "FeatureCollection" else {
-				return PIOutdoorError.GeoJsonWrongType(type)
+				return PIGeofencingError.GeoJsonWrongType(type)
 			}
 
+			guard let properties = geojson["properties"] as? [String:AnyObject] else {
+				return PIGeofencingError.GeoJsonMissingFeatureCollectionProperties
+			}
+
+			let totalFeatures = properties["totalFeatures"] as? Int
+			DDLogVerbose("TotalFeatures downloaded \(totalFeatures)")
+
+			let pageSize = properties["pageSize"] as? Int
+			DDLogVerbose("PageSize \(pageSize)")
 
 			guard var geofences = geojson["features"] as? [[String:AnyObject]] else {
-				return PIOutdoorError.GeoJsonNoFeature
+				return PIGeofencingError.GeoJsonNoFeature
 			}
+
+			DDLogVerbose("--- \(geofences.count)",asynchronous:false)
 
 			geofences.sortInPlace { (fencea, fenceb) -> Bool in
 				guard let propertiesa = fencea["properties"] as? [String:AnyObject] else {
@@ -146,7 +157,6 @@ extension PIGeofencingManager {
 
 				DDLogVerbose(code,asynchronous:false)
 			}
-			DDLogVerbose("---",asynchronous:false)
 
 			do {
 				let request = PIGeofence.fetchRequest
@@ -340,12 +350,12 @@ extension PIGeofencingManager {
 				if nbErrors == 0 {
 					return nil
 				} else {
-					return PIOutdoorError.WrongFences(nbErrors)
+					return PIGeofencingError.WrongFences(nbErrors)
 				}
 			} catch {
-				DDLogError("Core Data Error \(error)",asynchronous:false)
+				DDLogError("Core Data Error \(error)")
 				assertionFailure("Core Data Error \(error)")
-				return PIOutdoorError.InternalError(error)
+				return PIGeofencingError.InternalError(error)
 			}
 	}
 

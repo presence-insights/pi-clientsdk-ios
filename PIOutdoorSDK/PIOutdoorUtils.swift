@@ -64,6 +64,24 @@ class PIOutdoorUtils {
 		return true
 	}
 
+	static func buildQueryStringWithParams(params:[String:Any]) -> String? {
+
+		let pairs:NSMutableArray = []
+
+		for (key,value) in params {
+			let param = "\(key)=\(value)"
+			pairs.addObject(param)
+		}
+
+		let queryString = pairs.componentsJoinedByString("&")
+
+		let encodedQueryString = queryString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+
+		return encodedQueryString
+	}
+
+
+
 }
 
 

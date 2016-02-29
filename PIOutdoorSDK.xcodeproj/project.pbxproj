@@ -17,6 +17,7 @@
 		7D45109E1C5A2F24007BA047 /* PIServiceCreateOrgRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D45109D1C5A2F24007BA047 /* PIServiceCreateOrgRequest.swift */; };
 		7D4510A01C5A2F3C007BA047 /* PIServiceCreateOrgOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D45109F1C5A2F3C007BA047 /* PIServiceCreateOrgOperation.swift */; };
 		7D4510A71C5A60A9007BA047 /* PIServiceCreateOrgResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4510A61C5A60A9007BA047 /* PIServiceCreateOrgResponse.swift */; };
+		7D8241E21C848AA4007A759B /* PIGeofencingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8241E11C848AA4007A759B /* PIGeofencingError.swift */; };
 		7D9198321C735698001640E0 /* PIDownload+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9198301C735698001640E0 /* PIDownload+CoreDataProperties.swift */; };
 		7D9198331C735698001640E0 /* PIDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9198311C735698001640E0 /* PIDownload.swift */; };
 		7D9198371C7377AD001640E0 /* NSURLRequest+PIOutdoor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9198361C7377AD001640E0 /* NSURLRequest+PIOutdoor.swift */; };
@@ -62,6 +63,7 @@
 		7D45109D1C5A2F24007BA047 /* PIServiceCreateOrgRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIServiceCreateOrgRequest.swift; sourceTree = "<group>"; };
 		7D45109F1C5A2F3C007BA047 /* PIServiceCreateOrgOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIServiceCreateOrgOperation.swift; sourceTree = "<group>"; };
 		7D4510A61C5A60A9007BA047 /* PIServiceCreateOrgResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIServiceCreateOrgResponse.swift; sourceTree = "<group>"; };
+		7D8241E11C848AA4007A759B /* PIGeofencingError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIGeofencingError.swift; sourceTree = "<group>"; };
 		7D9198301C735698001640E0 /* PIDownload+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PIDownload+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		7D9198311C735698001640E0 /* PIDownload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIDownload.swift; sourceTree = "<group>"; };
 		7D9198361C7377AD001640E0 /* NSURLRequest+PIOutdoor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLRequest+PIOutdoor.swift"; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 			isa = PBXGroup;
 			children = (
 				7DDC91BE1C47982E002A5113 /* PIGeofencingManager.swift */,
+				7D8241E11C848AA4007A759B /* PIGeofencingError.swift */,
 				7D30843B1C75EFCF00CF59A4 /* PIGeofencingManager+CLLocationManagerDelegate.swift */,
 				7D30842E1C74CF0500CF59A4 /* PIGeofencingManager+PIServiceDelegate.swift */,
 				7D0690BE1C7B7A5500574386 /* PIGeofencingManager+UpdateMonitoredGeofences.swift */,
@@ -363,6 +366,7 @@
 				7D26965A1C64A9F800A7F1CF /* PIGeofenceFencesDownloadRequest.swift in Sources */,
 				7DAD42C61C6CD40E0012CE25 /* DownloadResponse.swift in Sources */,
 				7DAD42C81C6CD4EE0012CE25 /* DownloadRequest.swift in Sources */,
+				7D8241E21C848AA4007A759B /* PIGeofencingError.swift in Sources */,
 				7D30842F1C74CF0500CF59A4 /* PIGeofencingManager+PIServiceDelegate.swift in Sources */,
 				7DDC91B31C47980D002A5113 /* HTTPOperation.swift in Sources */,
 				7D9198371C7377AD001640E0 /* NSURLRequest+PIOutdoor.swift in Sources */,

@@ -27,24 +27,6 @@ import CocoaLumberjack
 
 public let kGeofenceManagerDidSynchronize = "com.ibm.PI.GeofenceManagerDidSynchronize"
 
-public enum PIOutdoorError:ErrorType {
-    case UnzipOpenFile(String)
-    case UnzipFileTo(String)
-    case EmptyZipFile(NSURL)
-    case UnzipCloseFile
-    
-    case GeoJsonMissingType
-    case GeoJsonWrongType(String)
-    case GeoJsonNoFeature
-    
-    case WrongFences(Int)
-    case HTTPStatus(Int,AnyObject?)
-
-	case DownloadError
-    case InternalError(ErrorType)
-}
-
-
 public struct PIGeofenceProperties {
     public let name:String
     public let radius:Int
@@ -327,7 +309,7 @@ public final class PIGeofencingManager:NSObject {
             case .OK?:
                 DDLogVerbose("PIGeofenceCreateRequest OK \(response.geofenceCode)",asynchronous:false)
                 guard let geofenceCode = response.geofenceCode else {
-                    DDLogError("PIGeofenceCreateRequest Missing fence Id",asynchronous:false)
+                    DDLogError("PIGeofenceCreateRequest Missing fence Id")
                     completionHandler?(nil)
                     return
                 }
@@ -352,7 +334,7 @@ public final class PIGeofencingManager:NSObject {
                             completionHandler?(geofence)
                         }
                     } catch {
-                        DDLogError("Core Data Error \(error)",asynchronous:false)
+                        DDLogError("Core Data Error \(error)")
                         assertionFailure("Core Data Error \(error)")
                         dispatch_async(dispatch_get_main_queue()) {
                             completionHandler?(nil)
@@ -368,17 +350,17 @@ public final class PIGeofencingManager:NSObject {
                     completionHandler?(nil)
                 }
             case let .Error(error)?:
-                DDLogError("PIGeofenceCreateRequest Error \(error)",asynchronous:false)
+                DDLogError("PIGeofenceCreateRequest Error \(error)")
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(nil)
                 }
             case let .Exception(error)?:
-                DDLogError("PIGeofenceCreateRequest Exception \(error)",asynchronous:false)
+                DDLogError("PIGeofenceCreateRequest Exception \(error)")
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(nil)
                 }
             case let .HTTPStatus(status,_)?:
-                DDLogError("PIGeofenceCreateRequest Status \(status)",asynchronous:false)
+                DDLogError("PIGeofenceCreateRequest Status \(status)")
                 dispatch_async(dispatch_get_main_queue()) {
                     completionHandler?(nil)
                 }
@@ -400,13 +382,13 @@ public final class PIGeofencingManager:NSObject {
         let fetchRequest = PIGeofence.fetchRequest
         do {
             guard let geofences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
-                DDLogError("Programming Error",asynchronous:false)
+                DDLogError("Programming Error")
                 assertionFailure("Programming error")
                 return []
             }
             return geofences
         } catch {
-            DDLogError("Core Data Error \(error)",asynchronous:false)
+            DDLogError("Core Data Error \(error)")
             assertionFailure("Core Data Error \(error)")
             return []
         }
@@ -431,7 +413,7 @@ public final class PIGeofencingManager:NSObject {
             }
             return geofence
         } catch {
-            DDLogError("Core Data Error \(error)",asynchronous:false)
+            DDLogError("Core Data Error \(error)")
             assertionFailure("Core Data Error \(error)")
             return nil
         }
@@ -502,7 +484,7 @@ public final class PIGeofencingManager:NSObject {
                 
                 
             } catch {
-                DDLogError("Core Data Error \(error)",asynchronous:false)
+                DDLogError("Core Data Error \(error)")
                 assertionFailure("Core Data Error \(error)")
                 completionHandler(geofence: nil)
             }

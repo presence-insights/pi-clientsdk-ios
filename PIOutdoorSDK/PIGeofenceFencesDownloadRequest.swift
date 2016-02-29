@@ -30,12 +30,16 @@ public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 		DDLogVerbose("PIGeofenceFencesDownloadRequest.executeDownload",asynchronous:false)
 
 		guard let orgCode = service.orgCode else {
-			DDLogError("Missing orgCode for executing the download",asynchronous:false)
+			DDLogError("Missing orgCode for executing the download")
 			return nil
 		}
 		let path = "pi-config/v2/tenants/\(service.tenantCode)/orgs/\(orgCode)/geofences"
 		let url = NSURL(string:path,relativeToURL:service.baseURL)
 		let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
+
+		let queryItems:[String:Any] = ["pageSize":100]
+		URLComponents.percentEncodedQuery = PIOutdoorUtils.buildQueryStringWithParams(queryItems)
+
 
 		DDLogInfo("PIGeofenceFencesDownloadRequest \(URLComponents.URL!)",asynchronous:false)
 
@@ -47,7 +51,7 @@ public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 		task.resume()
 		let taskIdentifier = task.taskIdentifier
 		guard let backgroundSessionIdentifier = service.backgroundServiceSession.configuration.identifier else {
-			DDLogError("No Background session identifier",asynchronous:false)
+			DDLogError("No Background session identifier")
 			return nil
 		}
 

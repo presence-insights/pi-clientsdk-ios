@@ -92,7 +92,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 			}
 		}
 		if bkgTaskId == UIBackgroundTaskInvalid {
-			DDLogError("****** No background time for PIGeofencingManager.didCompleteWithError!!!",asynchronous:false)
+			DDLogError("****** No background time for PIGeofencingManager.didCompleteWithError!!!")
 		}
 
 		DDLogVerbose("PIGeofencingManager.didCompleteWithError beginBackgroundTaskWithExpirationHandler \(bkgTaskId)",asynchronous:false)
@@ -165,11 +165,11 @@ extension PIGeofencingManager: PIServiceDelegate {
 				do {
 					let downloads = try moc.executeFetchRequest(request) as! [PIDownload]
 					guard let download = downloads.first  else {
-						DDLogError("PIGeofencingManager.didReceiveFile download not found",asynchronous:false)
+						DDLogError("PIGeofencingManager.didReceiveFile download not found")
 						return
 					}
 					guard downloads.count == 1 else {
-						DDLogError("PIGeofencingManager.didReceiveFile more than one download!",asynchronous:false)
+						DDLogError("PIGeofencingManager.didReceiveFile more than one download!")
 						return
 					}
 					download.progressStatus = .Received
@@ -191,7 +191,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 							download.progressStatus = .ProcessingError
 						}
 					} catch {
-						DDLogError("PIGeofencingManager.updateGeofences error \(error)",asynchronous:false)
+						DDLogError("PIGeofencingManager.updateGeofences error \(error)")
 						download.progressStatus = .ProcessingError
 					}
 					try moc.save()
@@ -201,7 +201,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 						self.delegate?.geofencingManager?(self, didReceiveDownload: download)
 					}
 				} catch {
-					DDLogError("PIGeofencingManager.didReceiveFile error \(error)",asynchronous:false)
+					DDLogError("PIGeofencingManager.didReceiveFile error \(error)")
 				}
 				self.updateMonitoredGeofencesWithMoc(moc)
 				dispatch_async(dispatch_get_main_queue()) {
