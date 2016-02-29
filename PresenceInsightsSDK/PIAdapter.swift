@@ -111,12 +111,38 @@ extension PIAdapter {
             callback(nil, error)
             return
         }
-        
-        var device = device
-        
-        let endpoint = _configURL + "/devices"
-        
         device.registered = true
+        
+        self.handleDevice(device, callback: callback)
+    }
+
+    /**
+    Public function to unregister a device in PI.
+    Sets device registered property to false and updates the device.
+
+    - parameter device:   PIDevice to unregister.
+    - parameter callback: Returns a copy of the unregistered PIDevice upon task completion.
+    */
+    public func unregisterDevice(device: PIDevice, callback:(PIDevice?, NSError?)->()) {
+        let device_ = device
+        device_.registered = false
+        self.handleDevice(device_, callback: callback)
+    }
+    
+    /**
+    Public function to update a device in PI.
+    It pulls down the remote version of the device then modifies it for re-upload.
+    
+    - parameter device:   PIDevice to be updated.
+    - parameter callback: Returns a copy of the updated PIDevice upon task completion.
+    */
+    public func updateDevice(device: PIDevice, callback:(PIDevice?, NSError?)->() ) {
+        self.handleDevice(device, callback: callback)
+    }
+
+    private func handleDevice(device: PIDevice, callback:(PIDevice?, NSError?)->()) {
+        let device = device
+        let endpoint = _configURL + "/devices"
         
         if device.data == nil {
             device.data = [:]
@@ -171,59 +197,6 @@ extension PIAdapter {
                 // TODO : NSError
                 callback(nil,nil)
             }
-        })
-    }
-    
-    /**
-    Public function to unregister a device in PI.
-    Sets device registered property to false and updates the device.
-    
-    - parameter device:   PIDevice to unregister.
-    - parameter callback: Returns a copy of the unregistered PIDevice upon task completion.
-    */
-    public func unregisterDevice(device: PIDevice, callback:(PIDevice?, NSError?)->()) {
-        
-        var device_ = device
-        device_.registered = false
-        updateDevice(device_, callback: {newDevice, error in
-            guard let newDevice = newDevice where error == nil else {
-                callback(nil, error)
-                return
-            }
-            callback(newDevice, nil)
-        })
-    }
-    
-    /**
-    Public function to update a device in PI. 
-    It pulls down the remote version of the device then modifies it for re-upload.
-    
-    - parameter device:   PIDevice to be updated.
-    - parameter callback: Returns a copy of the updated PIDevice upon task completion.
-    */
-    public func updateDevice(device: PIDevice, callback:(PIDevice?, NSError?)->() ) {
-        
-        guard let descriptor = device.descriptor else {
-            // TODO: NSError or throw exception
-            callback(nil,nil)
-            return
-        }
-        
-        let endpoint = _configURL + "/devices?rawDescriptor=" + descriptor
-        getDevice(endpoint, callback: {deviceData, error in
-            guard let deviceData = deviceData where error == nil else {
-                callback(nil, error)
-                return
-            }
-            guard let code = deviceData["@code"] as? String else {
-                // TODO: NSError or throw exception
-                callback(nil,nil)
-                return
-            }
-            let endpoint = self._configURL + "/devices/" + code
-            self.updateDeviceDictionary(endpoint, dictionary: deviceData, device: device, callback: {newDevice, error in
-                callback(newDevice, error)
-            })
         })
     }
     
@@ -293,6 +266,7 @@ extension PIAdapter {
     - parameter descriptor: The unhashed device descriptor. (Usually the UUID)
     - parameter callback:   Returns the PIDevice upon task completion.
     */
+    @available(*, deprecated=1.2.1, message="Use getDeviceByCode() with the code returned from registering device.")
     public func getDeviceByDescriptor(descriptor: String, callback:(PIDevice?, NSError?)->()) {
         
         let endpoint = _configURL + "/devices?rawDescriptor=" + descriptor
@@ -808,14 +782,25 @@ extension PIAdapter {
                 return
             }
 
+            let response = response as? NSHTTPURLResponse
+
             if let data = data {
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableLeaves) as? [String: AnyObject] {
                         
-                        if let _ = json["code"] as? String,  message = json["message"] as? String {
-                            let errorDetails = [NSLocalizedFailureReasonErrorKey: message]
-                            let error = NSError(domain: "PresenceInsightsSDK", code: 1, userInfo: errorDetails)
-                            callback( nil, error)
+                        let statusCode = response?.statusCode
+                        if statusCode > 400 {
+                            if statusCode == 409 {
+                                // POST providing location to existing document
+                                callback(json, nil)
+                            } else {
+                                // its an error
+                                if let message = json["message"] as? String {
+                                    let errorDetails = [NSLocalizedFailureReasonErrorKey: message]
+                                    let error = NSError(domain: "PresenceInsightsSDK", code: 1, userInfo: errorDetails)
+                                    callback(nil, error)
+                                }
+                            }
                             return
                         }
                         callback(json, nil)
