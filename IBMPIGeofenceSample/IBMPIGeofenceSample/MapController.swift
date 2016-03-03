@@ -21,7 +21,7 @@ import UIKit
 import MapKit
 import CoreLocation
 import MBProgressHUD
-import PIOutdoorSDK
+import IBMPIGeofence
 
 class MapController: UIViewController,SegueHandlerType,NewGeofenceDelegate {
 

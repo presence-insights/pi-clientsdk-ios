@@ -19,7 +19,7 @@
 
 import UIKit
 import CoreData
-import PIOutdoorSDK
+import IBMPIGeofence
 import MBProgressHUD
 
 class DownloadsController: UITableViewController {

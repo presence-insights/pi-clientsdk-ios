@@ -18,7 +18,7 @@
  **/
 
 import Foundation
-import PIOutdoorSDK
+import IBMPIGeofence
 import CocoaLumberjack
 
 enum SlackAPI:ErrorType {

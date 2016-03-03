@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:PIOutdoorSample/PIOutdoorSample.xcodeproj">
+      location = "group:IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:PIOutdoorSDK.xcodeproj">
+      location = "group:IBMPIGeofence.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

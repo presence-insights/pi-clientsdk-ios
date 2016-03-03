@@ -19,7 +19,7 @@
 
 
 import UIKit
-import PIOutdoorSDK
+import IBMPIGeofence
 
 class DownloadCell: UITableViewCell {
 

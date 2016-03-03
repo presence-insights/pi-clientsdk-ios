@@ -19,7 +19,7 @@
 import UIKit
 import MessageUI
 import CocoaLumberjack
-import PIOutdoorSDK
+import IBMPIGeofence
 import MBProgressHUD
 import SSKeychain
 

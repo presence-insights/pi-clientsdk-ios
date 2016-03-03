@@ -2,24 +2,24 @@
 platform :ios, '8.0'
 # Uncomment this line if you're using Swift
 
-workspace 'PIOutdoorSDK'
-xcodeproj 'PIOutdoorSDK.xcodeproj'
-xcodeproj 'PIOutdoorSample/PIOutdoorSample.xcodeproj'
+workspace 'IBMPIGeofence'
+xcodeproj 'IBMPIGeofence.xcodeproj'
+xcodeproj 'IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj'
 
 
 use_frameworks!
 
-target 'PIOutdoorSDK' do
+target 'IBMPIGeofence' do
 pod 'ZipArchive'
 pod 'CocoaLumberjack/Swift'
-xcodeproj 'PIOutdoorSDK.xcodeproj'
+xcodeproj 'IBMPIGeofence.xcodeproj'
 end
 
-target 'PIOutdoorSample' do
+target 'IBMPIGeofenceSample' do
 pod 'ZipArchive'
 pod 'SSKeychain'
 pod 'CocoaLumberjack/Swift'
 pod 'MBProgressHUD'
-xcodeproj 'PIOutdoorSample/PIOutdoorSample.xcodeproj'
+xcodeproj 'IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj'
 end
 

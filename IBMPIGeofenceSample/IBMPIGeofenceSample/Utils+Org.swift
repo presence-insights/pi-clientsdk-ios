@@ -20,7 +20,7 @@
 import UIKit
 import MBProgressHUD
 import CocoaLumberjack
-import PIOutdoorSDK
+import IBMPIGeofence
 import SSKeychain
 
 extension Utils {

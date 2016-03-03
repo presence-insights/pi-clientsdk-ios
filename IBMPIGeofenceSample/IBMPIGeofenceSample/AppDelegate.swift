@@ -20,7 +20,7 @@
 
 
 import UIKit
-import PIOutdoorSDK
+import IBMPIGeofence
 import CoreLocation
 import SSKeychain
 import CocoaLumberjack

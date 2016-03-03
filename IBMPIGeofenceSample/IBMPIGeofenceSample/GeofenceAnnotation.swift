@@ -20,7 +20,7 @@
 
 import Foundation
 import MapKit
-import PIOutdoorSDK
+import IBMPIGeofence
 
 class GeofenceAnnotation:MKPointAnnotation {
     
