@@ -21,6 +21,7 @@ import CoreData
 import CoreLocation
 
 /// Represents a geofence
+@objc(IBMPIGeofence)
 public final class PIGeofence: ManagedObject {
 
     /// - returns: The coordinates of the center of this fence.
