@@ -45,7 +45,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 		let moc = dataController.writerContext
 		moc.performBlock {
 			let request = PIDownload.fetchRequest
-			request.predicate = NSPredicate(format: "sessionIdentifier = %@ and taskIdentifier = %@", session.configuration.identifier!,downloadTask.taskIdentifier)
+			request.predicate = NSPredicate(format: "sessionIdentifier = %@ and taskIdentifier = %ld", session.configuration.identifier!,downloadTask.taskIdentifier)
 			do {
 				let downloads = try moc.executeFetchRequest(request) as! [PIDownload]
 				guard let download = downloads.first  else {
@@ -100,7 +100,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 		let moc = dataController.writerContext
 		moc.performBlock {
 			let request = PIDownload.fetchRequest
-			request.predicate = NSPredicate(format: "sessionIdentifier = %@ and taskIdentifier = %lu", session.configuration.identifier!,task.taskIdentifier)
+			request.predicate = NSPredicate(format: "sessionIdentifier = %@ and taskIdentifier = %ld", session.configuration.identifier!,task.taskIdentifier)
 			do {
 				let downloads = try moc.executeFetchRequest(request) as! [PIDownload]
 				guard let download = downloads.first  else {
@@ -161,7 +161,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 					moc.reset()
 				}
 				let request = PIDownload.fetchRequest
-				request.predicate = NSPredicate(format: "sessionIdentifier = %@ and taskIdentifier = %lu", session.configuration.identifier!,downloadTask.taskIdentifier)
+				request.predicate = NSPredicate(format: "sessionIdentifier = %@ and taskIdentifier = %ld", session.configuration.identifier!,downloadTask.taskIdentifier)
 				do {
 					let downloads = try moc.executeFetchRequest(request) as! [PIDownload]
 					guard let download = downloads.first  else {
