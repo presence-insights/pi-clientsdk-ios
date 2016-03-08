@@ -20,9 +20,9 @@
 
 import Foundation
 
-public class Response {
+public class PIResponse {
     
-    public let piRequest: Request
+    public let piRequest: PIRequest
     
     public var httpRequest:NSURLRequest? {
         return operation.request
@@ -31,7 +31,7 @@ public class Response {
         return operation.response
     }
     
-    var operation: ServiceOperation
+    var operation: PIServiceOperation
     
     public enum Result {
         case Cancelled
@@ -49,7 +49,7 @@ public class Response {
         operation.cancel()
     }
     
-    init(piRequest:Request,operation:ServiceOperation){
+    init(piRequest:PIRequest,operation:PIServiceOperation){
         self.piRequest = piRequest
         self.operation = operation
     }

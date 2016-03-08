@@ -20,7 +20,7 @@
 import Foundation
 
 /// Response from Presence Insight when a geofence has been created
-final public class PIGeofenceCreateResponse:Response {
+final public class PIGeofenceCreateResponse:PIResponse {
     
     /// The code of the geofence if the request was successful.
     public var geofenceCode:String?

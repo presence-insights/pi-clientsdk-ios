@@ -177,21 +177,28 @@ extension PIGeofencingManager: PIServiceDelegate {
 					download.endDate = NSDate()
 					download.url = geofencesURL.absoluteString
 					try moc.save()
+					var data:NSData? = nil
 					do {
-						let data = try NSData(contentsOfURL: geofencesURL, options: .DataReadingMappedAlways)
-						if let jsonObject = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] {
-							if let _ = self.seedGeojson(moc, geojson: jsonObject)  {
+						data = try NSData(contentsOfURL: geofencesURL, options: .DataReadingMappedAlways)
+						let anyObject = try NSJSONSerialization.JSONObjectWithData(data!, options: [])
+						if let jsonObject = anyObject as? [String:AnyObject] {
+							if let error = self.seedGeojson(moc, geojson: jsonObject)  {
+								DDLogError("Geojson processing error \(error)")
 								download.progressStatus = .ProcessingError
 							} else {
 								download.progressStatus = .Processed
 								DDLogInfo("PIGeofencingManager.updateGeofences OK!!!",asynchronous:false)
 							}
 						} else {
-							DDLogError("PIGeofencingManager.updateGeofences Can't read json file",asynchronous:false)
+							DDLogError("PIGeofencingManager.updateGeofences Can't read json file: \(anyObject)")
 							download.progressStatus = .ProcessingError
 						}
 					} catch {
 						DDLogError("PIGeofencingManager.updateGeofences error \(error)")
+						if let data = data {
+							let stringFile = String(data:data,encoding: NSUTF8StringEncoding)
+							DDLogError("PIGeofencingManager.updateGeofences json \(stringFile)")
+						}
 						download.progressStatus = .ProcessingError
 					}
 					try moc.save()

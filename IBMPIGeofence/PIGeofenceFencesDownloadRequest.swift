@@ -23,9 +23,9 @@ import Foundation
 import CocoaLumberjack
 
 /// Get the geofences defined on the PI backend
-public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
+public final class PIGeofenceFencesDownloadRequest:PIDownloadRequest {
 
-	public func executeDownload(service:PIService) -> DownloadResponse? {
+	public func executeDownload(service:PIService) -> PIDownloadResponse? {
 
 		DDLogVerbose("PIGeofenceFencesDownloadRequest.executeDownload",asynchronous:false)
 
@@ -38,13 +38,13 @@ public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 		let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
 
 		let queryItems:[String:Any] = ["pageSize":100]
-		URLComponents.percentEncodedQuery = PIOutdoorUtils.buildQueryStringWithParams(queryItems)
+		URLComponents.percentEncodedQuery = PIGeofenceUtils.buildQueryStringWithParams(queryItems)
 
 
 		DDLogInfo("PIGeofenceFencesDownloadRequest \(URLComponents.URL!)",asynchronous:false)
 
 		let request = NSMutableURLRequest(URL: URLComponents.URL!)
-		PIOutdoorUtils.setBasicAuthHeader(request, username: service.username, password: service.password)
+		PIGeofenceUtils.setBasicAuthHeader(request, username: service.username, password: service.password)
 
 		let task = service.backgroundServiceSession.downloadTaskWithRequest(request)
 		task.taskDescription = "PIGeofenceFencesDownloadRequest"
@@ -55,6 +55,6 @@ public final class PIGeofenceFencesDownloadRequest:DownloadRequest {
 			return nil
 		}
 
-		return DownloadResponse(backgroundSessionIdentifier: backgroundSessionIdentifier, taskIdentifier: taskIdentifier)
+		return PIDownloadResponse(backgroundSessionIdentifier: backgroundSessionIdentifier, taskIdentifier: taskIdentifier)
 	}
 }

@@ -64,14 +64,14 @@ public final class PIService: NSObject {
     }
     
     
-    public func executeRequest(request:Request) -> Response {
+    public func executeRequest(request:PIRequest) -> PIResponse {
         let response = request.execute(self)
         self.httpQueue.addOperation(response.operation)
         return response
     }
 
 
-	public func executeDownload(request:DownloadRequest) -> DownloadResponse? {
+	public func executeDownload(request:PIDownloadRequest) -> PIDownloadResponse? {
 		let response = request.executeDownload(self)
 		return response
 	}
@@ -251,7 +251,7 @@ extension PIService : NSURLSessionDownloadDelegate {
 
 	public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
 		DDLogError("PIService.didFinishDownloadingToURL session description \(session.sessionDescription ?? "No session description") , task identifier \(downloadTask.taskIdentifier) , task description \(downloadTask.taskDescription ?? "No task description")",asynchronous:false)
-		let libraryURL = PIOutdoorUtils.libraryDirectory
+		let libraryURL = PIGeofenceUtils.libraryDirectory
 		let geojsonURL = NSURL(fileURLWithPath: NSUUID().UUIDString+".json", relativeToURL: libraryURL)
 		do {
 			let _ = try? NSFileManager.defaultManager().removeItemAtURL(geojsonURL)

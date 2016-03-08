@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7DD0F3881C8DE1FC00D8BBB5 /* IBMPIGeofence.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DE01B041C888EE800D7C654 /* IBMPIGeofence.framework */; };
+		7DD0F3891C8DE1FC00D8BBB5 /* IBMPIGeofence.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7DE01B041C888EE800D7C654 /* IBMPIGeofence.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7DE01AE61C888D2C00D7C654 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE01AE51C888D2C00D7C654 /* AppDelegate.swift */; };
 		7DE01AE81C888D2C00D7C654 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE01AE71C888D2C00D7C654 /* ViewController.swift */; };
 		7DE01AED1C888D2C00D7C654 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DE01AEC1C888D2C00D7C654 /* Assets.xcassets */; };
@@ -46,6 +48,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		7DD0F38A1C8DE1FC00D8BBB5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7DE01AFF1C888EE700D7C654 /* IBMPIGeofence.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7DE01ACD1C888BBB00D7C654;
+			remoteInfo = IBMPIGeofence;
+		};
 		7DE01B031C888EE800D7C654 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7DE01AFF1C888EE700D7C654 /* IBMPIGeofence.xcodeproj */;
@@ -54,6 +63,20 @@
 			remoteInfo = IBMPIGeofence;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7DD0F38C1C8DE1FD00D8BBB5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7DD0F3891C8DE1FC00D8BBB5 /* IBMPIGeofence.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		767D82DEF01D0E8532EB5FF3 /* Pods-IBMPIGeofenceSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IBMPIGeofenceSample.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-IBMPIGeofenceSample/Pods-IBMPIGeofenceSample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -104,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DD0F3881C8DE1FC00D8BBB5 /* IBMPIGeofence.framework in Frameworks */,
 				A6786DFCB27C62804B5BB583 /* Pods_IBMPIGeofenceSample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,10 +299,12 @@
 				7DE01AE01C888D2C00D7C654 /* Resources */,
 				43FE539298FDF68036C2FCD5 /* Embed Pods Frameworks */,
 				DA05E4F9FE91A63BDD03FBD2 /* Copy Pods Resources */,
+				7DD0F38C1C8DE1FD00D8BBB5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7DD0F38B1C8DE1FC00D8BBB5 /* PBXTargetDependency */,
 			);
 			name = IBMPIGeofenceSample;
 			productName = IBMPIGeofenceSample;
@@ -438,6 +464,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		7DD0F38B1C8DE1FC00D8BBB5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = IBMPIGeofence;
+			targetProxy = 7DD0F38A1C8DE1FC00D8BBB5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		7DE01AEE1C888D2C00D7C654 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -541,7 +575,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = IBMPIGeofenceSample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.pi.IBMPIGeofenceSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -554,7 +590,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = IBMPIGeofenceSample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.pi.IBMPIGeofenceSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";

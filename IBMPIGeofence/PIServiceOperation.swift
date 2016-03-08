@@ -21,7 +21,7 @@
 import Foundation
 import CocoaLumberjack
 
-class ServiceOperation: AsynchronousOperation {
+class PIServiceOperation: AsynchronousOperation {
     
     private var didStart = false
     
@@ -92,7 +92,7 @@ class ServiceOperation: AsynchronousOperation {
     
     func setBasicAuthHeader(request:NSMutableURLRequest) {
 
-		guard PIOutdoorUtils.setBasicAuthHeader(request, username: service.username, password: service.password) == true else {
+		guard PIGeofenceUtils.setBasicAuthHeader(request, username: service.username, password: service.password) == true else {
 			DDLogError("Couldn't set the basic authentication header",asynchronous:false)
 			return
 		}
@@ -101,7 +101,7 @@ class ServiceOperation: AsynchronousOperation {
 }
 
 
-extension ServiceOperation {
+extension PIServiceOperation {
     func performRequest(request:NSURLRequest,retryCount:Int = 0,completionHandler: () -> ())  {
         
         self.request = request

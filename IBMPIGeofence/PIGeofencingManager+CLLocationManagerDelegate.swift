@@ -30,13 +30,16 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 			fallthrough
 		case .AuthorizedWhenInUse:
 			self.locationManager.startMonitoringSignificantLocationChanges()
-			DDLogVerbose("startMonitoringSignificantLocationChanges",asynchronous:false)
+			DDLogVerbose("didChangeAuthorizationStatus.startMonitoringSignificantLocationChanges",asynchronous:false)
 		case .Denied:
-			break
+			self.stopMonitoringRegions()
+			DDLogVerbose("didChangeAuthorizationStatus.Denied",asynchronous:false)
 		case .NotDetermined:
-			break
+			self.stopMonitoringRegions()
+			DDLogVerbose("didChangeAuthorizationStatus.NotDetermined",asynchronous:false)
 		case .Restricted:
-			break
+			self.stopMonitoringRegions()
+			DDLogVerbose("didChangeAuthorizationStatus.Restricted",asynchronous:false)
 
 		}
 

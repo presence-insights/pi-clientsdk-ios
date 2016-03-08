@@ -22,26 +22,26 @@ import Foundation
 import CocoaLumberjack
 
 /// Delete a geofence in the Presence Insight platform
-public final class PIGeofenceDeleteRequest:Request {
+public final class PIGeofenceDeleteRequest:PIRequest {
     
-    public let completionBlock: Response -> Void
+    public let completionBlock: PIResponse -> Void
     
     /// The code of the fence to be deleted
     public let geofenceCode:String
     
     
-    public init(geofenceCode:String, completionBlock:Response -> Void) {
+    public init(geofenceCode:String, completionBlock:PIResponse -> Void) {
         self.geofenceCode = geofenceCode
         self.completionBlock = completionBlock
     }
     
-    public func execute(service:PIService) -> Response {
+    public func execute(service:PIService) -> PIResponse {
         
         let operation = PIGeofenceDeleteOperation(
             service:service,
             geofenceCode: self.geofenceCode)
         
-        let response = Response(piRequest: self,operation:operation)
+        let response = PIResponse(piRequest: self,operation:operation)
         
         operation.completionBlock = {[unowned self] in
             operation.completionBlock = nil

@@ -25,7 +25,7 @@ func StringFromClass(obj: AnyClass) -> String {
 }
 
 
-class PIOutdoorUtils {
+class PIGeofenceUtils {
     
     static let documentsDirectory: NSURL = {
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
@@ -45,7 +45,7 @@ class PIOutdoorUtils {
     }()
 
 	static let version:String = {
-		let infoDictionary = NSBundle(forClass: PIOutdoorUtils.self).infoDictionary!
+		let infoDictionary = NSBundle(forClass: PIGeofenceUtils.self).infoDictionary!
 		let appVersionName = infoDictionary["CFBundleShortVersionString"] as! String
 		let appBuildNumber = infoDictionary["CFBundleVersion"] as! String
 

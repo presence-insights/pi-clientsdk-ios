@@ -60,6 +60,8 @@ extension PIGeofencingManager {
 				geofence.monitored = false
 				if let region = self.regions?[geofence.code] {
 					regionsToStop.append(region)
+				} else {
+					DDLogError("Region to stop not found \(geofence.code)")
 				}
 			}
 

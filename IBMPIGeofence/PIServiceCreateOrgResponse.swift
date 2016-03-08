@@ -22,7 +22,7 @@
 import Foundation
 
 
-final public class PIServiceCreateOrgResponse:Response {
+final public class PIServiceCreateOrgResponse:PIResponse {
     
     public var orgCode:String?
     

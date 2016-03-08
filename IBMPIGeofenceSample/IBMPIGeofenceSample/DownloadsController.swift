@@ -38,7 +38,7 @@ class DownloadsController: UITableViewController {
 			fetchRequest.fetchBatchSize = 25
 			fetchRequest.returnsObjectsAsFaults = false
 
-			let dataController = PIOutdoor.dataController
+			let dataController = PIGeofenceData.dataController
 			_fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.mainContext, sectionNameKeyPath: nil, cacheName: nil)
 			_fetchedResultsController?.delegate = self
 			do {

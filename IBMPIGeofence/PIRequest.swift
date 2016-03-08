@@ -25,7 +25,7 @@ import Foundation
  Protocol that should be adopted by all PI request
  */
 
-public protocol Request {
+public protocol PIRequest {
     
     
     /**
@@ -33,7 +33,7 @@ public protocol Request {
      - returns: a Response instance
      */
     
-    func execute(service:PIService) -> Response
+    func execute(service:PIService) -> PIResponse
     
     
 }

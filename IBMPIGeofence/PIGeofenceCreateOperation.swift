@@ -21,7 +21,7 @@ import Foundation
 import CocoaLumberjack
 import CoreLocation
 
-final class PIGeofenceCreateOperation:ServiceOperation {
+final class PIGeofenceCreateOperation:PIServiceOperation {
     
     let geofenceName:String
     

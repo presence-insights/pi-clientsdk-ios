@@ -21,7 +21,7 @@
 import Foundation
 import CocoaLumberjack
 
-final class PIGeofenceMonitoringOperation:ServiceOperation {
+final class PIGeofenceMonitoringOperation:PIServiceOperation {
     
     let geofenceCode:String
     
@@ -37,7 +37,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         self.event = event
 		self.geofenceName = geofenceName
         super.init(service: service)
-        self.name = "com.ibm.PI.GeofenceMonitoringOperation"
+        self.name = "com.ibm.pi.GeofenceMonitoringOperation"
 
 		DDLogVerbose("Create PIGeofenceMonitoringOperation \(geofenceCode) , \(geofenceName)",asynchronous:false)
     }
@@ -60,7 +60,7 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         notification["data"] = data
         
         json["notifications"] = [notification]
-		json["sdkVersion"] = PIOutdoorUtils.version
+		json["sdkVersion"] = PIGeofenceUtils.version
 
         
         let url = NSURL(string:path,relativeToURL:self.service.baseURL)
@@ -77,9 +77,9 @@ final class PIGeofenceMonitoringOperation:ServiceOperation {
         request.HTTPMethod = "POST"
                 
         performRequest(request) {
+			DDLogVerbose("End PIGeofenceMonitoringOperation \(path)",asynchronous:false)
             self.executing = false
             self.finished = true
-			DDLogVerbose("End PIGeofenceMonitoringOperation \(path)",asynchronous:false)
         }
         
         

@@ -230,6 +230,7 @@ class MoreController: UITableViewController {
 			}))
 			self.presentViewController(alertController, animated: true, completion: nil)
 		} else {
+			DDLog.flushLog()
 			let picker = MFMailComposeViewController()
 			picker.mailComposeDelegate = self
 

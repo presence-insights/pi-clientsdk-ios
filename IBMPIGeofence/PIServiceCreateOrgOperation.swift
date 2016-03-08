@@ -22,14 +22,14 @@
 import Foundation
 import CocoaLumberjack
 
-final class PIServiceCreateOrgOperation:ServiceOperation {
+final class PIServiceCreateOrgOperation:PIServiceOperation {
     
     let orgName:String
     
     init(service: PIService,orgName:String) {
         self.orgName = orgName
         super.init(service: service)
-        self.name = "com.ibm.PI.ServiceCreateOrgOperation"
+        self.name = "com.ibm.pi.ServiceCreateOrgOperation"
     }
     
     override func main() {

@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIOutdoor.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -21,9 +21,9 @@
 import Foundation
 
 
-public class PIOutdoor {
+public class PIGeofenceData {
     
-    static public let dataController = DataController(fileName:"PIOutdoor")
+    static public let dataController = PIDataController(fileName:"PIGeofence")
     
     static public let userDefaults = NSUserDefaults(suiteName: dataController.groupIdentifier)!
     

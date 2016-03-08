@@ -186,14 +186,17 @@ extension PIGeofencingManager {
 
 			try moc.save()
 
-			for region in regionsToStop {
-				self.locationManager.stopMonitoringForRegion(region)
-				DDLogVerbose("did stopMonitoringForRegion \(region.identifier)",asynchronous:false)
+			dispatch_async(dispatch_get_main_queue()) {
+				for region in regionsToStop {
+					self.locationManager.stopMonitoringForRegion(region)
+					DDLogVerbose("did stopMonitoringForRegion \(region.identifier)",asynchronous:false)
+				}
+				for region in regionsToStart {
+					self.locationManager.startMonitoringForRegion(region)
+					DDLogVerbose("did startMonitoringForRegion \(region.identifier)",asynchronous:false)
+				}
 			}
-			for region in regionsToStart {
-				self.locationManager.startMonitoringForRegion(region)
-				DDLogVerbose("did startMonitoringForRegion \(region.identifier)",asynchronous:false)
-			}
+
 
 		} catch {
 			DDLogError("Core Data Error \(error)",asynchronous:false)

@@ -1,6 +1,6 @@
 /**
 *  PIOutdoorSDK
-*  NSURLRequest+PIOutdoor
+*  DownloadResponse.swift
 *
 *  Performs all communication to the PI Rest API.
 *
@@ -17,33 +17,16 @@
 *  limitations under the License.
 **/
 
-
-
-
 import Foundation
 
-extension NSURLRequest {
-	var userInfo:[String:AnyObject]? {
-		get {
-			return NSURLProtocol.propertyForKey("com.ibm.PIOutdoor", inRequest: self) as? [String:AnyObject]
-		}
+
+public class PIDownloadResponse {
+
+	public let taskIdentifier:Int
+	public let backgroundSessionIdentifier:String
+
+	init(backgroundSessionIdentifier:String,taskIdentifier:Int) {
+		self.backgroundSessionIdentifier = backgroundSessionIdentifier
+		self.taskIdentifier = taskIdentifier
 	}
-}
-
-extension NSMutableURLRequest {
-
-	override var userInfo:[String:AnyObject]? {
-		set {
-			if let newValue = newValue {
-				NSURLProtocol.setProperty(newValue, forKey: "com.ibm.PIOutdoor", inRequest: self)
-			} else {
-				NSURLProtocol.removePropertyForKey("com.ibm.PIOutdoor", inRequest: self)
-			}
-		}
-
-		get {
-			return NSURLProtocol.propertyForKey("com.ibm.PIOutdoor", inRequest: self) as? [String:AnyObject]
-		}
-	}
-	
 }

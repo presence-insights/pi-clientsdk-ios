@@ -21,8 +21,7 @@ import Foundation
 import CoreData
 
 
-
-public class DataController:NSObject {
+public class PIDataController:NSObject {
     
     private let lock = NSRecursiveLock()
     
@@ -75,7 +74,7 @@ public class DataController:NSObject {
                 self._writerContext.persistentStoreCoordinator = coordinator
                 self._writerContext.undoManager = nil
                 
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DataController.contextChanged(_:)), name: NSManagedObjectContextDidSaveNotification, object: self._writerContext)
+                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PIDataController.contextChanged(_:)), name: NSManagedObjectContextDidSaveNotification, object: self._writerContext)
             }
         }
         
@@ -189,7 +188,7 @@ public class DataController:NSObject {
     
 }
 
-extension DataController {
+extension PIDataController {
     // Returns the URL to the application's Library directory.
     private var applicationLibraryDirectory: NSURL {
         
@@ -216,7 +215,7 @@ extension DataController {
     
 }
 
-extension DataController {
+extension PIDataController {
     
     public func managedObjectWithURI(uri:NSURL) -> NSManagedObject {
         

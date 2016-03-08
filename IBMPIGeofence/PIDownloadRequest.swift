@@ -12,7 +12,7 @@ import Foundation
 Protocol that should be adopted by all PI request
 */
 
-public protocol DownloadRequest {
+public protocol PIDownloadRequest {
 
 
 	/**
@@ -20,7 +20,7 @@ public protocol DownloadRequest {
 	- returns: a Response instance
 	*/
 
-	func executeDownload(service:PIService) -> DownloadResponse?
+	func executeDownload(service:PIService) -> PIDownloadResponse?
 
 
 }

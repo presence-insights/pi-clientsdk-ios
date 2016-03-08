@@ -21,7 +21,7 @@
 import Foundation
 import CocoaLumberjack
 
-final public class PIServiceCreateOrgRequest:Request {
+final public class PIServiceCreateOrgRequest:PIRequest {
     
     let completionBlock: PIServiceCreateOrgResponse -> Void
     
@@ -32,7 +32,7 @@ final public class PIServiceCreateOrgRequest:Request {
         self.completionBlock = completionBlock
     }
     
-    public func execute(service:PIService) -> Response {
+    public func execute(service:PIService) -> PIResponse {
 
 		DDLogInfo("PIServiceCreateOrgRequest.execute",asynchronous:false)
 

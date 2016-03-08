@@ -77,7 +77,7 @@ public final class PIGeofencingManager:NSObject {
     /// Maximum number of regions which can be monitored simultaneously.
     public let maxRegions:Int
     
-    public lazy var dataController = PIOutdoor.dataController
+    public lazy var dataController = PIGeofenceData.dataController
 
 	/// PI Service
     public let service:PIService
@@ -127,8 +127,8 @@ public final class PIGeofencingManager:NSObject {
             DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
             DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
             
-            let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIOutdoorUtils.documentsDirectory.path)
-            
+			let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIGeofenceUtils.documentsDirectory.path,defaultFileProtectionLevel:NSFileProtectionNone)
+
             let fileLogger: DDFileLogger = DDFileLogger(logFileManager: documentsFileManager) // File Logger
             fileLogger.rollingFrequency = 60*60*24  // 24 hours
             fileLogger.logFileManager.maximumNumberOfLogFiles = 7
@@ -139,7 +139,7 @@ public final class PIGeofencingManager:NSObject {
     }
 
 	public static func logFiles() -> [String] {
-		let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIOutdoorUtils.documentsDirectory.path)
+		let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIGeofenceUtils.documentsDirectory.path)
 
 		return documentsFileManager.sortedLogFilePaths().map { String($0) }
 

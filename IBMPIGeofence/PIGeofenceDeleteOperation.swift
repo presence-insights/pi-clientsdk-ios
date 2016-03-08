@@ -21,14 +21,14 @@
 import Foundation
 import CocoaLumberjack
 
-final class PIGeofenceDeleteOperation:ServiceOperation {
+final class PIGeofenceDeleteOperation:PIServiceOperation {
     
     let geofenceCode:String
     
     init(service: PIService,geofenceCode:String) {
         self.geofenceCode = geofenceCode
         super.init(service: service)
-        self.name = "com.ibm.PI.PIGeofenceDeleteOperation"
+        self.name = "com.ibm.pi.PIGeofenceDeleteOperation"
     }
     
     override func main() {

@@ -23,7 +23,7 @@ import CoreLocation
 import CocoaLumberjack
 
 /// Creates a geofence in the Presence Insight platform.
-public final class PIGeofenceCreateRequest:Request {
+public final class PIGeofenceCreateRequest:PIRequest {
     
     public let completionBlock: PIGeofenceCreateResponse -> Void
     
@@ -50,7 +50,7 @@ public final class PIGeofenceCreateRequest:Request {
     
     /// - param service: The PI service
     /// Execute this request against the PI service
-    public func execute(service:PIService) -> Response {
+    public func execute(service:PIService) -> PIResponse {
         
         let operation = PIGeofenceCreateOperation(
             service:service,

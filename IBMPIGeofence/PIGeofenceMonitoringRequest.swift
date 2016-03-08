@@ -25,9 +25,9 @@ public enum PIGeofenceEvent:String {
 }
 
 /// Post a geofence event to the Presence Insight platform.
-public final class PIGeofenceMonitoringRequest:Request {
+public final class PIGeofenceMonitoringRequest:PIRequest {
     
-    public let completionBlock: Response -> Void
+    public let completionBlock: PIResponse -> Void
 
 	/// PI Geofence code
     public let geofenceCode:String
@@ -41,7 +41,7 @@ public final class PIGeofenceMonitoringRequest:Request {
 	/// For debugging only
 	public let geofenceName:String?
 
-	public init(geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent,geofenceName:String? = nil,completionBlock:Response -> Void) {
+	public init(geofenceCode:String,eventTime:NSDate,event:PIGeofenceEvent,geofenceName:String? = nil,completionBlock:PIResponse -> Void) {
         self.geofenceCode = geofenceCode
         self.eventTime = eventTime
         self.event = event
@@ -49,10 +49,10 @@ public final class PIGeofenceMonitoringRequest:Request {
         self.completionBlock = completionBlock
     }
     
-    public func execute(service:PIService) -> Response {
+    public func execute(service:PIService) -> PIResponse {
         
         let operation = PIGeofenceMonitoringOperation(service:service,geofenceCode: self.geofenceCode,eventTime: self.eventTime,event: self.event,geofenceName: self.geofenceName)
-        let response = Response(piRequest: self,operation:operation)
+        let response = PIResponse(piRequest: self,operation:operation)
         
         operation.completionBlock = {[unowned self] in
             operation.completionBlock = nil
