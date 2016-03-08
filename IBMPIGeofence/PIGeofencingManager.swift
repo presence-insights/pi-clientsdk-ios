@@ -58,6 +58,7 @@ public protocol PIGeofencingManagerDelegate:class {
 /// Its responsability is to monitor the PI geofences. 
 /// When the user enters or exits a geofence, `PIGeofencingManager` notifies
 /// the Presence Insights backend
+@objc(IBMPIGeofencingManager)
 public final class PIGeofencingManager:NSObject {
 
 	/// When `true`, the `PIGeofencingManager`does not post event against PIT backend
