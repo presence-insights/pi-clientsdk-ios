@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  NSManagedObjectContext+Extensions.swift
  *
  *

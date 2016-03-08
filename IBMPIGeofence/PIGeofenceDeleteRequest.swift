@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIGeofenceDeleteRequest.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -22,7 +22,8 @@ import Foundation
 import CocoaLumberjack
 
 /// Delete a geofence in the Presence Insight platform
-public final class PIGeofenceDeleteRequest:PIRequest {
+@objc(IBMPIGeofenceDeleteRequest)
+public final class PIGeofenceDeleteRequest:NSObject,PIRequest {
     
     public let completionBlock: PIResponse -> Void
     

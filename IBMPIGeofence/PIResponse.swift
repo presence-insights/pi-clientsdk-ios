@@ -1,6 +1,6 @@
 /**
- *  PIOutdoorSDK
- *  Response.swift
+ *  IBMPIGeofence
+ *  PIResponse.swift
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -20,7 +20,8 @@
 
 import Foundation
 
-public class PIResponse {
+@objc(IBMPIResponse)
+public class PIResponse:NSObject {
     
     public let piRequest: PIRequest
     

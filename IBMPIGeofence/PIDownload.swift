@@ -1,5 +1,5 @@
 /**
-*  PIOutdoorSDK
+*  IBMPIGeofence
 *  PIDownload
 *
 *
@@ -43,6 +43,7 @@ extension PIDownloadProgressStatus:CustomStringConvertible {
 	}
 }
 
+@objc(IBMPIDownload)
 public class PIDownload: ManagedObject {
 
 	public var progressStatus:PIDownloadProgressStatus {

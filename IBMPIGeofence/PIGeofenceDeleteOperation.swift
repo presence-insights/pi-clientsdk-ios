@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIGeofenceDeleteOperation.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -21,6 +21,7 @@
 import Foundation
 import CocoaLumberjack
 
+@objc(IBMPIGeofenceDeleteOperation)
 final class PIGeofenceDeleteOperation:PIServiceOperation {
     
     let geofenceCode:String

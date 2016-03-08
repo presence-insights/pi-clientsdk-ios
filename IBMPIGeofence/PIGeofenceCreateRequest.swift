@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIGeofenceCreateRequest.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -23,7 +23,8 @@ import CoreLocation
 import CocoaLumberjack
 
 /// Creates a geofence in the Presence Insight platform.
-public final class PIGeofenceCreateRequest:PIRequest {
+@objc(IBMPIGeofenceCreateRequest)
+public final class PIGeofenceCreateRequest:NSObject,PIRequest {
     
     public let completionBlock: PIGeofenceCreateResponse -> Void
     

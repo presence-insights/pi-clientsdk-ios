@@ -1,6 +1,6 @@
 /**
- *  PIOutdoorSDK
- *  Request.swift
+ *  IBMPIGeofence
+ *  PIRequest.swift
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -25,6 +25,7 @@ import Foundation
  Protocol that should be adopted by all PI request
  */
 
+@objc
 public protocol PIRequest {
     
     

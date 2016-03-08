@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  DataController.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -21,6 +21,7 @@ import Foundation
 import CoreData
 
 
+@objc(IBMPIDataController)
 public class PIDataController:NSObject {
     
     private let lock = NSRecursiveLock()

@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIService.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -30,6 +30,7 @@ public protocol PIServiceDelegate:class {
 	func didCompleteWithError(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?)
 }
 
+@objc(IBMPIService)
 public final class PIService: NSObject {
     
     private let httpQueue:NSOperationQueue = NSOperationQueue()

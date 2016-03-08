@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIServiceCreateReponse
  *
  *  Performs all communication to the PI Rest API.
@@ -22,6 +22,7 @@
 import Foundation
 
 
+@objc(IBMPIServiceCreateOrgResponse)
 final public class PIServiceCreateOrgResponse:PIResponse {
     
     public var orgCode:String?

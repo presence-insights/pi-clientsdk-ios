@@ -1,6 +1,6 @@
 /**
- *  PIOutdoorSDK
- *  ServiceOperation.swift
+ *  IBMPIGeofence
+ *  PIServiceOperation.swift
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -21,6 +21,7 @@
 import Foundation
 import CocoaLumberjack
 
+@objc(IBMPIServiceOperation)
 class PIServiceOperation: AsynchronousOperation {
     
     private var didStart = false

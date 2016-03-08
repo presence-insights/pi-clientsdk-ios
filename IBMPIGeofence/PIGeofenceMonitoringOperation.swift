@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIGeofenceMonitoringOperation.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -21,6 +21,7 @@
 import Foundation
 import CocoaLumberjack
 
+@objc(IBMPIGeofenceMonitoringOperation)
 final class PIGeofenceMonitoringOperation:PIServiceOperation {
     
     let geofenceCode:String

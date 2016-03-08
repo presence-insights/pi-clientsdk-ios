@@ -1,5 +1,5 @@
 /**
-*  PIOutdoorSDK
+*  IBMPIGeofence
 *  PIGeofencingManager+Seeding.swift
 *
 *  Performs all communication to the PI Rest API.

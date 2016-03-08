@@ -1,5 +1,5 @@
 /**
-*  PIOutdoorSDK
+*  IBMPIGeofence
 *  DownloadResponse.swift
 *
 *  Performs all communication to the PI Rest API.
@@ -19,8 +19,8 @@
 
 import Foundation
 
-
-public class PIDownloadResponse {
+@objc(IBMPIDownloadResponse)
+public class PIDownloadResponse:NSObject {
 
 	public let taskIdentifier:Int
 	public let backgroundSessionIdentifier:String

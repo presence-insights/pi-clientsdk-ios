@@ -1,5 +1,5 @@
 /**
-*  PIOutdoorSDK
+*  IBMPIGeofence
 *  PIDownload+CoreDataProperties
 *
 *

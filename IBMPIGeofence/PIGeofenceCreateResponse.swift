@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIGeofenceCreateResponse.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -20,6 +20,7 @@
 import Foundation
 
 /// Response from Presence Insight when a geofence has been created
+@objc(IBMPIGeofenceCreateResponse)
 final public class PIGeofenceCreateResponse:PIResponse {
     
     /// The code of the geofence if the request was successful.

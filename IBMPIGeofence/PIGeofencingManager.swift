@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIGeofencingManager.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -25,7 +25,7 @@ import MapKit
 import CocoaLumberjack
 
 
-public let kGeofenceManagerDidSynchronize = "com.ibm.PI.GeofenceManagerDidSynchronize"
+public let kGeofenceManagerDidSynchronize = "com.ibm.pi.GeofenceManagerDidSynchronize"
 
 public struct PIGeofenceProperties {
     public let name:String
@@ -41,7 +41,7 @@ public struct PIGeofenceProperties {
 
 public typealias GeofencePropertiesGenerator = ([String:AnyObject]) -> PIGeofenceProperties
 
-@objc
+@objc(IBMPIGeofencingManagerDelegate)
 public protocol PIGeofencingManagerDelegate:class {
     /// The device enters into a geofence
     func geofencingManager(manager: PIGeofencingManager, didEnterGeofence geofence: PIGeofence? )

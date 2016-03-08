@@ -1,6 +1,6 @@
 /**
  *  IBMPIGeofence
- *  PIOutdoor.swift
+ *  PIGeofenceData.swift
  *
  *  Performs all communication to the PI Rest API.
  *
@@ -21,7 +21,8 @@
 import Foundation
 
 
-public class PIGeofenceData {
+@objc(IBMPIGeofenceData)
+public class PIGeofenceData:NSObject {
     
     static public let dataController = PIDataController(fileName:"PIGeofence")
     

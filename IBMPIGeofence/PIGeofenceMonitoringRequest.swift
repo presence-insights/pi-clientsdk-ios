@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIGeofenceMonitoringRequest.swift
  *
  *  Performs all communication to the PI Rest API.
@@ -25,7 +25,8 @@ public enum PIGeofenceEvent:String {
 }
 
 /// Post a geofence event to the Presence Insight platform.
-public final class PIGeofenceMonitoringRequest:PIRequest {
+@objc(IBMPIGeofenceMonitoringRequest)
+public final class PIGeofenceMonitoringRequest:NSObject,PIRequest {
     
     public let completionBlock: PIResponse -> Void
 

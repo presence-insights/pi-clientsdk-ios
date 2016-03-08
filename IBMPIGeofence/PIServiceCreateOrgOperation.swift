@@ -1,5 +1,5 @@
 /**
- *  PIOutdoorSDK
+ *  IBMPIGeofence
  *  PIServiceCreateOrgOperation
  *
  *  Performs all communication to the PI Rest API.
@@ -22,6 +22,7 @@
 import Foundation
 import CocoaLumberjack
 
+@objc(IBMPIServiceCreateOrgOperation)
 final class PIServiceCreateOrgOperation:PIServiceOperation {
     
     let orgName:String

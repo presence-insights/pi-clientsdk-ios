@@ -1,5 +1,5 @@
 /**
-*  PIOutdoorSDK
+*  IBMPIGeofence
 *  NSURLRequest+PIOutdoor
 *
 *  Performs all communication to the PI Rest API.

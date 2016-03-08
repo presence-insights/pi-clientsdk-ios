@@ -1,5 +1,5 @@
 /**
-*  PIOutdoorSDK
+*  IBMPIGeofence
 *  PIGeofenceFencesDownloadRequest.swift
 *
 *  Performs all communication to the PI Rest API.
@@ -23,7 +23,8 @@ import Foundation
 import CocoaLumberjack
 
 /// Get the geofences defined on the PI backend
-public final class PIGeofenceFencesDownloadRequest:PIDownloadRequest {
+@objc(IBMPIGeofenceFencesDownloadRequest)
+public final class PIGeofenceFencesDownloadRequest:NSObject,PIDownloadRequest {
 
 	public func executeDownload(service:PIService) -> PIDownloadResponse? {
 

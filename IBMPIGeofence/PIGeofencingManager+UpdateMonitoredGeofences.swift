@@ -1,5 +1,5 @@
 /**
-*  PIOutdoorSDK
+*  IBMPIGeofence
 *  PIGeofencingManager+UpdateMonitoredGeofences.swift
 *
 *  Performs all communication to the PI Rest API.
