@@ -27,7 +27,8 @@ import CocoaLumberjack
 
 public let kGeofenceManagerDidSynchronize = "com.ibm.pi.GeofenceManagerDidSynchronize"
 
-public struct PIGeofenceProperties {
+@objc(IBMPIGeofenceProperties)
+public class PIGeofenceProperties:NSObject {
     public let name:String
     public let radius:Int
     public let code:String?

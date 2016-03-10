@@ -43,11 +43,13 @@ extension PIGeofencingManager {
 
 			let tmpDirectoryURL = NSURL.fileURLWithPath(NSTemporaryDirectory(), isDirectory: true)
 
-			guard zip.UnzipOpenFile(url.path!) else {
-				throw PIGeofencingError.UnzipOpenFile(url.path!)
+			guard let path = url.path where zip.UnzipOpenFile(path) else {
+				DDLogError("UnzipOpenFile error \(url)")
+				throw PIGeofencingError.UnzipOpenFile
 			}
-			guard zip.UnzipFileTo(tmpDirectoryURL.path!, overWrite: true) else {
-				throw PIGeofencingError.UnzipFileTo(tmpDirectoryURL.path!)
+			guard let tmpDirectoryPath = tmpDirectoryURL.path where zip.UnzipFileTo(tmpDirectoryPath, overWrite: true) else {
+				DDLogError("UnzipFileTo error \(tmpDirectoryURL)")
+				throw PIGeofencingError.UnzipFileTo
 
 			}
 
@@ -111,10 +113,12 @@ extension PIGeofencingManager {
 			}
 
 			guard type == "FeatureCollection" else {
-				return PIGeofencingError.GeoJsonWrongType(type)
+				DDLogError("PIGeofencingError.GeoJsonWrongType \(type)")
+				return PIGeofencingError.GeoJsonWrongType
 			}
 
 			guard let properties = geojson["properties"] as? [String:AnyObject] else {
+				DDLogError("PIGeofencingError.GeoJsonMissingFeatureCollectionProperties")
 				return PIGeofencingError.GeoJsonMissingFeatureCollectionProperties
 			}
 
@@ -125,6 +129,7 @@ extension PIGeofencingManager {
 			DDLogVerbose("PageSize \(pageSize)")
 
 			guard var geofences = geojson["features"] as? [[String:AnyObject]] else {
+				DDLogError("PIGeofencingError.GeoJsonNoFeature")
 				return PIGeofencingError.GeoJsonNoFeature
 			}
 
@@ -350,12 +355,13 @@ extension PIGeofencingManager {
 				if nbErrors == 0 {
 					return nil
 				} else {
-					return PIGeofencingError.WrongFences(nbErrors)
+					DDLogError("PIGeofencingError.WrongFences \(nbErrors)")
+					return PIGeofencingError.WrongFences
 				}
 			} catch {
 				DDLogError("Core Data Error \(error)")
 				assertionFailure("Core Data Error \(error)")
-				return PIGeofencingError.InternalError(error)
+				return PIGeofencingError.InternalError
 			}
 	}
 

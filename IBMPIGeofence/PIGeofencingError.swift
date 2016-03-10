@@ -21,23 +21,24 @@
 import Foundation
 
 
-public enum PIGeofencingError:ErrorType {
-	case UnzipOpenFile(String)
-	case UnzipFileTo(String)
-	case EmptyZipFile(NSURL)
+@objc(IBMPIGeofencingError)
+public enum PIGeofencingError:Int,ErrorType {
+	case UnzipOpenFile
+	case UnzipFileTo
+	case EmptyZipFile
 	case UnzipCloseFile
 
 	case GeoJsonMissingType
-	case GeoJsonWrongType(String)
+	case GeoJsonWrongType
 	case GeoJsonNoFeature
 
 	case GeoJsonMissingFeatureCollectionProperties
 
-	case WrongFences(Int)
-	case HTTPStatus(Int,AnyObject?)
+	case WrongFences
+	case HTTPStatus
 
 	case DownloadError
-	case InternalError(ErrorType)
+	case InternalError
 }
 
 
@@ -45,30 +46,30 @@ public enum PIGeofencingError:ErrorType {
 extension PIGeofencingError:CustomStringConvertible {
 	public var description:String {
 		switch self {
-		case let .UnzipOpenFile(file):
-			return "UnzipOpenFile(\(file))"
-		case let .UnzipFileTo(file):
-			return "UnzipFileTo(\(file))"
-		case let .EmptyZipFile(url):
-			return "EmptyZipFile(\(url))"
+		case .UnzipOpenFile:
+			return "UnzipOpenFile"
+		case .UnzipFileTo:
+			return "UnzipFileTo"
+		case .EmptyZipFile:
+			return "EmptyZipFile"
 		case .UnzipCloseFile:
 			return "UnzipCloseFile"
 		case .GeoJsonMissingType:
 			return "GeoJsonMissingType"
-		case let .GeoJsonWrongType(type):
-			return "GeoJsonWrongType(\(type))"
+		case .GeoJsonWrongType:
+			return "GeoJsonWrongType"
 		case .GeoJsonNoFeature:
 			return "GeoJsonNoFeature"
 		case .GeoJsonMissingFeatureCollectionProperties:
 			return "GeoJsonMissingFeatureCollectionProperties"
-		case let .WrongFences(nbErrors):
-			return "WrongFences(\(nbErrors))"
-		case let .HTTPStatus(status,_):
-			return "HTTPStatus(\(status))"
+		case .WrongFences:
+			return "WrongFences"
+		case .HTTPStatus:
+			return "HTTPStatus"
 		case .DownloadError:
 			return "DownloadError"
-		case let .InternalError(error):
-			return "InternalError(\(error))"
+		case .InternalError:
+			return "InternalError"
 
 		}
 	}
