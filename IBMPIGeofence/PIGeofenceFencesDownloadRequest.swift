@@ -38,8 +38,8 @@ public final class PIGeofenceFencesDownloadRequest:NSObject,PIDownloadRequest {
 		let url = NSURL(string:path,relativeToURL:service.baseURL)
 		let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
 
-		let queryItems:[String:Any] = ["pageSize":100]
-		URLComponents.percentEncodedQuery = PIGeofenceUtils.buildQueryStringWithParams(queryItems)
+//		let queryItems:[String:Any] = ["pageSize":100]
+//		URLComponents.percentEncodedQuery = PIGeofenceUtils.buildQueryStringWithParams(queryItems)
 
 
 		DDLogInfo("PIGeofenceFencesDownloadRequest \(URLComponents.URL!)",asynchronous:false)
