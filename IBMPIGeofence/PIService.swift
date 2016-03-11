@@ -20,7 +20,7 @@
 import Foundation
 import CocoaLumberjack
 
-public let PIServiceError = "com.ibm.PI.Error"
+public let PIServiceError = "com.ibm.pi.Error"
 
 public typealias PIResult = HTTPOperationResult
 

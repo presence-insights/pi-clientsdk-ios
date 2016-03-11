@@ -19,11 +19,12 @@
 
 import CoreData
 
-
+@objc(IBMPIManagedObject)
 public class ManagedObject: NSManagedObject {
 }
 
 
+@objc(IBMPIManagedObjectType)
 public protocol ManagedObjectType: class {
     static var entityName: String { get }
 }

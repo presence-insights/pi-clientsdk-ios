@@ -21,6 +21,7 @@ import Foundation
 import CoreData
 
 
+@objc(IBMPIDownloadProgressStatus)
 public enum PIDownloadProgressStatus:Int16 {
 	case NoStarted
 	case InProgress
