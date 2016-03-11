@@ -253,7 +253,7 @@ extension PIService : NSURLSessionDownloadDelegate {
 	public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
 		DDLogError("PIService.didFinishDownloadingToURL session description \(session.sessionDescription ?? "No session description") , task identifier \(downloadTask.taskIdentifier) , task description \(downloadTask.taskDescription ?? "No task description")",asynchronous:false)
 		let libraryURL = PIGeofenceUtils.libraryDirectory
-		let geojsonURL = NSURL(fileURLWithPath: NSUUID().UUIDString+".json", relativeToURL: libraryURL)
+		let geojsonURL = libraryURL.URLByAppendingPathComponent(NSUUID().UUIDString+".json")
 		do {
 			let _ = try? NSFileManager.defaultManager().removeItemAtURL(geojsonURL)
 			try NSFileManager.defaultManager().moveItemAtURL(location, toURL: geojsonURL)
