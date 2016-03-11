@@ -25,7 +25,7 @@ import Foundation
  Protocol that should be adopted by all PI request
  */
 
-@objc
+@objc(IBMPIRequest)
 public protocol PIRequest {
     
     
