@@ -19,9 +19,10 @@
 
 import Foundation
 
-public let NetworkDidStartRequest = "com.ibm.PI.NetworkDidStartRequest"
-public let NetworkDidEndRequest = "com.ibm.PI.NetworkDidEndRequest"
+public let kIBMPINetworkDidStartRequest = "com.ibm.pi.NetworkDidStartRequest"
+public let kIBMPINetworkDidEndRequest = "com.ibm.pi.NetworkDidEndRequest"
 
+@objc(IBMPINetworkActivityIndicatorManager)
 public class NetworkActivityIndicatorManager: NSObject {
     
     public static let sharedInstance:NetworkActivityIndicatorManager = NetworkActivityIndicatorManager()
@@ -45,8 +46,8 @@ public class NetworkActivityIndicatorManager: NSObject {
     
     public func enableActivityIndicator(enable:Bool) {
         if enable {
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NetworkActivityIndicatorManager.didStartRequest(_:)), name: NetworkDidStartRequest, object: nil)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NetworkActivityIndicatorManager.didEndRequest(_:)), name: NetworkDidEndRequest, object: nil)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NetworkActivityIndicatorManager.didStartRequest(_:)), name: kIBMPINetworkDidStartRequest, object: nil)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NetworkActivityIndicatorManager.didEndRequest(_:)), name: kIBMPINetworkDidEndRequest, object: nil)
         } else {
             NSNotificationCenter.defaultCenter().removeObserver(self)
         }
@@ -56,7 +57,6 @@ public class NetworkActivityIndicatorManager: NSObject {
     func didStartRequest(notification:NSNotification) {
         synchronized {
             self.requestCount += 1
-            print("didStartRequest",self.requestCount)
             self.refreshNetworkActivityIndicator()
         }
         
@@ -65,7 +65,6 @@ public class NetworkActivityIndicatorManager: NSObject {
     func didEndRequest(notification:NSNotification) {
         synchronized {
             self.requestCount -= 1
-            print("didEndRequest",self.requestCount)
             self.refreshNetworkActivityIndicator()
         }
         

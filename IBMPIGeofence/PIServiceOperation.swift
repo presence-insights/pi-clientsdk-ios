@@ -47,7 +47,7 @@ class PIServiceOperation: AsynchronousOperation {
                 self.didStart = true
                 dispatch_async(dispatch_get_main_queue()) {
                     NSNotificationCenter.defaultCenter().postNotificationName(
-                        NetworkDidStartRequest,
+                        kIBMPINetworkDidStartRequest,
                         object: self)
                 }
             }
@@ -59,7 +59,7 @@ class PIServiceOperation: AsynchronousOperation {
             if finished && self.didStart {
                 dispatch_async(dispatch_get_main_queue()) {
                     NSNotificationCenter.defaultCenter().postNotificationName(
-                        NetworkDidEndRequest,
+                        kIBMPINetworkDidEndRequest,
                         object: self)
                 }
             }

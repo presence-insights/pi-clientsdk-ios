@@ -52,7 +52,7 @@ public class HTTPOperation: AsynchronousOperation {
             if executing {
                 self.didStart = true
                 dispatch_async(dispatch_get_main_queue()) {
-                    NSNotificationCenter.defaultCenter().postNotificationName(NetworkDidStartRequest, object: self)
+                    NSNotificationCenter.defaultCenter().postNotificationName(kIBMPINetworkDidStartRequest, object: self)
                 }
             }
         }
@@ -62,7 +62,7 @@ public class HTTPOperation: AsynchronousOperation {
         willSet {
             if newValue && self.didStart {
                 dispatch_async(dispatch_get_main_queue()) {
-                    NSNotificationCenter.defaultCenter().postNotificationName(NetworkDidEndRequest, object: self)
+                    NSNotificationCenter.defaultCenter().postNotificationName(kIBMPINetworkDidEndRequest, object: self)
                 }
             }
             
