@@ -33,10 +33,10 @@ extension PIGeofencingManager {
 
 	*/
 
-	public func seedGeojson(
+	public func seedGeojsonWithURL(
 		url:NSURL,
 		propertiesGenerator:GeofencePropertiesGenerator? = nil,
-		completionHandler:((error:ErrorType?) -> Void)? = nil) throws {
+		completionHandler:((success:Bool) -> Void)? = nil)  {
 
 			let fileManager = NSFileManager.defaultManager()
 			let zip = ZipArchive(fileManager:fileManager)
@@ -45,28 +45,46 @@ extension PIGeofencingManager {
 
 			guard let path = url.path where zip.UnzipOpenFile(path) else {
 				DDLogError("UnzipOpenFile error \(url)")
-				throw PIGeofencingError.UnzipOpenFile
+				//throw PIGeofencingError.UnzipOpenFile
+				completionHandler?(success: false)
+				return
 			}
 			guard let tmpDirectoryPath = tmpDirectoryURL.path where zip.UnzipFileTo(tmpDirectoryPath, overWrite: true) else {
 				DDLogError("UnzipFileTo error \(tmpDirectoryURL)")
-				throw PIGeofencingError.UnzipFileTo
+				//throw PIGeofencingError.UnzipFileTo
+				completionHandler?(success: false)
+				return
 
 			}
 
 			let unzippedFiles = zip.unzippedFiles as! [String]
 
 			guard zip.UnzipCloseFile() else {
-				throw PIGeofencingError.UnzipCloseFile
+				//throw PIGeofencingError.UnzipCloseFile
+				DDLogError("UnzipCloseFile error")
+				completionHandler?(success: false)
+				return
 			}
 
 			for file in unzippedFiles {
 				DDLogVerbose("geojson \(file)",asynchronous:false)
 				let url = NSURL(fileURLWithPath: file)
-				let data = try NSData(contentsOfURL: url, options: .DataReadingMappedAlways)
-				guard let jsonObject = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] else {
+				if url.lastPathComponent?.hasPrefix(".") == true {
 					continue
 				}
-				seedGeojson(jsonObject, propertiesGenerator:propertiesGenerator,completionHandler: completionHandler)
+				do {
+					let data = try NSData(contentsOfURL: url, options: .DataReadingMappedAlways)
+					guard let jsonObject = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String:AnyObject] else {
+					continue
+					}
+					seedGeojson(
+						jsonObject,
+						propertiesGenerator:propertiesGenerator,
+						completionHandler: completionHandler)
+				} catch {
+					DDLogError("Error \(error)")
+					completionHandler?(success: false)
+				}
 
 			}
 
@@ -85,7 +103,7 @@ extension PIGeofencingManager {
 	public func seedGeojson(
 		geojson:[String:AnyObject],
 		propertiesGenerator:GeofencePropertiesGenerator? = nil,
-		completionHandler:((error:ErrorType?) -> Void)? = nil)  {
+		completionHandler:((success:Bool) -> Void)? = nil)  {
 
 			let moc = dataController.writerContext
 
@@ -99,14 +117,14 @@ extension PIGeofencingManager {
 				self.updateMonitoredGeofencesWithMoc(moc)
 				dispatch_async(dispatch_get_main_queue()) {
 					NSNotificationCenter.defaultCenter().postNotificationName(kGeofenceManagerDidSynchronize, object: nil)
-					completionHandler?(error:error)
+					completionHandler?(success:error == nil)
 				}
 			}
 
 	}
 
 	func seedGeojson(moc:NSManagedObjectContext,geojson:[String:AnyObject],
-		propertiesGenerator:GeofencePropertiesGenerator? = nil) -> ErrorType? {
+		propertiesGenerator:GeofencePropertiesGenerator? = nil) -> PIGeofencingError? {
 
 			guard let type = geojson["type"] as? String else {
 				return PIGeofencingError.GeoJsonMissingType
