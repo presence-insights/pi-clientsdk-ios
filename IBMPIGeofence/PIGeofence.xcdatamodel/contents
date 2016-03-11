@@ -11,8 +11,8 @@
     </entity>
     <entity name="PIGeofence" representedClassName="IBMPIGeofence" syncable="YES">
         <attribute name="code" attributeType="String" syncable="YES"/>
-        <attribute name="latitude" attributeType="Double" syncable="YES"/>
-        <attribute name="longitude" attributeType="Double" syncable="YES"/>
+        <attribute name="latitude" attributeType="Double" indexed="YES" syncable="YES"/>
+        <attribute name="longitude" attributeType="Double" indexed="YES" syncable="YES"/>
         <attribute name="monitored" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="radius" attributeType="Double" syncable="YES"/>
