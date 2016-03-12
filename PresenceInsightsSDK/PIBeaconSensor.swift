@@ -22,7 +22,7 @@ import UIKit
 import CoreLocation
 
 // MARK: - Delegate protocol.
-public protocol PIBeaconSensorDelegate:class {
+@objc public protocol PIBeaconSensorDelegate {
     func didRangeBeacons(beacons:[CLBeacon])
     func didEnterRegion(region: CLBeaconRegion)
     func didExitRegion(region: CLBeaconRegion)
