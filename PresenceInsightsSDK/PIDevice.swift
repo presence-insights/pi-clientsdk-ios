@@ -22,63 +22,136 @@ import UIKit
 // MARK: - PIDevice object
 public class PIDevice:NSObject {
     
-    // Values every device has.
+    // Every device document
+    /// The unique identifier of the device object.
     public let descriptor: String?
+    /// The unique identifier automatically generated when the device document is first created.
+    public let code: String?
+    /// Is this a registered device?
     public var registered: Bool
     
     // Optional values only registered devices have.
-    public var code: String?
+    /// The name of the device
     public var name: String?
+    /// The type of device (list of types can be found in PIOrg)
     public var type: String?
+    /// The encrypted data of the device (personal information)
     public var data: [String: AnyObject]?
+    /// The unencrypted data of the device (non-personal information)
     public var unencryptedData: [String: AnyObject]?
+    /// Should this device be ignored by analytics?
     public var blacklist: Bool?
     
     /**
-    Default object initializer.
+     Initializer for a registered device object.
 
-    - parameter name:            Device name
-    - parameter type:            Device registration type
-    - parameter data:            Data about device (encrypted)
-    - parameter unencryptedData: Data about device (unencrytped)
-    - parameter registered:      Device registered with PI
-    */
-    public init(name: String?, type: String?, data: [String: String]?, unencryptedData: [String: String]?, registered: Bool, blacklist: Bool) {
+     - parameter name:          Device name
+     - parameter type:          Device registration type
+
+     - returns: An initialized PIDevice.
+     */
+    public init(name: String?, type: String?) {
         
         self.name = name
         self.type = type
-        self.data = data
-        self.unencryptedData = unencryptedData
+        self.data = nil
+        self.unencryptedData = nil
         
-        self.registered = registered
-        self.blacklist = blacklist
+        self.registered = true
+        self.blacklist = false
         self.descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
-        
+        self.code = nil
     }
     
     /**
-    Convenience initializer to init an empty Object.
-    
-    - returns: An initialized PIDevice.
-    */
+     Initializer for a registered device object with custom descriptor.
+
+     - parameter name:          Device name
+     - parameter type:          Device registration type
+     - parameter descriptor:    Device descriptor used to uniquely identify device
+
+     - returns: An initialized PIDevice.
+     */
+    public init(name: String?, type: String?, descriptor: String?) {
+
+        self.name = name
+        self.type = type
+        self.data = nil
+        self.unencryptedData = nil
+
+        self.registered = true
+        self.blacklist = false
+        self.descriptor = descriptor
+        self.code = nil
+    }
+
+    /**
+     Initializer for an anonymous device object.
+
+     - returns: An initialized PIDevice.
+     */
     public override init() {
         self.name = nil
         self.type = nil
         self.data = nil
         self.unencryptedData = nil
-        
+
         self.registered = false
-        self.blacklist = nil
-        self.descriptor = nil
+        self.blacklist = false
+        self.descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
+        self.code = nil
+    }
+
+    /**
+     Initializer for an anonymous device object with custom descriptor.
+
+     - parameter descriptor:    Device descriptor used to uniquely identify device
+
+     - returns: An initialized PIDevice.
+     */
+    public init(descriptor: String?) {
+        self.registered = false
+        self.blacklist = false
+        self.descriptor = descriptor
+
+        self.name = nil
+        self.type = nil
+        self.data = nil
+        self.unencryptedData = nil
+        self.code = nil
+    }
+
+    /**
+     Initializer for a device object.
+
+     - parameter name:            Device name
+     - parameter type:            Device registration type
+     - parameter data:            Data about device (encrypted)
+     - parameter unencryptedData: Data about device (unencrytped)
+     - parameter registered:      Device registered with PI
+     */
+    @available(*, deprecated=1.3.0, message="Created new constructors for registered and anonymous devices to simplify the use of PIDevice.")
+    public init(name: String?, type: String?, data: [String: String]?, unencryptedData: [String: String]?, registered: Bool, blacklist: Bool) {
+
+        self.name = name
+        self.type = type
+        self.data = data
+        self.unencryptedData = unencryptedData
+
+        self.registered = registered
+        self.blacklist = blacklist
+        self.descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
+        self.code = nil
     }
     
     /**
-    Convenience initializer which sets the device name, and sets defaults for the remaining properties.
+     Convenience initializer which sets the device name, and sets defaults for the remaining properties.
 
-    - parameter name: Device name
+     - parameter name: Device name
 
-    - returns: An initialized PIDevice.
-    */
+     - returns: An initialized PIDevice.
+     */
+    @available(*, deprecated=1.3.0, message="Created new constructors for registered and anonymous devices to simplify the use of PIDevice.")
     public init(name: String) {
         self.name = name
         self.type = nil
@@ -88,15 +161,16 @@ public class PIDevice:NSObject {
         self.registered = false
         self.blacklist = nil
         self.descriptor = nil
+        self.code = nil
     }
     
     /**
-    Convenience initializer that uses a dictionary to populate the objects properties.
+     Convenience initializer that uses a dictionary to populate the objects properties.
 
-    - parameter dictionary: PIDevice represented as a dictionary
+     - parameter dictionary: PIDevice represented as a dictionary
 
-    - returns: An initialized PIDevice.
-    */
+     - returns: An initialized PIDevice.
+     */
     public init(dictionary: [String: AnyObject]) {
         
         self.descriptor = UIDevice.currentDevice().identifierForVendor?.UUIDString
@@ -118,11 +192,11 @@ public class PIDevice:NSObject {
     }
     
     /**
-    Adds key/value pair to the data dictionary.
+     Adds key/value pair to the data dictionary.
 
-    - parameter object:   Object to be stored
-    - parameter key:      Key to use to store object
-    */
+     - parameter object:   Object to be stored
+     - parameter key:      Key to use to store object
+     */
     public func addToDataObject(object: AnyObject, key: String) {
         if data == nil {
             data = [:]
@@ -132,10 +206,10 @@ public class PIDevice:NSObject {
     }
     
     /**
-    Adds key/value pair to the unencryptedData dictionary.
+     Adds key/value pair to the unencryptedData dictionary.
 
-    - parameter object:   Object to be stored
-    - parameter key:      Key to use to store object
+     - parameter object:   Object to be stored
+     - parameter key:      Key to use to store object
     */
     public func addToUnencryptedDataObject(object: AnyObject, key: String) {
         if unencryptedData == nil {
@@ -145,10 +219,10 @@ public class PIDevice:NSObject {
     }
     
     /**
-    Helper function that provides the PIDevice object as a dictionary
+     Helper function that provides the PIDevice object as a dictionary
 
-    - returns: dictionary representation of PIDevice
-    */
+     - returns: dictionary representation of PIDevice
+     */
     public func toDictionary() -> [String: AnyObject] {
         
         var dictionary: [String: AnyObject] = [:]

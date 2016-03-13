@@ -105,13 +105,14 @@ extension PIAdapter {
     */
     public func registerDevice(device: PIDevice, callback:(PIDevice?, NSError?)->()) {
         
-        guard device.name != nil && device.type != nil else {
-            let errorDetails = [NSLocalizedFailureReasonErrorKey: "PIDevice type or name cannot be registered as nil."]
-            let error = NSError(domain: "PresenceInsightsSDK", code: 0, userInfo: errorDetails)
-            callback(nil, error)
-            return
+        if device.registered {
+            guard device.name != nil && device.type != nil else {
+                let errorDetails = [NSLocalizedFailureReasonErrorKey: "PIDevice type or name cannot be registered as nil."]
+                let error = NSError(domain: "PresenceInsightsSDK", code: 0, userInfo: errorDetails)
+                callback(nil, error)
+                return
+            }
         }
-        device.registered = true
         
         self.handleDevice(device, callback: callback)
     }
