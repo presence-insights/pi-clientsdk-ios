@@ -11,7 +11,7 @@ EOT
 
 Pod::Spec.new do |s|
   s.name         = "PresenceInsightsSDK"
-  s.version      = "1.2.0"
+  s.version      = "1.2.1"
   s.summary      = "IBM Presence Insights SDK for iOS."
   s.description  = <<-DESC
                     Presence Insights SDK enables users to communicate with
