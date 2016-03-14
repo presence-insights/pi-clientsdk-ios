@@ -183,7 +183,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				DDLogError("didFinishLaunchingWithOptions Programming Error",asynchronous:false)
 			}
 			piGeofencingManager?.service.orgCode = orgCode
-			piGeofencingManager?.synchronize()
 		} else {
 			let vc = self.window!.rootViewController!
 			MBProgressHUD.showHUDAddedTo(vc.view, animated: true)
@@ -201,9 +200,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 					DDLogError("didFinishLaunchingWithOptions Programming Error",asynchronous:false)
 				}
 				piGeofencingManager?.service.orgCode = orgCode
-				piGeofencingManager?.synchronize()
 				MBProgressHUD.hideHUDForView(vc.view, animated: true)
 			}
+		}
+		if self.firstTime {
+			self.seeding {
+				piGeofencingManager?.synchronize()
+			}
+		} else {
+			piGeofencingManager?.synchronize()
 		}
 
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
@@ -323,26 +328,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate {
     
-    private func seeding(){
+	private func seeding(completionHandler:() -> Void){
         
 		if piGeofencingManager?.firstTime == true {
-            guard let url = NSBundle.mainBundle().URLForResource("referentiel-gares-voyageurs.geojson", withExtension: "zip") else {
+            guard let url = NSBundle.mainBundle().URLForResource(
+				"referentiel-gares-voyageurs.geojson",
+				withExtension: "zip") else {
                 fatalError("file not found")
             }
-            do {
-                try piGeofencingManager?.seedGeojson(url,propertiesGenerator:fenceProperties) { error in
-					DDLogError("(error)",asynchronous:false)
-                }
-            } catch {
-                print(error)
-            }
+			piGeofencingManager?.seedGeojsonWithURL(
+				url,
+				propertiesGenerator:fenceProperties) { success in
+				if success == false {
+					DDLogError("seedGeojsonWithURL error")
+				}
+				completionHandler()
+
+			}
         }
         
     }
 
     func fenceProperties(properties:[String:AnyObject]) -> PIGeofenceProperties {
         let name = properties["intitule_gare"] as? String ?? "???!!!"
-        let fenceProperties = PIGeofenceProperties(name:name,radius:100,code:nil)
+        let fenceProperties = PIGeofenceProperties(name:name,radius:100,code:nil,local: true)
         return fenceProperties
     }
     

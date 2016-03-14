@@ -12,6 +12,7 @@
     <entity name="PIGeofence" representedClassName="IBMPIGeofence" syncable="YES">
         <attribute name="code" attributeType="String" syncable="YES"/>
         <attribute name="latitude" attributeType="Double" indexed="YES" syncable="YES"/>
+        <attribute name="local" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="longitude" attributeType="Double" indexed="YES" syncable="YES"/>
         <attribute name="monitored" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
@@ -19,6 +20,6 @@
     </entity>
     <elements>
         <element name="PIDownload" positionX="-63" positionY="27" width="128" height="150"/>
-        <element name="PIGeofence" positionX="-63" positionY="-18" width="128" height="135"/>
+        <element name="PIGeofence" positionX="-63" positionY="-18" width="128" height="150"/>
     </elements>
 </model>

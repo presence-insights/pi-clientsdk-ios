@@ -23,6 +23,7 @@ extension PIGeofence {
 
     @NSManaged public internal(set) var latitude: NSNumber
     @NSManaged public internal(set) var longitude: NSNumber
+	@NSManaged public internal(set) var local: NSNumber
     @NSManaged var monitored: NSNumber
     @NSManaged public internal(set) var name: String
     @NSManaged public internal(set) var radius: NSNumber

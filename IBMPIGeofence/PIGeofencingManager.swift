@@ -27,21 +27,6 @@ import CocoaLumberjack
 
 public let kGeofenceManagerDidSynchronize = "com.ibm.pi.GeofenceManagerDidSynchronize"
 
-@objc(IBMPIGeofenceProperties)
-public class PIGeofenceProperties:NSObject {
-    public let name:String
-    public let radius:Int
-    public let code:String?
-    
-    public init(name:String,radius:Int,code:String?) {
-        self.name = name
-        self.radius = radius
-        self.code = code
-    }
-}
-
-public typealias GeofencePropertiesGenerator = ([String:AnyObject]) -> PIGeofenceProperties
-
 @objc(IBMPIGeofencingManagerDelegate)
 public protocol PIGeofencingManagerDelegate:class {
     /// The device enters into a geofence

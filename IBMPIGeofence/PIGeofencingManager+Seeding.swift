@@ -35,7 +35,7 @@ extension PIGeofencingManager {
 
 	public func seedGeojsonWithURL(
 		url:NSURL,
-		propertiesGenerator:GeofencePropertiesGenerator? = nil,
+		propertiesGenerator:PIGeofencePropertiesGenerator? = nil,
 		completionHandler:((success:Bool) -> Void)? = nil)  {
 
 			let fileManager = NSFileManager.defaultManager()
@@ -102,7 +102,7 @@ extension PIGeofencingManager {
 
 	public func seedGeojson(
 		geojson:[String:AnyObject],
-		propertiesGenerator:GeofencePropertiesGenerator? = nil,
+		propertiesGenerator:PIGeofencePropertiesGenerator? = nil,
 		completionHandler:((success:Bool) -> Void)? = nil)  {
 
 			let moc = dataController.writerContext
@@ -124,7 +124,7 @@ extension PIGeofencingManager {
 	}
 
 	func seedGeojson(moc:NSManagedObjectContext,geojson:[String:AnyObject],
-		propertiesGenerator:GeofencePropertiesGenerator? = nil) -> PIGeofencingError? {
+		propertiesGenerator:PIGeofencePropertiesGenerator? = nil) -> PIGeofencingError? {
 
 			guard let type = geojson["type"] as? String else {
 				return PIGeofencingError.GeoJsonMissingType
@@ -135,16 +135,15 @@ extension PIGeofencingManager {
 				return PIGeofencingError.GeoJsonWrongType
 			}
 
-			guard let properties = geojson["properties"] as? [String:AnyObject] else {
-				DDLogError("PIGeofencingError.GeoJsonMissingFeatureCollectionProperties")
-				return PIGeofencingError.GeoJsonMissingFeatureCollectionProperties
+			let properties = geojson["properties"] as? [String:AnyObject]
+
+			if let totalFeatures = properties?["totalFeatures"] as? Int {
+				DDLogVerbose("TotalFeatures downloaded \(totalFeatures)")
 			}
 
-			let totalFeatures = properties["totalFeatures"] as? Int
-			DDLogVerbose("TotalFeatures downloaded \(totalFeatures)")
-
-			let pageSize = properties["pageSize"] as? Int
-			DDLogVerbose("PageSize \(pageSize)")
+			if let pageSize = properties?["pageSize"] as? Int {
+				DDLogVerbose("PageSize \(pageSize)")
+			}
 
 			guard var geofences = geojson["features"] as? [[String:AnyObject]] else {
 				DDLogError("PIGeofencingError.GeoJsonNoFeature")
@@ -184,6 +183,7 @@ extension PIGeofencingManager {
 			do {
 				let request = PIGeofence.fetchRequest
 				request.sortDescriptors = [NSSortDescriptor(key: "code", ascending: true)]
+				request.predicate = NSPredicate(format: "immutable == false")
 				
 				let existingFences = try moc.executeFetchRequest(request) as! [PIGeofence]
 				for fence in existingFences {
@@ -258,16 +258,14 @@ extension PIGeofencingManager {
 					let name:String
 					let radius:Int
 					let geofenceCode:String
+					let local:Bool
 
 					if let propertiesGenerator = propertiesGenerator {
 						let properties = propertiesGenerator(properties)
 						name = properties.name
 						radius = properties.radius
-						guard let code = properties.code else {
-							DDLogError("\(i) Missing geofence code",asynchronous:false)
-							nbErrors += 1
-							continue
-						}
+						local = properties.local
+						let code = properties.code ?? NSUUID().UUIDString
 						geofenceCode = code
 					} else {
 						name = properties["name"] as? String ?? "???!!!"
@@ -278,14 +276,11 @@ extension PIGeofencingManager {
 							continue
 						}
 						geofenceCode = code
+						local = false
 					}
 
-					guard let orgCode = properties["@org"] as? String else {
-						DDLogError("\(i) Missing org code",asynchronous:false)
-						nbErrors += 1
-						continue
-					}
-					if orgCode != self.service.orgCode {
+					let orgCode = properties["@org"] as? String
+					if let orgCode = orgCode where orgCode != self.service.orgCode {
 						DDLogError("\(i) Wrong org code \(geofenceCode), current org code is \(self.service.orgCode)",asynchronous:false)
 						nbErrors += 1
 						continue
@@ -349,6 +344,7 @@ extension PIGeofencingManager {
 						geofence.code = geofenceCode
 						geofence.latitude = latitude
 						geofence.longitude = longitude
+						geofence.local = local
 						nbInserted += 1
 						DDLogVerbose("Insert Geofence \(name) \(geofenceCode)",asynchronous:false)
 					}
