@@ -54,7 +54,14 @@ public final class PIGeofencingManager:NSObject {
     public static let DefaultMaxRegions = 15
     
     let locationManager = CLLocationManager()
-    
+
+	/// Maximum of consecutive retry for downloading geofence definitions from PI
+	/// We wait for one hour between each retry
+	public var maxDownloadRetry = 10
+
+	/// Number of days between each check against PI for downloading geofence definitions from PI
+	public var intervalBetweenDownloads = 1
+
     var regions:[String:CLCircularRegion]?
     
     /// The length of the sides of the bounding box used to find out

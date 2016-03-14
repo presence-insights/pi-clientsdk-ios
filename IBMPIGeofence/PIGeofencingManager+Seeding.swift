@@ -183,7 +183,7 @@ extension PIGeofencingManager {
 			do {
 				let request = PIGeofence.fetchRequest
 				request.sortDescriptors = [NSSortDescriptor(key: "code", ascending: true)]
-				request.predicate = NSPredicate(format: "immutable == false")
+				request.predicate = NSPredicate(format: "local == false")
 				
 				let existingFences = try moc.executeFetchRequest(request) as! [PIGeofence]
 				for fence in existingFences {

@@ -203,12 +203,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				MBProgressHUD.hideHUDForView(vc.view, animated: true)
 			}
 		}
+		// Local seed
 		if self.firstTime {
 			self.seeding {
-				piGeofencingManager?.synchronize()
 			}
-		} else {
-			piGeofencingManager?.synchronize()
 		}
 
         let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
