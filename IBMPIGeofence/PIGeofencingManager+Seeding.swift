@@ -164,6 +164,13 @@ extension PIGeofencingManager {
 
 			DDLogVerbose("number of geofences : \(geofences.count)",asynchronous:false)
 
+			let deleted = properties?["deleted"] as? [String]
+			if let deleted = deleted {
+				DDLogVerbose("number of deleted geofences : \(deleted.count)",asynchronous:false)
+			} else {
+				DDLogVerbose("No deleted geofences",asynchronous:false)
+			}
+
 			geofences.sortInPlace { (fencea, fenceb) -> Bool in
 				guard let propertiesa = fencea["properties"] as? [String:AnyObject] else {
 					return true
@@ -189,7 +196,7 @@ extension PIGeofencingManager {
 					continue
 				}
 
-				DDLogVerbose(code,asynchronous:false)
+				DDLogVerbose("fence code: \(code)",asynchronous:false)
 			}
 
 			do {
@@ -212,16 +219,6 @@ extension PIGeofencingManager {
 					guard let properties = fence["properties"] as? [String:AnyObject] else {
 						DDLogError("\(i) Missing properties",asynchronous:false)
 						nbErrors += 1
-						continue
-					}
-
-					// LEGACY
-					if let deleted = properties["@deleted"] as? Bool where deleted {
-						if let geofenceCode = properties["@code"] as? String {
-							DDLogInfo("Deleted Geofence \(geofenceCode)",asynchronous:false)
-						} else {
-							DDLogError("Deleted Geofence Unknown",asynchronous:false)
-						}
 						continue
 					}
 
@@ -335,9 +332,9 @@ extension PIGeofencingManager {
 						}
 						if currentFence.code < geofenceCode {
 
-							DDLogVerbose("Delete Geofence \(currentFence.name) \(currentFence.code)",asynchronous:false)
-							moc.deleteObject(currentFence)
-							nbDeleted += 1
+							DDLogVerbose("Skip Geofence \(currentFence.code), \(currentFence.name) ",asynchronous:false)
+//							moc.deleteObject(currentFence)
+//							nbDeleted += 1
 							iCurrentFence += 1
 							continue
 						}
@@ -367,12 +364,42 @@ extension PIGeofencingManager {
 				while iCurrentFence < existingFences.count {
 					let currentFence = existingFences[iCurrentFence]
 					iCurrentFence += 1
-
-					moc.deleteObject(currentFence)
-					nbDeleted += 1
+					DDLogVerbose("Skip fence \(currentFence.code), \(currentFence.name)")
+//					moc.deleteObject(currentFence)
+//					nbDeleted += 1
 				}
 
 				try moc.save()
+
+				if let deleted = deleted {
+					var deletedSet = Set(deleted)
+					var deletedFences:[PIGeofence]?
+					repeat {
+						autoreleasepool {
+							do {
+								let deletedRequest = PIGeofence.fetchRequest
+								deletedRequest.fetchLimit = 100
+								deletedRequest.predicate = NSPredicate(format: "code in %@",deletedSet)
+								deletedFences = try moc.executeFetchRequest(deletedRequest) as? [PIGeofence]
+								guard let deletedFences = deletedFences where deletedFences.count > 0 else {
+									return
+								}
+								for fence in deletedFences {
+									DDLogVerbose("Delete fence \(fence.code), \(fence.name)")
+									moc.deleteObject(fence)
+									nbDeleted += 1
+									deletedSet.remove(fence.code)
+								}
+								try moc.save()
+							} catch {
+								DDLogError("PIGeofencingError.WrongFences \(nbErrors)")
+							}
+						}
+						guard let deletedFences = deletedFences where deletedFences.count > 0 else {
+							break
+						}
+					} while true
+				}
 
 				PIGeofencePreferences.lastSyncDate = lastSyncDate
 
