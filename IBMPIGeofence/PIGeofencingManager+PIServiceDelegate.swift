@@ -97,6 +97,8 @@ extension PIGeofencingManager: PIServiceDelegate {
 
 		DDLogVerbose("PIGeofencingManager.didCompleteWithError beginBackgroundTaskWithExpirationHandler \(bkgTaskId)",asynchronous:false)
 		
+		PIGeofencePreferences.downloadError()
+
 		let moc = dataController.writerContext
 		moc.performBlock {
 			let request = PIDownload.fetchRequest
@@ -165,10 +167,12 @@ extension PIGeofencingManager: PIServiceDelegate {
 				do {
 					let downloads = try moc.executeFetchRequest(request) as! [PIDownload]
 					guard let download = downloads.first  else {
+						PIGeofencePreferences.downloadError()
 						DDLogError("PIGeofencingManager.didReceiveFile download not found")
 						return
 					}
 					guard downloads.count == 1 else {
+						PIGeofencePreferences.downloadError()
 						DDLogError("PIGeofencingManager.didReceiveFile more than one download!")
 						return
 					}
@@ -185,13 +189,16 @@ extension PIGeofencingManager: PIServiceDelegate {
 							if let error = self.seedGeojson(moc, geojson: jsonObject)  {
 								DDLogError("Geojson processing error \(error)")
 								download.progressStatus = .ProcessingError
+								PIGeofencePreferences.downloadError()
 							} else {
 								download.progressStatus = .Processed
 								DDLogInfo("PIGeofencingManager.updateGeofences OK!!!",asynchronous:false)
+								PIGeofencePreferences.resetDownloadErrors()
 							}
 						} else {
 							DDLogError("PIGeofencingManager.updateGeofences Can't read json file: \(anyObject)")
 							download.progressStatus = .ProcessingError
+							PIGeofencePreferences.downloadError()
 						}
 					} catch {
 						DDLogError("PIGeofencingManager.updateGeofences error \(error)")
@@ -200,6 +207,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 							DDLogError("PIGeofencingManager.updateGeofences json \(stringFile)")
 						}
 						download.progressStatus = .ProcessingError
+						PIGeofencePreferences.downloadError()
 					}
 					try moc.save()
 					let downloadURI = download.objectID.URIRepresentation()

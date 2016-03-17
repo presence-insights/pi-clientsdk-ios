@@ -57,7 +57,14 @@ public final class PIGeofencingManager:NSObject {
 
 	/// Maximum of consecutive retry for downloading geofence definitions from PI
 	/// We wait for one hour between each retry
-	public var maxDownloadRetry = 10
+	public var maxDownloadRetry:Int {
+		set {
+			PIGeofencePreferences.maxDownloadRetry = newValue
+		}
+		get {
+			return PIGeofencePreferences.maxDownloadRetry
+		}
+	}
 
 	/// Number of days between each check against PI for downloading geofence definitions from PI
 	public var intervalBetweenDownloads = 1
@@ -106,9 +113,17 @@ public final class PIGeofencingManager:NSObject {
 
 		self.service.delegate = self
 		
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PIGeofencingManager.didBecomeActive(_:)), name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(
+			self,
+			selector: #selector(PIGeofencingManager.didBecomeActive(_:)),
+			name: UIApplicationWillEnterForegroundNotification,
+			object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PIGeofencingManager.willResignActive(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(
+			self,
+			selector: #selector(PIGeofencingManager.willResignActive(_:)),
+			name: UIApplicationDidEnterBackgroundNotification,
+			object: nil)
         
     }
 
@@ -144,7 +159,7 @@ public final class PIGeofencingManager:NSObject {
      - parameter completionHandler:  The closure called when the synchronisation is completed
      */
 	public func synchronize(completionHandler: ((Bool)-> Void)? = nil) {
-        let request = PIGeofenceFencesDownloadRequest()
+		let request = PIGeofenceFencesDownloadRequest(lastSyncDate:PIGeofencePreferences.lastSyncDate)
 		guard let response = service.executeDownload(request) else {
 			completionHandler?(false)
 			return

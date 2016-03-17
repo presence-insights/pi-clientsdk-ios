@@ -73,27 +73,10 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 
 		synchronize { success in
 			if success {
-				PIGeofencePreferences.lastDownloadDate = NSDate()
-				PIGeofencePreferences.downloadErrorCount = nil
-				PIGeofencePreferences.lastDownloadErrorDate = nil
+				PIGeofencePreferences.lastSyncDate = NSDate()
 			} else {
-				var errorCount = PIGeofencePreferences.downloadErrorCount ?? 0
-				errorCount += 1
-				// If too many errors, wait for next day
-				if errorCount > self.maxDownloadRetry {
-					DDLogError("Too many errors for the download, wait until tomorrow")
-					PIGeofencePreferences.lastDownloadDate = NSDate()
-					PIGeofencePreferences.downloadErrorCount = nil
-					PIGeofencePreferences.lastDownloadErrorDate = nil
-
-				} else {
-					DDLogError("Download error, wait for one hour, nbRetry \(errorCount)")
-					PIGeofencePreferences.downloadErrorCount = errorCount
-					PIGeofencePreferences.lastDownloadErrorDate = NSDate()
-				}
-
+				PIGeofencePreferences.downloadError()
 			}
-			PIGeofencePreferences.synchronize()
 		}
 
 	}

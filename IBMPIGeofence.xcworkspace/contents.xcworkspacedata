@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:IBMPIGeofence.xcodeproj">
    </FileRef>
    <FileRef

@@ -141,6 +141,18 @@ extension PIGeofencingManager {
 				DDLogVerbose("TotalFeatures downloaded \(totalFeatures)")
 			}
 
+			var lastSyncDate:NSDate?
+
+			if let lastSyncDateString = properties?["lastSyncDate"] as? String {
+				DDLogVerbose("LastSyncDate  \(lastSyncDateString)")
+				lastSyncDate = lastSyncDateString.ISO8601
+				if lastSyncDate == nil {
+					DDLogError("Can't parse the JSON lastSyncDate")
+				}
+			} else {
+				DDLogError("Missing Last Synchronization date")
+			}
+		
 			if let pageSize = properties?["pageSize"] as? Int {
 				DDLogVerbose("PageSize \(pageSize)")
 			}
@@ -150,7 +162,7 @@ extension PIGeofencingManager {
 				return PIGeofencingError.GeoJsonNoFeature
 			}
 
-			DDLogVerbose("--- \(geofences.count)",asynchronous:false)
+			DDLogVerbose("number of geofences : \(geofences.count)",asynchronous:false)
 
 			geofences.sortInPlace { (fencea, fenceb) -> Bool in
 				guard let propertiesa = fencea["properties"] as? [String:AnyObject] else {
@@ -361,6 +373,8 @@ extension PIGeofencingManager {
 				}
 
 				try moc.save()
+
+				PIGeofencePreferences.lastSyncDate = lastSyncDate
 
 				DDLogVerbose("Inserted \(nbInserted)",asynchronous:false)
 				DDLogVerbose("Deleted \(nbDeleted)",asynchronous:false)

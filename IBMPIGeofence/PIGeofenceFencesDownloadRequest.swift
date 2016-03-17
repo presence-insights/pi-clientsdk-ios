@@ -26,6 +26,12 @@ import CocoaLumberjack
 @objc(IBMPIGeofenceFencesDownloadRequest)
 public final class PIGeofenceFencesDownloadRequest:NSObject,PIDownloadRequest {
 
+	let lastSyncDate:NSDate?
+
+	public init(lastSyncDate:NSDate?) {
+		self.lastSyncDate = lastSyncDate
+	}
+
 	public func executeDownload(service:PIService) -> PIDownloadResponse? {
 
 		DDLogVerbose("PIGeofenceFencesDownloadRequest.executeDownload",asynchronous:false)
@@ -38,8 +44,10 @@ public final class PIGeofenceFencesDownloadRequest:NSObject,PIDownloadRequest {
 		let url = NSURL(string:path,relativeToURL:service.baseURL)
 		let URLComponents = NSURLComponents(URL:url!,resolvingAgainstBaseURL:true)!
 
-//		let queryItems:[String:Any] = ["pageSize":100]
-//		URLComponents.percentEncodedQuery = PIGeofenceUtils.buildQueryStringWithParams(queryItems)
+		if let lastSyncDate = lastSyncDate {
+			let queryItems:[String:Any] = ["lastSyncDate":lastSyncDate.ISO8601]
+			URLComponents.percentEncodedQuery = PIGeofenceUtils.buildQueryStringWithParams(queryItems)
+		}
 
 
 		DDLogInfo("PIGeofenceFencesDownloadRequest \(URLComponents.URL!)",asynchronous:false)

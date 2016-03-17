@@ -85,20 +85,27 @@ class PIGeofenceUtils {
 }
 
 
-private let dateFormatter:NSDateFormatter = {
+private let ZuluTimeFormatter:NSDateFormatter = {
     let dateFormatter = NSDateFormatter()
     let enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
     dateFormatter.locale = enUSPOSIXLocale
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
-    
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+	dateFormatter.timeZone = NSTimeZone(forSecondsFromGMT: 0)
+
     return dateFormatter
     
 }()
 
 extension NSDate {
     var ISO8601:String {
-        return dateFormatter.stringFromDate(self)
+        return ZuluTimeFormatter.stringFromDate(self)
     }
+}
+
+extension String {
+	var ISO8601:NSDate? {
+		return ZuluTimeFormatter.dateFromString(self)
+	}
 }
 
 

@@ -18,11 +18,13 @@
 **/
 
 import Foundation
-
+import CocoaLumberjack
 
 private let kLastDownloadDate = "com.ibm.pi.LastDownloadDate"
 private let kLastDownloadErrorDate = "com.ibm.pi.lastDownloadErrorDate"
 private let kErrorDownloadCountKey = "com.ibm.pi.downloads.errorCount"
+private let kLastSyncDate = "com.ibm.pi.downloads.lastSyncDate"
+private let kMaxDownloadRetry = "com.ibm.pi.downloads.maxDownloadRetry"
 
 struct PIGeofencePreferences {
 	static var lastDownloadDate:NSDate? {
@@ -64,7 +66,55 @@ struct PIGeofencePreferences {
 		}
 	}
 
+	static func resetDownloadErrors() {
+		downloadErrorCount = nil
+		lastDownloadErrorDate = nil
+		synchronize()
+	}
+
+	static func downloadError() {
+		guard downloadErrorCount < maxDownloadRetry else {
+			DDLogError("Too many errors for the download, wait until tomorrow")
+			resetDownloadErrors()
+			return
+		}
+		lastDownloadErrorDate = NSDate()
+		downloadErrorCount = (downloadErrorCount ?? 0) + 1
+		synchronize()
+	}
+
+	static var lastSyncDate:NSDate? {
+		set {
+			if let newValue = newValue {
+				PIUnprotectedPreferences.sharedInstance.setObject(newValue, forKey: kLastSyncDate)
+			} else {
+				PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kLastSyncDate)
+			}
+			synchronize()
+		}
+		get {
+			return PIUnprotectedPreferences.sharedInstance.objectForKey(kLastSyncDate) as? NSDate
+		}
+	}
+
 	static func synchronize() {
 		PIUnprotectedPreferences.sharedInstance.synchronize()
 	}
+
+	static var maxDownloadRetry:Int {
+		set {
+			PIUnprotectedPreferences.sharedInstance.setInteger(newValue, forKey: kMaxDownloadRetry)
+			synchronize()
+		}
+		get {
+			let max = PIUnprotectedPreferences.sharedInstance.integerForKey(kMaxDownloadRetry)
+			if max > 0 {
+				return max
+			} else {
+				return 10
+			}
+		}
+	}
+
+
 }
