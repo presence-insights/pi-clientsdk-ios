@@ -1,0 +1,367 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7DB26D5C1C9AF0F7003D3DE9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB26D5B1C9AF0F7003D3DE9 /* AppDelegate.swift */; };
+		7DB26D5E1C9AF0F9003D3DE9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB26D5D1C9AF0F9003D3DE9 /* ViewController.swift */; };
+		7DB26D611C9AF0F9003D3DE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DB26D5F1C9AF0F9003D3DE9 /* Main.storyboard */; };
+		7DB26D631C9AF0F9003D3DE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DB26D621C9AF0F9003D3DE9 /* Assets.xcassets */; };
+		7DB26D661C9AF0F9003D3DE9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DB26D641C9AF0F9003D3DE9 /* LaunchScreen.storyboard */; };
+		7DB26D731C9AF191003D3DE9 /* IBMPIGeofence.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DB26D721C9AF188003D3DE9 /* IBMPIGeofence.framework */; };
+		7DB26D741C9AF191003D3DE9 /* IBMPIGeofence.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7DB26D721C9AF188003D3DE9 /* IBMPIGeofence.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7DB26D711C9AF188003D3DE9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7DB26D6D1C9AF188003D3DE9 /* IBMPIGeofence.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7DE01ACE1C888BBB00D7C654;
+			remoteInfo = IBMPIGeofence;
+		};
+		7DB26D751C9AF191003D3DE9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7DB26D6D1C9AF188003D3DE9 /* IBMPIGeofence.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7DE01ACD1C888BBB00D7C654;
+			remoteInfo = IBMPIGeofence;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7DB26D771C9AF192003D3DE9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7DB26D741C9AF191003D3DE9 /* IBMPIGeofence.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7DB26D581C9AF0F7003D3DE9 /* IBMPIGeofenceSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IBMPIGeofenceSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7DB26D5B1C9AF0F7003D3DE9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7DB26D5D1C9AF0F9003D3DE9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		7DB26D601C9AF0F9003D3DE9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		7DB26D621C9AF0F9003D3DE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7DB26D651C9AF0F9003D3DE9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		7DB26D671C9AF0F9003D3DE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7DB26D6D1C9AF188003D3DE9 /* IBMPIGeofence.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = IBMPIGeofence.xcodeproj; path = ../IBMPIGeofence.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7DB26D551C9AF0F7003D3DE9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7DB26D731C9AF191003D3DE9 /* IBMPIGeofence.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7DB26D4F1C9AF0F7003D3DE9 = {
+			isa = PBXGroup;
+			children = (
+				7DB26D6D1C9AF188003D3DE9 /* IBMPIGeofence.xcodeproj */,
+				7DB26D5A1C9AF0F7003D3DE9 /* IBMPIGeofenceSample */,
+				7DB26D591C9AF0F7003D3DE9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7DB26D591C9AF0F7003D3DE9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7DB26D581C9AF0F7003D3DE9 /* IBMPIGeofenceSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7DB26D5A1C9AF0F7003D3DE9 /* IBMPIGeofenceSample */ = {
+			isa = PBXGroup;
+			children = (
+				7DB26D5B1C9AF0F7003D3DE9 /* AppDelegate.swift */,
+				7DB26D5D1C9AF0F9003D3DE9 /* ViewController.swift */,
+				7DB26D5F1C9AF0F9003D3DE9 /* Main.storyboard */,
+				7DB26D621C9AF0F9003D3DE9 /* Assets.xcassets */,
+				7DB26D641C9AF0F9003D3DE9 /* LaunchScreen.storyboard */,
+				7DB26D671C9AF0F9003D3DE9 /* Info.plist */,
+			);
+			path = IBMPIGeofenceSample;
+			sourceTree = "<group>";
+		};
+		7DB26D6E1C9AF188003D3DE9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7DB26D721C9AF188003D3DE9 /* IBMPIGeofence.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7DB26D571C9AF0F7003D3DE9 /* IBMPIGeofenceSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7DB26D6A1C9AF0F9003D3DE9 /* Build configuration list for PBXNativeTarget "IBMPIGeofenceSample" */;
+			buildPhases = (
+				7DB26D541C9AF0F7003D3DE9 /* Sources */,
+				7DB26D551C9AF0F7003D3DE9 /* Frameworks */,
+				7DB26D561C9AF0F7003D3DE9 /* Resources */,
+				7DB26D771C9AF192003D3DE9 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7DB26D761C9AF191003D3DE9 /* PBXTargetDependency */,
+			);
+			name = IBMPIGeofenceSample;
+			productName = IBMPIGeofenceSample;
+			productReference = 7DB26D581C9AF0F7003D3DE9 /* IBMPIGeofenceSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7DB26D501C9AF0F7003D3DE9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = IBM;
+				TargetAttributes = {
+					7DB26D571C9AF0F7003D3DE9 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+				};
+			};
+			buildConfigurationList = 7DB26D531C9AF0F7003D3DE9 /* Build configuration list for PBXProject "IBMPIGeofenceSample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 7DB26D4F1C9AF0F7003D3DE9;
+			productRefGroup = 7DB26D591C9AF0F7003D3DE9 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 7DB26D6E1C9AF188003D3DE9 /* Products */;
+					ProjectRef = 7DB26D6D1C9AF188003D3DE9 /* IBMPIGeofence.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				7DB26D571C9AF0F7003D3DE9 /* IBMPIGeofenceSample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		7DB26D721C9AF188003D3DE9 /* IBMPIGeofence.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = IBMPIGeofence.framework;
+			remoteRef = 7DB26D711C9AF188003D3DE9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7DB26D561C9AF0F7003D3DE9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7DB26D661C9AF0F9003D3DE9 /* LaunchScreen.storyboard in Resources */,
+				7DB26D631C9AF0F9003D3DE9 /* Assets.xcassets in Resources */,
+				7DB26D611C9AF0F9003D3DE9 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7DB26D541C9AF0F7003D3DE9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7DB26D5E1C9AF0F9003D3DE9 /* ViewController.swift in Sources */,
+				7DB26D5C1C9AF0F7003D3DE9 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7DB26D761C9AF191003D3DE9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = IBMPIGeofence;
+			targetProxy = 7DB26D751C9AF191003D3DE9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		7DB26D5F1C9AF0F9003D3DE9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7DB26D601C9AF0F9003D3DE9 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		7DB26D641C9AF0F9003D3DE9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7DB26D651C9AF0F9003D3DE9 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		7DB26D681C9AF0F9003D3DE9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7DB26D691C9AF0F9003D3DE9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		7DB26D6B1C9AF0F9003D3DE9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = IBMPIGeofenceSample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.IBMPIGeofenceSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		7DB26D6C1C9AF0F9003D3DE9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = IBMPIGeofenceSample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.IBMPIGeofenceSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7DB26D531C9AF0F7003D3DE9 /* Build configuration list for PBXProject "IBMPIGeofenceSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7DB26D681C9AF0F9003D3DE9 /* Debug */,
+				7DB26D691C9AF0F9003D3DE9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7DB26D6A1C9AF0F9003D3DE9 /* Build configuration list for PBXNativeTarget "IBMPIGeofenceSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7DB26D6B1C9AF0F9003D3DE9 /* Debug */,
+				7DB26D6C1C9AF0F9003D3DE9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7DB26D501C9AF0F7003D3DE9 /* Project object */;
+}
