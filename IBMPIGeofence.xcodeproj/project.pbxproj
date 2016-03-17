@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7D0AB21F1C97222D00638D62 /* PIUnprotectedPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0AB21E1C97222D00638D62 /* PIUnprotectedPreferences.swift */; };
+		7DB68AB31C9AB40A001A1151 /* PIGeofencePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB68AB21C9AB40A001A1151 /* PIGeofencePreferences.swift */; };
 		7DC3EDC21C970343007C99E7 /* PIGeofenceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC3EDC11C970343007C99E7 /* PIGeofenceProperties.swift */; };
 		7DE01AD21C888BBB00D7C654 /* IBMPIGeofence.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DE01AD11C888BBB00D7C654 /* IBMPIGeofence.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7DE01B541C8897EA00D7C654 /* ManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE01B521C8897EA00D7C654 /* ManagedObjectContext.swift */; };
@@ -55,6 +56,7 @@
 /* Begin PBXFileReference section */
 		6712494E546FB96EC1EF41B8 /* Pods-IBMPIGeofence.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IBMPIGeofence.release.xcconfig"; path = "Pods/Target Support Files/Pods-IBMPIGeofence/Pods-IBMPIGeofence.release.xcconfig"; sourceTree = "<group>"; };
 		7D0AB21E1C97222D00638D62 /* PIUnprotectedPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIUnprotectedPreferences.swift; sourceTree = "<group>"; };
+		7DB68AB21C9AB40A001A1151 /* PIGeofencePreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIGeofencePreferences.swift; sourceTree = "<group>"; };
 		7DC3EDC11C970343007C99E7 /* PIGeofenceProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIGeofenceProperties.swift; sourceTree = "<group>"; };
 		7DE01ACE1C888BBB00D7C654 /* IBMPIGeofence.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IBMPIGeofence.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DE01AD11C888BBB00D7C654 /* IBMPIGeofence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IBMPIGeofence.h; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 		7DE01AD01C888BBB00D7C654 /* IBMPIGeofence */ = {
 			isa = PBXGroup;
 			children = (
+				7DB68AB21C9AB40A001A1151 /* PIGeofencePreferences.swift */,
 				7D0AB21E1C97222D00638D62 /* PIUnprotectedPreferences.swift */,
 				7DE01BA61C889F8600D7C654 /* PIGeofenceUtils.swift */,
 				7DE01B4D1C88965E00D7C654 /* CoreDataHelpers */,
@@ -370,6 +373,7 @@
 				7DE01B7B1C88987C00D7C654 /* PIGeofenceDeleteOperation.swift in Sources */,
 				7DE01B781C88987C00D7C654 /* PIGeofenceCreateOperation.swift in Sources */,
 				7DE01B6C1C88984B00D7C654 /* PIGeofencingManager+LifeCycleMonitoringRegions.swift in Sources */,
+				7DB68AB31C9AB40A001A1151 /* PIGeofencePreferences.swift in Sources */,
 				7DE01B7E1C88987C00D7C654 /* PIGeofenceMonitoringOperation.swift in Sources */,
 				7DE01B931C8898C200D7C654 /* NSURLRequest+PIGeofence.swift in Sources */,
 				7DE01B541C8897EA00D7C654 /* ManagedObjectContext.swift in Sources */,

@@ -21,9 +21,6 @@
 import CoreLocation
 import CocoaLumberjack
 
-let kErrorDownloadCountKey = "com.ibm.pi.downloads.errorCount"
-let kLastSynchronizeKey = "com.ibm.pi.LastSynchronize"
-let kLastSynchronizeErrorKey = "com.ibm.pi.LastSynchronizeError"
 
 
 extension PIGeofencingManager: CLLocationManagerDelegate {
@@ -61,13 +58,13 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 		if days < 1 {
 			days = 1
 		}
-		if let lastSynchronize = PIUnprotectedPreferences.sharedInstance.objectForKey(kLastSynchronizeKey) as? NSDate where lastSynchronize.timeIntervalSinceNow > -60 * 60 * 24 * days {
+		if let lastSynchronize = PIGeofencePreferences.lastSynchronizeDate where lastSynchronize.timeIntervalSinceNow > -60 * 60 * 24 * days {
 			// synchronize less than one day ago
 			return
 
 		}
 
-		if let lastSynchronizeError = PIUnprotectedPreferences.sharedInstance.objectForKey(kLastSynchronizeErrorKey) as? NSDate where lastSynchronizeError.timeIntervalSinceNow > -60 * 60 {
+		if let lastSynchronizeError = PIGeofencePreferences.lastSynchronizeErrorDate where lastSynchronizeError.timeIntervalSinceNow > -60 * 60 {
 			// error less than one hour ago
 			// wait for retry
 			return
@@ -76,27 +73,27 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 
 		synchronize { success in
 			if success {
-				PIUnprotectedPreferences.sharedInstance.setObject(NSDate(), forKey: kLastSynchronizeKey)
-				PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kErrorDownloadCountKey)
-				PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kLastSynchronizeErrorKey)
+				PIGeofencePreferences.lastSynchronizeDate = NSDate()
+				PIGeofencePreferences.downloadErrorCount = nil
+				PIGeofencePreferences.lastSynchronizeErrorDate = nil
 			} else {
-				var errorCount = PIUnprotectedPreferences.sharedInstance.integerForKey(kErrorDownloadCountKey) ?? 0
+				var errorCount = PIGeofencePreferences.downloadErrorCount ?? 0
 				errorCount += 1
 				// If too many errors, wait for next day
 				if errorCount > self.maxDownloadRetry {
 					DDLogError("Too many errors for the download, wait until tomorrow")
-					PIUnprotectedPreferences.sharedInstance.setObject(NSDate(), forKey: kLastSynchronizeKey)
-					PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kErrorDownloadCountKey)
-					PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kLastSynchronizeErrorKey)
+					PIGeofencePreferences.lastSynchronizeDate = NSDate()
+					PIGeofencePreferences.downloadErrorCount = nil
+					PIGeofencePreferences.lastSynchronizeErrorDate = nil
 
 				} else {
 					DDLogError("Download error, wait for one hour, nbRetry \(errorCount)")
-					PIUnprotectedPreferences.sharedInstance.setInteger(errorCount, forKey: kErrorDownloadCountKey)
-					PIUnprotectedPreferences.sharedInstance.setObject(NSDate(), forKey: kLastSynchronizeErrorKey)
+					PIGeofencePreferences.downloadErrorCount = errorCount
+					PIGeofencePreferences.lastSynchronizeErrorDate = NSDate()
 				}
 
 			}
-			PIUnprotectedPreferences.sharedInstance.synchronize()
+			PIGeofencePreferences.synchronize()
 		}
 
 	}
