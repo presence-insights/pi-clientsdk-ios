@@ -20,34 +20,34 @@
 import Foundation
 
 
-private let kLastSynchronizeKey = "com.ibm.pi.LastSynchronize"
-private let kLastSynchronizeErrorKey = "com.ibm.pi.LastSynchronizeError"
+private let kLastDownloadDate = "com.ibm.pi.LastDownloadDate"
+private let kLastDownloadErrorDate = "com.ibm.pi.lastDownloadErrorDate"
 private let kErrorDownloadCountKey = "com.ibm.pi.downloads.errorCount"
 
 struct PIGeofencePreferences {
-	static var lastSynchronizeDate:NSDate? {
+	static var lastDownloadDate:NSDate? {
 		set {
 			if let newValue = newValue {
-				PIUnprotectedPreferences.sharedInstance.setObject(newValue, forKey: kLastSynchronizeKey)
+				PIUnprotectedPreferences.sharedInstance.setObject(newValue, forKey: kLastDownloadDate)
 			} else {
-				PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kLastSynchronizeKey)
+				PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kLastDownloadDate)
 			}
 		}
 		get {
-			return PIUnprotectedPreferences.sharedInstance.objectForKey(kLastSynchronizeKey) as? NSDate
+			return PIUnprotectedPreferences.sharedInstance.objectForKey(kLastDownloadDate) as? NSDate
 		}
 	}
 
-	static var lastSynchronizeErrorDate:NSDate? {
+	static var lastDownloadErrorDate:NSDate? {
 		set {
 			if let newValue = newValue {
-				PIUnprotectedPreferences.sharedInstance.setObject(newValue, forKey: kLastSynchronizeErrorKey)
+				PIUnprotectedPreferences.sharedInstance.setObject(newValue, forKey: kLastDownloadErrorDate)
 			} else {
-				PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kLastSynchronizeErrorKey)
+				PIUnprotectedPreferences.sharedInstance.removeObjectForKey(kLastDownloadErrorDate)
 			}
 		}
 		get {
-			return PIUnprotectedPreferences.sharedInstance.objectForKey(kLastSynchronizeErrorKey) as? NSDate
+			return PIUnprotectedPreferences.sharedInstance.objectForKey(kLastDownloadErrorDate) as? NSDate
 		}
 	}
 

@@ -58,13 +58,13 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 		if days < 1 {
 			days = 1
 		}
-		if let lastSynchronize = PIGeofencePreferences.lastSynchronizeDate where lastSynchronize.timeIntervalSinceNow > -60 * 60 * 24 * days {
+		if let lastDownloadDate = PIGeofencePreferences.lastDownloadDate where lastDownloadDate.timeIntervalSinceNow > -60 * 60 * 24 * days {
 			// synchronize less than one day ago
 			return
 
 		}
 
-		if let lastSynchronizeError = PIGeofencePreferences.lastSynchronizeErrorDate where lastSynchronizeError.timeIntervalSinceNow > -60 * 60 {
+		if let lastDownloadErrorDate = PIGeofencePreferences.lastDownloadErrorDate where lastDownloadErrorDate.timeIntervalSinceNow > -60 * 60 {
 			// error less than one hour ago
 			// wait for retry
 			return
@@ -73,23 +73,23 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 
 		synchronize { success in
 			if success {
-				PIGeofencePreferences.lastSynchronizeDate = NSDate()
+				PIGeofencePreferences.lastDownloadDate = NSDate()
 				PIGeofencePreferences.downloadErrorCount = nil
-				PIGeofencePreferences.lastSynchronizeErrorDate = nil
+				PIGeofencePreferences.lastDownloadErrorDate = nil
 			} else {
 				var errorCount = PIGeofencePreferences.downloadErrorCount ?? 0
 				errorCount += 1
 				// If too many errors, wait for next day
 				if errorCount > self.maxDownloadRetry {
 					DDLogError("Too many errors for the download, wait until tomorrow")
-					PIGeofencePreferences.lastSynchronizeDate = NSDate()
+					PIGeofencePreferences.lastDownloadDate = NSDate()
 					PIGeofencePreferences.downloadErrorCount = nil
-					PIGeofencePreferences.lastSynchronizeErrorDate = nil
+					PIGeofencePreferences.lastDownloadErrorDate = nil
 
 				} else {
 					DDLogError("Download error, wait for one hour, nbRetry \(errorCount)")
 					PIGeofencePreferences.downloadErrorCount = errorCount
-					PIGeofencePreferences.lastSynchronizeErrorDate = NSDate()
+					PIGeofencePreferences.lastDownloadErrorDate = NSDate()
 				}
 
 			}
