@@ -68,7 +68,9 @@ struct PIGeofencePreferences {
 
 	static func resetDownloadErrors() {
 		downloadErrorCount = nil
+		// We stop retrying
 		lastDownloadErrorDate = nil
+		lastDownloadDate = NSDate()
 		synchronize()
 	}
 
@@ -78,6 +80,9 @@ struct PIGeofencePreferences {
 			resetDownloadErrors()
 			return
 		}
+		// Reset the lastDownloadDate so we can try again when
+		// a significant change is triggered
+		lastDownloadDate = nil
 		lastDownloadErrorDate = NSDate()
 		downloadErrorCount = (downloadErrorCount ?? 0) + 1
 		synchronize()
@@ -116,5 +121,12 @@ struct PIGeofencePreferences {
 		}
 	}
 
+	static func reset() {
+		self.lastDownloadDate = nil
+		self.lastDownloadErrorDate = nil
+		self.downloadErrorCount = nil
+		self.lastSyncDate = nil
+		synchronize()
+	}
 
 }

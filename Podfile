@@ -3,8 +3,8 @@ platform :ios, '8.0'
 # Uncomment this line if you're using Swift
 
 workspace 'IBMPIGeofence'
-xcodeproj 'IBMPIGeofence.xcodeproj'
-xcodeproj 'IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj'
+project 'IBMPIGeofence.xcodeproj'
+project 'IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj'
 
 
 use_frameworks!
@@ -12,14 +12,10 @@ use_frameworks!
 target 'IBMPIGeofence' do
 pod 'ZipArchive'
 pod 'CocoaLumberjack/Swift'
-xcodeproj 'IBMPIGeofence.xcodeproj'
+project 'IBMPIGeofence.xcodeproj'
 end
 
 target 'IBMPIGeofenceSample' do
-pod 'ZipArchive'
-pod 'SSKeychain'
-pod 'CocoaLumberjack/Swift'
-pod 'MBProgressHUD'
-xcodeproj 'IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj'
+project 'IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj'
 end
 

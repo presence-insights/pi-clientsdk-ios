@@ -20,16 +20,52 @@
 
 import UIKit
 import IBMPIGeofence
+import CoreLocation
+
+var piGeofencingManager: PIGeofencingManager?
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
 
+	private let locationManager = CLLocationManager()
+
+	private static let dateFormatter:NSDateFormatter = {
+		let dateFormatter = NSDateFormatter()
+		dateFormatter.dateStyle = .MediumStyle
+		dateFormatter.timeStyle = .MediumStyle
+		return dateFormatter
+	}()
+
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		// Override point for customization after application launch.
 		PIGeofencingManager.enableLogging(true)
+
+		let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
+		UIApplication.sharedApplication().registerUserNotificationSettings(settings)
+
+		piGeofencingManager?.delegate = self
+
+		let tenantCode = "xf504jy"
+		let orgCode = "rpcwyjy"
+		let hostname = "http://pi-outdoor-proxy.mybluemix.net"
+		let username = "a6su7f"
+		let password = "8xdr5vfh"
+
+		piGeofencingManager = PIGeofencingManager(
+			tenantCode: tenantCode,
+			orgCode: orgCode,
+			baseURL: hostname,
+			username: username,
+			password: password)
+
+		//self.seeding()
+
+		self.manageAuthorizations()
+
+
 		return true
 	}
 
@@ -57,4 +93,182 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
+
+extension AppDelegate {
+
+
+	private func manageAuthorizations() {
+
+		if !CLLocationManager.isMonitoringAvailableForClass(CLCircularRegion) {
+			dispatch_async(dispatch_get_main_queue()) {
+				let title = NSLocalizedString("Alert.NoMonitoring.Title",comment:"")
+				let message = NSLocalizedString("Alert.NoMonitoring.Message",comment:"")
+				self.showAlert(title, message: message)
+
+			}
+
+		} else {
+			switch CLLocationManager.authorizationStatus() {
+			case .NotDetermined:
+				locationManager.requestAlwaysAuthorization()
+
+			case .AuthorizedAlways:
+				fallthrough
+			case .AuthorizedWhenInUse:
+				break
+			case .Restricted, .Denied:
+				let alertController = UIAlertController(
+					title: NSLocalizedString("Alert.Monitoring.Title",comment:""),
+					message: NSLocalizedString("Alert.Monitoring.Message",comment:""),
+					preferredStyle: .Alert)
+
+				let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel",comment:""), style: .Cancel){ (action) in
+				}
+				alertController.addAction(cancelAction)
+
+				let openAction = UIAlertAction(title: NSLocalizedString("Alert.Monitoring.OpenAction",comment:""), style: .Default) { (action) in
+					if let url = NSURL(string:UIApplicationOpenSettingsURLString) {
+						UIApplication.sharedApplication().openURL(url)
+					}
+				}
+				alertController.addAction(openAction)
+
+				dispatch_async(dispatch_get_main_queue()) {
+					self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+
+				}
+			}
+		}
+
+		let refreshStatus = UIApplication.sharedApplication().backgroundRefreshStatus
+		switch refreshStatus {
+		case .Restricted:
+			fallthrough
+		case .Denied:
+			let alertController = UIAlertController(
+				title: NSLocalizedString("Alert.BackgroundRefresh.Title",comment:""),
+				message: NSLocalizedString("Alert.BackgroundRefresh.Message",comment:""),
+				preferredStyle: .Alert)
+
+			let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
+			}
+			alertController.addAction(okAction)
+
+
+			dispatch_async(dispatch_get_main_queue()) {
+				self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+
+			}
+
+		case .Available:
+			break
+
+		}
+
+	}
+
+}
+
+
+extension AppDelegate:PIGeofencingManagerDelegate {
+
+	// MARK: - PIGeofencingManagerDelegate
+
+	func geofencingManager(manager: PIGeofencingManager, didEnterGeofence geofence: PIGeofence? ) {
+
+		let geofenceName = geofence?.name ?? "Error,unknown fence"
+
+		let notification = UILocalNotification()
+		notification.alertBody = String(format:NSLocalizedString("Region.Notification.Enter %@", comment: ""),geofenceName)
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		if let geofence = geofence {
+			notification.userInfo = ["geofence.code":geofence.code]
+		}
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+
+	}
+
+	func geofencingManager(manager: PIGeofencingManager, didExitGeofence geofence: PIGeofence? ) {
+
+		let geofenceName = geofence?.name ?? "Error,unknown fence"
+
+		let notification = UILocalNotification()
+		notification.alertBody = String(format:NSLocalizedString("Region.Notification.Exit %@", comment: ""),geofenceName)
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		if let geofence = geofence {
+			notification.userInfo = ["geofence.code":geofence.code]
+		}
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+	}
+
+	func geofencingManager(manager: PIGeofencingManager, didStartDownload download: PIDownload) {
+		let notification = UILocalNotification()
+		let startDate = self.dynamicType.dateFormatter.stringFromDate(download.startDate)
+		notification.alertBody = String(format:NSLocalizedString("Download.Notification.Start %@", comment: ""),startDate)
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		notification.userInfo = ["download.startDate":download.startDate]
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+
+	}
+
+	func geofencingManager(manager: PIGeofencingManager, didReceiveDownload download: PIDownload) {
+		let notification = UILocalNotification()
+		let startDate = self.dynamicType.dateFormatter.stringFromDate(download.startDate)
+		if let endDate = download.endDate {
+			let endDate = self.dynamicType.dateFormatter.stringFromDate(endDate)
+			notification.alertBody = String(format:NSLocalizedString("Download.Notification.End %@ %@ %@", comment: ""),startDate,endDate,"\(download.progressStatus)")
+		} else {
+			notification.alertBody = String(format:NSLocalizedString("Download.Notification.End %@ %@", comment: ""),startDate, "\(download.progressStatus)")
+		}
+
+		notification.soundName = UILocalNotificationDefaultSoundName
+		if let endDate = download.endDate {
+			notification.userInfo = ["download.endDate":endDate]
+		} else {
+
+		}
+
+		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+
+	}
+
+
+
+}
+
+extension AppDelegate {
+
+	func privacyDidChange(notification:NSNotification) {
+	}
+}
+
+extension AppDelegate {
+
+	func showAlert(title:String,message:String) {
+
+		if let _ = self.window?.rootViewController?.presentedViewController {
+			self.window?.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+		}
+
+		let alertController = UIAlertController(
+			title: NSLocalizedString(title,comment:""),
+			message: NSLocalizedString(message,comment:""),
+			preferredStyle: .Alert)
+
+		let okAction = UIAlertAction(title: NSLocalizedString("OK",comment:""), style: .Default){ (action) in
+		}
+		alertController.addAction(okAction)
+
+
+		self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+	}
+}
+
+
 

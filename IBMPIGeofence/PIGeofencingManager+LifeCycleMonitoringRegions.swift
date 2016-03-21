@@ -98,6 +98,7 @@ extension PIGeofencingManager {
 		self.stopMonitoringRegions {
 			do {
 				try self.dataController.removeStore()
+				PIGeofencePreferences.reset()
 				completionHandler?()
 			} catch {
 				DDLogError("Core Data Error \(error)",asynchronous:false)

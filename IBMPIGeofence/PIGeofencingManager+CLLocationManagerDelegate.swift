@@ -71,10 +71,13 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 
 		}
 
+		// This data will be reset if there is an error
+		// so we retry one hour later
+		// PIServiceDelegate
+		PIGeofencePreferences.lastDownloadDate = NSDate()
+
 		synchronize { success in
-			if success {
-				PIGeofencePreferences.lastSyncDate = NSDate()
-			} else {
+			if success == false {
 				PIGeofencePreferences.downloadError()
 			}
 		}
