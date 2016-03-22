@@ -46,8 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		let settings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
 		UIApplication.sharedApplication().registerUserNotificationSettings(settings)
 
-		piGeofencingManager?.delegate = self
-
 		let tenantCode = "xf504jy"
 		let orgCode = "rpcwyjy"
 		let hostname = "http://pi-outdoor-proxy.mybluemix.net"
@@ -60,6 +58,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			baseURL: hostname,
 			username: username,
 			password: password)
+
+		piGeofencingManager?.delegate = self
 
 		//self.seeding()
 
@@ -91,6 +91,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 	}
 
+
+	func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+		let state = UIApplication .sharedApplication().applicationState
+		if state == .Active {
+
+			let title = NSLocalizedString("Alert.LocalNotification.Title",comment:"")
+			let message = notification.alertBody ?? NSLocalizedString("Alert.LocalNotification.MissingBody",comment:"")
+			self.showAlert(title, message: message)
+
+		}
+
+	}
+
+	func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+
+		piGeofencingManager?.handleEventsForBackgroundURLSession(identifier, completionHandler: completionHandler)
+	}
 
 }
 

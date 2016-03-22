@@ -31,46 +31,6 @@
 "Alert.LocalNotification.Title" = "Notification";
 "Alert.LocalNotification.MissingBody" = "No message!";
 
-"More.Section.Settings" = "Settings";
-"More.Section.PIOutdoorSample" = "PI Sample";
-
-"More.Settings.Privacy" = "Privacy";
-
-"More.PIOutdoorSample.ContactUs" = "Contact Us";
-
-"More.Reset.Reset" = "Reset";
-
-"NoMail.Message.ContactUs" = "No mail account available to contact us.";
-"NoMail.Message.Title" = "No Mail";
-
-
-"Alert.OrgCreation.Error.Title" = "Error";
-"Alert.OrgCreation.Error.Message" = "An error occured when creating an org";
-
-"Alert.OrgCreation.Title" = "Organization";
-"Alert.OrgCreation.Message" = "An org has been created for your device";
-
-"Alert.GeofenceCreation.Error.Title" = "Error";
-"Alert.GeofenceCreation.Error.Message" = "An error occured when creating the geofence";
-
-
-"Alert.GeofenceDeletion.Error.Title" = "Error";
-"Alert.GeofenceDeletion.Error.Message" = "An error occured when deleting the geofence";
-
-"Alert.Refresh.Error.Title" = "Error";
-"Alert.Refresh.Error.Message" = "An error occured when creating the geofence";
-
-"Alert.Reset.Title" = "PI Outdoor Sample";
-"Alert.Reset.Message" = "Are you sure you want to reset?\
-All the geofences will be deleted and a new org will be created.";
-"Alert.Reset.Reset" = "Reset";
-
-"More.Settings.TenantCode" = "PI Tenant";
-"More.Settings.OrgCode" = "PI Organization";
-
-"MailFooter.App %@" = "App: %@\n";
-"MailFooter.Device %@ %@" = "Device: %@ (%@)\n";
-"MailFooter.Locale %@" = "Locale: %@";
 
 "Download.Notification.Start %@" = "Download started at \n%@";
 "Download.Notification.End %@ %@ %@" = "Download started at \n%@, \nended at %@, \nstatus %@";
