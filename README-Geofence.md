@@ -195,11 +195,76 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 @end
 ```
 
-### Seeding the local cache from a resource file
+### Initializing the list of geofences from a resource
+
+You can embed a zipped geojson file as a resource to initialize the list of geofences to monitor.
+
+```swift
+	if piGeofencingManager?.firstTime == true {
+            guard let url = NSBundle.mainBundle().URLForResource(
+				"referentiel-gares-voyageurs.geojson",
+				withExtension: "zip") else {
+                fatalError("file not found")
+            }
+			piGeofencingManager?.seedGeojsonWithURL(
+				url,
+				propertiesGenerator:fenceProperties) { success in
+				if success == false {
+
+			}
+    }
+    
+    func fenceProperties(properties:[String:AnyObject]) -> PIGeofenceProperties {
+        let name = properties["intitule_gare"] as? String ?? "???"
+        let fenceProperties = PIGeofenceProperties(name:name,radius:200,code:nil,local: true)
+        return fenceProperties
+    }
+    
+```
+
+```objective-c
+	if (geofencingManager.firstTime) {
+		NSURL *url = [[NSBundle mainBundle] URLForResource:@"referentiel-gares-voyageurs.geojson" withExtension:@"zip"];
+
+
+		[geofencingManager seedGeojsonWithURL:url propertiesGenerator:^IBMPIGeofenceProperties * _Nonnull(NSDictionary<NSString *,id> * _Nonnull fence) {
+			NSString *name = fence[@"name"];
+			if (name == NULL) {
+				name = @"??";
+			}
+			return [[IBMPIGeofenceProperties alloc] initWithName:@"xx" radius:100 code:@"dd" local:false];
+		} completionHandler:^(BOOL success) {
+		}];
+
+	}
+```
 
 ### Logging
 
-IBMPIGeofenceSDK can log traces for debugging purpose, thanks to [CocoaLumberjack](https://cocoapods.org/pods/CocoaLumberjack)
+IBMPIGeofenceSDK can log traces for debugging purpose, thanks to [CocoaLumberjack](https://cocoapods.org/pods/CocoaLumberjack).
+
+To enable the logging:
+
+```swift
+	PIGeofencingManager.enableLogging(true)
+```
+
+```objective-c
+	[IBMPIGeofencingManager enableLogging:true];
+```
+
+To get the paths to the log files,
+
+
+```swift
+	let logFiles = PIGeofencingManager.logFiles()
+```
+
+```objective-c
+	NSArray *logFiles = [IBMPIGeofencingManager logFiles];
+```
+
+
 
 
 
