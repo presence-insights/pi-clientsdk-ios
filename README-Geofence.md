@@ -199,7 +199,7 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 
 ### Logging
 
-IBMPIGeofenceSDK can log traces for debugging purpose, thanks to ![CocoaLumberjack](https://cocoapods.org/pods/CocoaLumberjack)
+IBMPIGeofenceSDK can log traces for debugging purpose, thanks to [CocoaLumberjack](https://cocoapods.org/pods/CocoaLumberjack)
 
 
 
