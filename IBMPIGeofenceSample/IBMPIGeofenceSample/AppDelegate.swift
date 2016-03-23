@@ -38,7 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		return dateFormatter
 	}()
 
-
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		// Override point for customization after application launch.
 		PIGeofencingManager.enableLogging(true)
@@ -48,14 +47,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		let tenantCode = "xf504jy"
 		let orgCode = "rpcwyjy"
-		let hostname = "http://pi-outdoor-proxy.mybluemix.net"
+		let baseURL = "http://pi-outdoor-proxy.mybluemix.net"
 		let username = "a6su7f"
 		let password = "8xdr5vfh"
 
 		piGeofencingManager = PIGeofencingManager(
 			tenantCode: tenantCode,
 			orgCode: orgCode,
-			baseURL: hostname,
+			baseURL: baseURL,
 			username: username,
 			password: password)
 
@@ -257,12 +256,6 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 
 
 
-}
-
-extension AppDelegate {
-
-	func privacyDidChange(notification:NSNotification) {
-	}
 }
 
 extension AppDelegate {

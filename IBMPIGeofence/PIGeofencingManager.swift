@@ -25,7 +25,7 @@ import MapKit
 import CocoaLumberjack
 
 
-public let kGeofenceManagerDidSynchronize = "com.ibm.pi.GeofenceManagerDidSynchronize"
+public let kGeofencingManagerDidSynchronize = "com.ibm.pi.GeofencingManagerDidSynchronize"
 
 @objc(IBMPIGeofencingManagerDelegate)
 public protocol PIGeofencingManagerDelegate:class {
@@ -66,8 +66,8 @@ public final class PIGeofencingManager:NSObject {
 		}
 	}
 
-	/// Number of days between each check against PI for downloading geofence definitions from PI
-	public var intervalBetweenDownloads = 1
+	/// Number of hours between each check against PI for downloading geofence definitions from PI
+	public var intervalBetweenDownloads = 24
 
     var regions:[String:CLCircularRegion]?
     

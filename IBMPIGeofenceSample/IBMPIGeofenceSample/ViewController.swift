@@ -44,8 +44,8 @@ class ViewController: UIViewController {
 
 		NSNotificationCenter.defaultCenter().addObserver(
 			self,
-			selector: #selector(ViewController.seedDidComplete(_:)),
-			name: kGeofenceManagerDidSynchronize,
+			selector: #selector(ViewController.didSynchronize(_:)),
+			name: kGeofencingManagerDidSynchronize,
 			object: nil)
 
 		self.zoomToFitMapOverlays(self.mapView)
@@ -70,7 +70,7 @@ class ViewController: UIViewController {
 
 	}
 
-	func seedDidComplete(notification:NSNotification) {
+	func didSynchronize(notification:NSNotification) {
 		let annotations = self.mapView.annotations
 		self.mapView.removeAnnotations(annotations)
 

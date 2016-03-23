@@ -221,7 +221,7 @@ extension PIGeofencingManager: PIServiceDelegate {
 				self.updateMonitoredGeofencesWithMoc(moc)
 				dispatch_async(dispatch_get_main_queue()) {
 					self.startMonitoringRegions()
-					NSNotificationCenter.defaultCenter().postNotificationName(kGeofenceManagerDidSynchronize, object: nil)
+					NSNotificationCenter.defaultCenter().postNotificationName(kGeofencingManagerDidSynchronize, object: nil)
 					if bkgTaskId != UIBackgroundTaskInvalid {
 						DDLogVerbose("****** PIGeofencingManager.didReceiveFile endBackgroundTask \(bkgTaskId)",asynchronous:false)
 						let id = bkgTaskId

@@ -116,7 +116,7 @@ extension PIGeofencingManager {
 					propertiesGenerator: propertiesGenerator)
 				self.updateMonitoredGeofencesWithMoc(moc)
 				dispatch_async(dispatch_get_main_queue()) {
-					NSNotificationCenter.defaultCenter().postNotificationName(kGeofenceManagerDidSynchronize, object: nil)
+					NSNotificationCenter.defaultCenter().postNotificationName(kGeofencingManagerDidSynchronize, object: nil)
 					completionHandler?(success:error == nil)
 				}
 			}
