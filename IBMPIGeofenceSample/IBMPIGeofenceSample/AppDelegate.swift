@@ -221,40 +221,6 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
 	}
 
-	func geofencingManager(manager: PIGeofencingManager, didStartDownload download: PIDownload) {
-		let notification = UILocalNotification()
-		let startDate = self.dynamicType.dateFormatter.stringFromDate(download.startDate)
-		notification.alertBody = String(format:NSLocalizedString("Download.Notification.Start %@", comment: ""),startDate)
-
-		notification.soundName = UILocalNotificationDefaultSoundName
-		notification.userInfo = ["download.startDate":download.startDate]
-
-		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
-
-	}
-
-	func geofencingManager(manager: PIGeofencingManager, didReceiveDownload download: PIDownload) {
-		let notification = UILocalNotification()
-		let startDate = self.dynamicType.dateFormatter.stringFromDate(download.startDate)
-		if let endDate = download.endDate {
-			let endDate = self.dynamicType.dateFormatter.stringFromDate(endDate)
-			notification.alertBody = String(format:NSLocalizedString("Download.Notification.End %@ %@ %@", comment: ""),startDate,endDate,"\(download.progressStatus)")
-		} else {
-			notification.alertBody = String(format:NSLocalizedString("Download.Notification.End %@ %@", comment: ""),startDate, "\(download.progressStatus)")
-		}
-
-		notification.soundName = UILocalNotificationDefaultSoundName
-		if let endDate = download.endDate {
-			notification.userInfo = ["download.endDate":endDate]
-		} else {
-
-		}
-
-		UIApplication.sharedApplication().presentLocalNotificationNow(notification)
-
-	}
-
-
 
 }
 

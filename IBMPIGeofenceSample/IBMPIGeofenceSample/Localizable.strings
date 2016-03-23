@@ -32,11 +32,6 @@
 "Alert.LocalNotification.MissingBody" = "No message!";
 
 
-"Download.Notification.Start %@" = "Download started at \n%@";
-"Download.Notification.End %@ %@ %@" = "Download started at \n%@, \nended at %@, \nstatus %@";
-"Download.Notification.End %@ %@" = "Download started at \n%@, \nstatus %@";
-
-
 
 
 

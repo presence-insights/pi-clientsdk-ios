@@ -66,7 +66,7 @@ public final class PIGeofencingManager:NSObject {
 		}
 	}
 
-	/// Number of hours between each check against PI for downloading geofence definitions from PI
+	/// Number of hours between each check against PI for downloading the geofence definitions
 	public var intervalBetweenDownloads = 24
 
     var regions:[String:CLCircularRegion]?
