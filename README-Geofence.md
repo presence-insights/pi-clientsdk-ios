@@ -195,3 +195,11 @@ extension AppDelegate:PIGeofencingManagerDelegate {
 @end
 ```
 
+### Seeding the local cache from a resource file
+
+### Logging
+
+IBMPIGeofenceSDK can log traces for debugging purpose, thanks to ![CocoaLumberjack](https://cocoapods.org/pods/CocoaLumberjack)
+
+
+
