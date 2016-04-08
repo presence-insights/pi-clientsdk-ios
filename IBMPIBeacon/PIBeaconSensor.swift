@@ -20,6 +20,7 @@
 
 import UIKit
 import CoreLocation
+import IBMPICore
 
 // MARK: - Delegate protocol.
 @objc public protocol PIBeaconSensorDelegate {

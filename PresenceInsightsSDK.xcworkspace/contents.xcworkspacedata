@@ -7,7 +7,4 @@
    <FileRef
       location = "group:IBMPIBeacon.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:PresenceInsightsSDK.xcodeproj">
-   </FileRef>
 </Workspace>

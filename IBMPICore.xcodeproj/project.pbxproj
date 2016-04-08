@@ -6,10 +6,34 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		518BE4CD1CB5A3A800612FD9 /* IBMPICore-Universal */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 518BE4CE1CB5A3A800612FD9 /* Build configuration list for PBXAggregateTarget "IBMPICore-Universal" */;
+			buildPhases = (
+				518BE4D61CB5A3F500612FD9 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "IBMPICore-Universal";
+			productName = "IBMPICore-Universal";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		518BE4291CB2E78F00612FD9 /* IBMPICore.h in Headers */ = {isa = PBXBuildFile; fileRef = 518BE4281CB2E78F00612FD9 /* IBMPICore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		518BE4301CB2E78F00612FD9 /* IBMPICore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518BE4251CB2E78F00612FD9 /* IBMPICore.framework */; };
 		518BE4351CB2E78F00612FD9 /* IBMPICoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4341CB2E78F00612FD9 /* IBMPICoreTests.swift */; };
+		518BE4BE1CB57EA100612FD9 /* CLProximity+CustomStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4B51CB57EA100612FD9 /* CLProximity+CustomStringConvertible.swift */; };
+		518BE4BF1CB57EA100612FD9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4B61CB57EA100612FD9 /* Constants.swift */; };
+		518BE4C01CB57EA100612FD9 /* PIAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4B71CB57EA100612FD9 /* PIAdapter.swift */; };
+		518BE4C11CB57EA100612FD9 /* PIBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4B81CB57EA100612FD9 /* PIBeacon.swift */; };
+		518BE4C21CB57EA100612FD9 /* PIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4B91CB57EA100612FD9 /* PIDevice.swift */; };
+		518BE4C31CB57EA100612FD9 /* PIFloor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4BA1CB57EA100612FD9 /* PIFloor.swift */; };
+		518BE4C41CB57EA100612FD9 /* PIOrg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4BB1CB57EA100612FD9 /* PIOrg.swift */; };
+		518BE4C51CB57EA100612FD9 /* PISensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4BC1CB57EA100612FD9 /* PISensor.swift */; };
+		518BE4C61CB57EA100612FD9 /* PIZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4BD1CB57EA100612FD9 /* PIZone.swift */; };
+		518BE4CC1CB57EC400612FD9 /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4CB1CB57EC400612FD9 /* TestConstants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +53,16 @@
 		518BE42F1CB2E78F00612FD9 /* IBMPICoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IBMPICoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		518BE4341CB2E78F00612FD9 /* IBMPICoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IBMPICoreTests.swift; sourceTree = "<group>"; };
 		518BE4361CB2E78F00612FD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		518BE4B51CB57EA100612FD9 /* CLProximity+CustomStringConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLProximity+CustomStringConvertible.swift"; sourceTree = "<group>"; };
+		518BE4B61CB57EA100612FD9 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		518BE4B71CB57EA100612FD9 /* PIAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIAdapter.swift; sourceTree = "<group>"; };
+		518BE4B81CB57EA100612FD9 /* PIBeacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIBeacon.swift; sourceTree = "<group>"; };
+		518BE4B91CB57EA100612FD9 /* PIDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIDevice.swift; sourceTree = "<group>"; };
+		518BE4BA1CB57EA100612FD9 /* PIFloor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIFloor.swift; sourceTree = "<group>"; };
+		518BE4BB1CB57EA100612FD9 /* PIOrg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIOrg.swift; sourceTree = "<group>"; };
+		518BE4BC1CB57EA100612FD9 /* PISensor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PISensor.swift; sourceTree = "<group>"; };
+		518BE4BD1CB57EA100612FD9 /* PIZone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIZone.swift; sourceTree = "<group>"; };
+		518BE4CB1CB57EC400612FD9 /* TestConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +105,15 @@
 		518BE4271CB2E78F00612FD9 /* IBMPICore */ = {
 			isa = PBXGroup;
 			children = (
+				518BE4B51CB57EA100612FD9 /* CLProximity+CustomStringConvertible.swift */,
+				518BE4B61CB57EA100612FD9 /* Constants.swift */,
+				518BE4B71CB57EA100612FD9 /* PIAdapter.swift */,
+				518BE4B81CB57EA100612FD9 /* PIBeacon.swift */,
+				518BE4B91CB57EA100612FD9 /* PIDevice.swift */,
+				518BE4BA1CB57EA100612FD9 /* PIFloor.swift */,
+				518BE4BB1CB57EA100612FD9 /* PIOrg.swift */,
+				518BE4BC1CB57EA100612FD9 /* PISensor.swift */,
+				518BE4BD1CB57EA100612FD9 /* PIZone.swift */,
 				518BE4281CB2E78F00612FD9 /* IBMPICore.h */,
 				518BE42A1CB2E78F00612FD9 /* Info.plist */,
 			);
@@ -80,6 +123,7 @@
 		518BE4331CB2E78F00612FD9 /* IBMPICoreTests */ = {
 			isa = PBXGroup;
 			children = (
+				518BE4CB1CB57EC400612FD9 /* TestConstants.swift */,
 				518BE4341CB2E78F00612FD9 /* IBMPICoreTests.swift */,
 				518BE4361CB2E78F00612FD9 /* Info.plist */,
 			);
@@ -152,6 +196,9 @@
 					518BE42E1CB2E78F00612FD9 = {
 						CreatedOnToolsVersion = 7.3;
 					};
+					518BE4CD1CB5A3A800612FD9 = {
+						CreatedOnToolsVersion = 7.3;
+					};
 				};
 			};
 			buildConfigurationList = 518BE41F1CB2E78F00612FD9 /* Build configuration list for PBXProject "IBMPICore" */;
@@ -168,6 +215,7 @@
 			targets = (
 				518BE4241CB2E78F00612FD9 /* IBMPICore */,
 				518BE42E1CB2E78F00612FD9 /* IBMPICoreTests */,
+				518BE4CD1CB5A3A800612FD9 /* IBMPICore-Universal */,
 			);
 		};
 /* End PBXProject section */
@@ -189,11 +237,36 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		518BE4D61CB5A3F500612FD9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "######################\n# Options\n######################\n\nREVEAL_ARCHIVE_IN_FINDER=false\n\nFRAMEWORK_NAME=\"${PROJECT_NAME}\"\n\nSIMULATOR_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework\"\n\nDEVICE_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework\"\n\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphoneuniversal\"\n\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n\n######################\n# Build Frameworks\n######################\n\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphonesimulator 2>&1\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphoneos -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphoneos 2>&1\n\n######################\n# Create directory for universal\n######################\n\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${FRAMEWORK}\"\n\n\n######################\n# Copy files Framework\n######################\n\ncp -r \"${DEVICE_LIBRARY_PATH}/.\" \"${FRAMEWORK}\"\n\n\n######################\n# Make an universal binary\n######################\n\nlipo \"${SIMULATOR_LIBRARY_PATH}/${FRAMEWORK_NAME}\" \"${DEVICE_LIBRARY_PATH}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# For Swift framework, Swiftmodule needs to be copied in the universal framework\nif [ -d \"${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\nif [ -d \"${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\n######################\n# On Release, copy the result to release directory\n######################\nOUTPUT_DIR=\"${PROJECT_DIR}/Output\"\nTARGET_DIR=\"${OUTPUT_DIR}/${FRAMEWORK_NAME}-${CONFIGURATION}-iphoneuniversal/\"\n\nrm -rf \"$TARGET_DIR\"\nmkdir -p \"$TARGET_DIR\"\n\ncp -rf \"${FRAMEWORK}\" \"$OUTPUT_DIR\"\ncp -r \"${FRAMEWORK}\" \"$TARGET_DIR\"\n\nif [ ${REVEAL_ARCHIVE_IN_FINDER} = true ]; then\n    open \"${OUTPUT_DIR}/\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		518BE4201CB2E78F00612FD9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				518BE4C41CB57EA100612FD9 /* PIOrg.swift in Sources */,
+				518BE4C01CB57EA100612FD9 /* PIAdapter.swift in Sources */,
+				518BE4C31CB57EA100612FD9 /* PIFloor.swift in Sources */,
+				518BE4BE1CB57EA100612FD9 /* CLProximity+CustomStringConvertible.swift in Sources */,
+				518BE4C51CB57EA100612FD9 /* PISensor.swift in Sources */,
+				518BE4C21CB57EA100612FD9 /* PIDevice.swift in Sources */,
+				518BE4C61CB57EA100612FD9 /* PIZone.swift in Sources */,
+				518BE4C11CB57EA100612FD9 /* PIBeacon.swift in Sources */,
+				518BE4BF1CB57EA100612FD9 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				518BE4351CB2E78F00612FD9 /* IBMPICoreTests.swift in Sources */,
+				518BE4CC1CB57EC400612FD9 /* TestConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,28 +384,33 @@
 		518BE43A1CB2E78F00612FD9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = IBMPICore/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.pi.IBMPICore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		518BE43B1CB2E78F00612FD9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = IBMPICore/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.pi.IBMPICore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -359,6 +438,24 @@
 			};
 			name = Release;
 		};
+		518BE4CF1CB5A3A800612FD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		518BE4D01CB5A3A800612FD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -378,6 +475,7 @@
 				518BE43B1CB2E78F00612FD9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		518BE43C1CB2E78F00612FD9 /* Build configuration list for PBXNativeTarget "IBMPICoreTests" */ = {
 			isa = XCConfigurationList;
@@ -386,6 +484,16 @@
 				518BE43E1CB2E78F00612FD9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		518BE4CE1CB5A3A800612FD9 /* Build configuration list for PBXAggregateTarget "IBMPICore-Universal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				518BE4CF1CB5A3A800612FD9 /* Debug */,
+				518BE4D01CB5A3A800612FD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

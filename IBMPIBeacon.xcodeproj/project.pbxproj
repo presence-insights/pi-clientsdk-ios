@@ -6,10 +6,28 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		518BE4D11CB5A3C400612FD9 /* IBMPIBeacon-Universal */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 518BE4D21CB5A3C400612FD9 /* Build configuration list for PBXAggregateTarget "IBMPIBeacon-Universal" */;
+			buildPhases = (
+				518BE4D51CB5A3D500612FD9 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "IBMPIBeacon-Universal";
+			productName = "IBMPIBeacon-Universal";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		518BE4051CB2E75A00612FD9 /* IBMPIBeacon.h in Headers */ = {isa = PBXBuildFile; fileRef = 518BE4041CB2E75A00612FD9 /* IBMPIBeacon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		518BE40C1CB2E75A00612FD9 /* IBMPIBeacon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518BE4011CB2E75A00612FD9 /* IBMPIBeacon.framework */; };
 		518BE4111CB2E75A00612FD9 /* IBMPIBeaconTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4101CB2E75A00612FD9 /* IBMPIBeaconTests.swift */; };
+		518BE4C91CB57EB800612FD9 /* PIBeaconSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4C71CB57EB800612FD9 /* PIBeaconSensor.swift */; };
+		518BE4CA1CB57EB800612FD9 /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4C81CB57EB800612FD9 /* RegionManager.swift */; };
+		518BE4D81CB6B5DB00612FD9 /* IBMPICore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518BE4D71CB6B5DB00612FD9 /* IBMPICore.framework */; };
+		518BE4E61CB81A4200612FD9 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518BE4E51CB81A4200612FD9 /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +47,10 @@
 		518BE40B1CB2E75A00612FD9 /* IBMPIBeaconTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IBMPIBeaconTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		518BE4101CB2E75A00612FD9 /* IBMPIBeaconTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IBMPIBeaconTests.swift; sourceTree = "<group>"; };
 		518BE4121CB2E75A00612FD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		518BE4C71CB57EB800612FD9 /* PIBeaconSensor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIBeaconSensor.swift; sourceTree = "<group>"; };
+		518BE4C81CB57EB800612FD9 /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
+		518BE4D71CB6B5DB00612FD9 /* IBMPICore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IBMPICore.framework; path = "../../Library/Developer/Xcode/DerivedData/PresenceInsightsSDK-akvndcbzjpticdarkjbrsccqjmju/Build/Products/Debug-iphonesimulator/IBMPICore.framework"; sourceTree = "<group>"; };
+		518BE4E51CB81A4200612FD9 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +58,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				518BE4E61CB81A4200612FD9 /* CoreLocation.framework in Frameworks */,
+				518BE4D81CB6B5DB00612FD9 /* IBMPICore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,6 +77,8 @@
 		518BE3F71CB2E75A00612FD9 = {
 			isa = PBXGroup;
 			children = (
+				518BE4E51CB81A4200612FD9 /* CoreLocation.framework */,
+				518BE4D71CB6B5DB00612FD9 /* IBMPICore.framework */,
 				518BE4031CB2E75A00612FD9 /* IBMPIBeacon */,
 				518BE40F1CB2E75A00612FD9 /* IBMPIBeaconTests */,
 				518BE4021CB2E75A00612FD9 /* Products */,
@@ -71,6 +97,8 @@
 		518BE4031CB2E75A00612FD9 /* IBMPIBeacon */ = {
 			isa = PBXGroup;
 			children = (
+				518BE4C71CB57EB800612FD9 /* PIBeaconSensor.swift */,
+				518BE4C81CB57EB800612FD9 /* RegionManager.swift */,
 				518BE4041CB2E75A00612FD9 /* IBMPIBeacon.h */,
 				518BE4061CB2E75A00612FD9 /* Info.plist */,
 			);
@@ -152,6 +180,9 @@
 					518BE40A1CB2E75A00612FD9 = {
 						CreatedOnToolsVersion = 7.3;
 					};
+					518BE4D11CB5A3C400612FD9 = {
+						CreatedOnToolsVersion = 7.3;
+					};
 				};
 			};
 			buildConfigurationList = 518BE3FB1CB2E75A00612FD9 /* Build configuration list for PBXProject "IBMPIBeacon" */;
@@ -168,6 +199,7 @@
 			targets = (
 				518BE4001CB2E75A00612FD9 /* IBMPIBeacon */,
 				518BE40A1CB2E75A00612FD9 /* IBMPIBeaconTests */,
+				518BE4D11CB5A3C400612FD9 /* IBMPIBeacon-Universal */,
 			);
 		};
 /* End PBXProject section */
@@ -189,11 +221,29 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		518BE4D51CB5A3D500612FD9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "######################\n# Options\n######################\n\nREVEAL_ARCHIVE_IN_FINDER=false\n\nFRAMEWORK_NAME=\"${PROJECT_NAME}\"\n\nSIMULATOR_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework\"\n\nDEVICE_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework\"\n\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphoneuniversal\"\n\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n\n######################\n# Build Frameworks\n######################\n\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphonesimulator 2>&1\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphoneos -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphoneos 2>&1\n\n######################\n# Create directory for universal\n######################\n\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${FRAMEWORK}\"\n\n\n######################\n# Copy files Framework\n######################\n\ncp -r \"${DEVICE_LIBRARY_PATH}/.\" \"${FRAMEWORK}\"\n\n\n######################\n# Make an universal binary\n######################\n\nlipo \"${SIMULATOR_LIBRARY_PATH}/${FRAMEWORK_NAME}\" \"${DEVICE_LIBRARY_PATH}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# For Swift framework, Swiftmodule needs to be copied in the universal framework\nif [ -d \"${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\nif [ -d \"${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\n######################\n# On Release, copy the result to release directory\n######################\nOUTPUT_DIR=\"${PROJECT_DIR}/Output\"\nTARGET_DIR=\"${OUTPUT_DIR}/${FRAMEWORK_NAME}-${CONFIGURATION}-iphoneuniversal/\"\n\nrm -rf \"$TARGET_DIR\"\nmkdir -p \"$TARGET_DIR\"\n\ncp -rf \"${FRAMEWORK}\" \"$OUTPUT_DIR\"\ncp -r \"${FRAMEWORK}\" \"$TARGET_DIR\"\n\nif [ ${REVEAL_ARCHIVE_IN_FINDER} = true ]; then\n    open \"${OUTPUT_DIR}/\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		518BE3FC1CB2E75A00612FD9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				518BE4C91CB57EB800612FD9 /* PIBeaconSensor.swift in Sources */,
+				518BE4CA1CB57EB800612FD9 /* RegionManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,28 +360,33 @@
 		518BE4161CB2E75A00612FD9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = IBMPIBeacon/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.pi.IBMPIBeacon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		518BE4171CB2E75A00612FD9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = IBMPIBeacon/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.pi.IBMPIBeacon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -359,6 +414,24 @@
 			};
 			name = Release;
 		};
+		518BE4D31CB5A3C400612FD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		518BE4D41CB5A3C400612FD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -378,6 +451,7 @@
 				518BE4171CB2E75A00612FD9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		518BE4181CB2E75A00612FD9 /* Build configuration list for PBXNativeTarget "IBMPIBeaconTests" */ = {
 			isa = XCConfigurationList;
@@ -386,6 +460,16 @@
 				518BE41A1CB2E75A00612FD9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		518BE4D21CB5A3C400612FD9 /* Build configuration list for PBXAggregateTarget "IBMPIBeacon-Universal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				518BE4D31CB5A3C400612FD9 /* Debug */,
+				518BE4D41CB5A3C400612FD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
