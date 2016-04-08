@@ -23,11 +23,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.default_subspec = 'standard'
-
-  s.subspec 'standard' do |sp|
-    sp.source_files = 'IBMPICore/c*.{swift}'
-    sp.exclude_files = 'IBMPICoreTests/*.{swift}'
-  end
+  s.source_files = 'IBMPICore/*.{swift}'
+  s.exclude_files = 'IBMPICoreTests/*.{swift}'
 
 end

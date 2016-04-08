@@ -21,15 +21,11 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '8.0'
   s.requires_arc = true
-  s.default_subspec = 'standard'
 
-  s.subspec 'standard' do |sp|
-    sp.source_files = 'IBMPIBeacon/**/*.{swift}'
-    sp.exclude_files = 'IBMPIBeaconTests/*.{swift}'
+  s.source_files = 'IBMPIBeacon/*.{swift}'
+  s.exclude_files = 'IBMPIBeaconTests/*.{swift}'
 
-    sp.dependency 'IBMPICore', '1.0.0'
-
-    sp.frameworks = 'CoreLocation'
-  end
+  s.dependency 'IBMPICore', '2.0.0'
+  s.frameworks = 'CoreLocation'
 
 end
