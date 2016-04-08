@@ -10,14 +10,10 @@ limitations under the License.
 EOT
 
 Pod::Spec.new do |s|
-  s.name         = "PresenceInsightsSDK"
-  s.version      = "1.2.1"
-  s.summary      = "IBM Presence Insights SDK for iOS."
-  s.description  = <<-DESC
-                    Presence Insights SDK enables users to communicate with
-                    the Presence Insights services either sending events or
-                    obtaining configuration data.
-                   DESC
+  s.name         = "IBMPICore"
+  s.version      = "2.0.0"
+  s.summary      = "This framework provides an API Adapter for Presence Insights."
+  s.description  = "IBM Presence Insights Core framework enables users to communicate with the Presence Insights services by either sending events or obtaining configuration data."
   s.homepage     = "http://presenceinsights.ibmcloud.com"
   s.license      = {:type => 'Presence Insights Client iOS Framework License', :text => license}
   s.author       = { "IBM Corp." => "support@ibm.com" }
@@ -30,10 +26,8 @@ Pod::Spec.new do |s|
   s.default_subspec = 'standard'
 
   s.subspec 'standard' do |sp|
-    sp.source_files = 'PresenceInsightsSDK/**/*.{swift}'
-    sp.exclude_files = 'PresenceInsightsSDKTests/*.{swift}'
-
-    sp.frameworks = 'CoreLocation'
+    sp.source_files = 'IBMPICore/c*.{swift}'
+    sp.exclude_files = 'IBMPICoreTests/*.{swift}'
   end
 
 end
