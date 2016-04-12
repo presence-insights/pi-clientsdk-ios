@@ -12,7 +12,7 @@ EOT
 
 Pod::Spec.new do |s|
   s.name     = 'IBMPIGeofence'
-  s.version  = '1.0.0'
+  s.version  = '1.0.1'
   s.license      = {:type => 'Apache', :text => license}
   s.summary  = 'IBM Presence Insight Outdoor SDK for iOS.'
   s.description  = <<-DESC
