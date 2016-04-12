@@ -54,11 +54,11 @@ extension PIGeofencingManager: CLLocationManagerDelegate {
 			return
 		}
 
-		var hours = Double(self.intervalBetweenDownloads)
-		if hours < 1 {
-			hours = 1
+		var days = Double(self.intervalBetweenDownloads)
+		if days < 1 {
+			days = 1
 		}
-		if let lastDownloadDate = PIGeofencePreferences.lastDownloadDate where lastDownloadDate.timeIntervalSinceNow > -60 * 60 * hours {
+		if let lastDownloadDate = PIGeofencePreferences.lastDownloadDate where lastDownloadDate.timeIntervalSinceNow > -60 * 60 * 24 * days {
 			// synchronize less than one day ago
 			return
 
