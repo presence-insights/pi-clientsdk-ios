@@ -68,6 +68,7 @@ struct Beacon {
     static let JSON_UUID_KEY = "proximityUUID"
     static let JSON_MAJOR_KEY = "major"
     static let JSON_MINOR_KEY = "minor"
+    static let JSON_THRESHOLD_KEY = "threshold"
     static let JSON_X_KEY = "x"
     static let JSON_Y_KEY = "y"
     static let JSON_SITE_KEY = "@site"

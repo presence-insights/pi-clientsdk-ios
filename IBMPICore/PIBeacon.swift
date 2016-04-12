@@ -30,6 +30,7 @@ public class PIBeacon:NSObject {
     public let proximityUUID: NSUUID?
     public let major: CLBeaconMajorValue?
     public let minor: CLBeaconMinorValue?
+    public let threshold: CGFloat?
     public let x: CGFloat?
     public let y: CGFloat?
     public let site: String?
@@ -51,6 +52,7 @@ public class PIBeacon:NSObject {
         self.proximityUUID = proximityUUID
         self.major = major
         self.minor = minor
+        self.threshold = nil
         self.x = nil
         self.y = nil
         self.site = nil
@@ -69,6 +71,7 @@ public class PIBeacon:NSObject {
         self.proximityUUID = NSUUID()
         self.major = nil
         self.minor = nil
+        self.threshold = nil
         self.x = nil
         self.y = nil
         self.site = nil
@@ -91,6 +94,7 @@ public class PIBeacon:NSObject {
         self.proximityUUID = beacon.proximityUUID
         self.major = beacon.major.unsignedShortValue
         self.minor = beacon.minor.unsignedShortValue
+        self.threshold = nil
         self.x = nil
         self.y = nil
         self.site = nil
@@ -127,12 +131,18 @@ public class PIBeacon:NSObject {
         } else {
             self.major = nil
         }
-        if let minor =  properties[Beacon.JSON_MINOR_KEY] as? String {
+        if let minor = properties[Beacon.JSON_MINOR_KEY] as? String {
             self.minor = CLBeaconMinorValue(minor)
         } else {
             self.minor = nil
         }
         
+        if let threshold = properties[Beacon.JSON_THRESHOLD_KEY] as? CGFloat {
+            self.threshold = threshold
+        } else {
+            self.threshold = nil
+        }
+
         self.site = properties[Beacon.JSON_SITE_KEY] as? String
         self.floor = properties[Beacon.JSON_FLOOR_KEY] as? String
         
@@ -170,6 +180,7 @@ public class PIBeacon:NSObject {
         if let minor = self.minor {
             dictionary[Beacon.JSON_MINOR_KEY] = NSNumber(unsignedShort:minor)
         }
+        dictionary[Beacon.JSON_THRESHOLD_KEY] = threshold
         dictionary[Beacon.JSON_X_KEY] = x
         dictionary[Beacon.JSON_Y_KEY] = y
         dictionary[Beacon.JSON_SITE_KEY] = site
