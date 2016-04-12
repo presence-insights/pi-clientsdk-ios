@@ -81,7 +81,7 @@ public final class PIGeofencingManager:NSObject {
     public lazy var dataController = PIGeofenceData.dataController
 
 	/// PI Service
-    public let service:PIService
+    let service:PIService
     
     public weak var delegate:PIGeofencingManagerDelegate?
     /// Create a `PIGeofencingManager` with the given PI connection parameters
@@ -221,7 +221,7 @@ public final class PIGeofencingManager:NSObject {
     /// - parameter code:   The code of the geofence to remove
 	/// - parameter completionHandler: closure invoked on completion
 	///
-    public func removeGeofence(code:String,completionHandler: ((Bool) -> Void)? = nil) {
+    func removeGeofence(code:String,completionHandler: ((Bool) -> Void)? = nil) {
         let geofenceDeleteRequest = PIGeofenceDeleteRequest(geofenceCode: code) {
             response in
             switch response.result {
@@ -303,7 +303,7 @@ public final class PIGeofencingManager:NSObject {
      - parameter radius: The radius of the fence, should be larger than 200 m
      - parameter completionHandler:  Closure to be called when the fence has been added
      */
-    public func addGeofence(name:String,center:CLLocationCoordinate2D,radius:Int,completionHandler: ((PIGeofence?) -> Void)? = nil) {
+    func addGeofence(name:String,center:CLLocationCoordinate2D,radius:Int,completionHandler: ((PIGeofence?) -> Void)? = nil) {
         
         guard let _ = service.orgCode else {
             DDLogError("No Organization Code",asynchronous:false)

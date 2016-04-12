@@ -23,7 +23,7 @@ import Foundation
 
 
 @objc(IBMPIServiceCreateOrgResponse)
-final public class PIServiceCreateOrgResponse:PIResponse {
+final class PIServiceCreateOrgResponse:PIResponse {
     
     public var orgCode:String?
     

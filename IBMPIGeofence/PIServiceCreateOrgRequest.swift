@@ -22,7 +22,7 @@ import Foundation
 import CocoaLumberjack
 
 @objc(IBMPIServiceCreateOrgRequest)
-final public class PIServiceCreateOrgRequest:NSObject,PIRequest {
+final class PIServiceCreateOrgRequest:NSObject,PIRequest {
     
     let completionBlock: PIServiceCreateOrgResponse -> Void
     
