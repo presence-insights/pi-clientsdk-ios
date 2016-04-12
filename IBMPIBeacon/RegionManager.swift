@@ -21,6 +21,8 @@ import Foundation
 import CoreLocation
 
 internal class RegionManager {
+    private let REGION_IDENTIFIER_PREPEND = "com.ibm.pi" // com.ibm.pi;uuid;major;minor
+
     private let _locationManager: CLLocationManager
     private var _beaconRegions: [CLBeaconRegion] = []
     private var _uuidRegions: [CLBeaconRegion] = []
@@ -36,23 +38,22 @@ internal class RegionManager {
 
         let regions = _locationManager.monitoredRegions
         for region: CLRegion in regions {
-            if NSUUID(UUIDString: region.identifier) == nil {
-                _beaconRegions.append(createBeaconRegionFromCLRegion(region))
+            let components = region.identifier.componentsSeparatedByString(";")
+            // PREPEND + UUID
+            if components.count == 2 {
+                _uuidRegions.append(createBeaconRegionFromCLRegion(region))
             } else {
                 // this will be a uuid region
-                _uuidRegions.append(createBeaconRegionFromCLRegion(region))
+                _beaconRegions.append(createBeaconRegionFromCLRegion(region))
             }
         }
     }
 
     func start() {
-        // to enable ranging in the background for iOS 9
-        if #available(iOS 9, *) {
-            _locationManager.allowsBackgroundLocationUpdates = true
-        }
-        _locationManager.startUpdatingLocation()
         // we are only interested in beacons, so this accuracy will not require Wifi or GPS, which will save battery
         _locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+
+        _locationManager.startUpdatingLocation()
     }
 
     func stop() {
@@ -60,17 +61,20 @@ internal class RegionManager {
         _locationManager.stopUpdatingLocation()
     }
 
+    // current implementation will only take the first uuid region in the array
     func addUuidRegions(uuids: [String]) {
-        for u in uuids {
-            if let uuid = NSUUID(UUIDString: u) {
-                let region = CLBeaconRegion(proximityUUID: uuid, identifier: u)
-                
-                // will notify state of uuid region whenever the user turns on the screen of their device
-                region.notifyEntryStateOnDisplay = true
-                
-                self._locationManager.startMonitoringForRegion(region)
-                self._uuidRegions.append(region)
-            }
+        guard let uuidString = uuids.first else {
+            return
+        }
+        if let uuid = NSUUID(UUIDString: uuidString) {
+            let region = CLBeaconRegion(proximityUUID: uuid,
+                                        identifier: "\(REGION_IDENTIFIER_PREPEND);\(uuidString)")
+
+            // will notify state of uuid region whenever the user turns on the screen of their device
+            region.notifyEntryStateOnDisplay = true
+
+            self._locationManager.startMonitoringForRegion(region)
+            self._uuidRegions.append(region)
         }
     }
     
@@ -81,11 +85,24 @@ internal class RegionManager {
     }
     
     func addBeaconRegion(beacon: CLBeacon) {
-        let region = CLBeaconRegion(proximityUUID: beacon.proximityUUID, major: beacon.major.unsignedShortValue, minor: beacon.minor.unsignedShortValue, identifier: "\(beacon.proximityUUID.UUIDString);\(beacon.major);\(beacon.minor)")
+        let beaconIdentifier = "\(REGION_IDENTIFIER_PREPEND);\(beacon.proximityUUID.UUIDString);\(beacon.major);\(beacon.minor)"
+        let filteredRegions = _beaconRegions.filter({$0.identifier == beaconIdentifier})
+
+        // check to see if beacon already exists
+        guard filteredRegions.count == 0 else {
+            return
+        }
+
+        let region = CLBeaconRegion(proximityUUID: beacon.proximityUUID,
+                                    major: beacon.major.unsignedShortValue,
+                                    minor: beacon.minor.unsignedShortValue,
+                                    identifier: beaconIdentifier)
+
         if _numRegions >= _maxRegions {
             let removedRegion = _beaconRegions.removeLast()
             _locationManager.stopMonitoringForRegion(removedRegion)
         }
+
         _beaconRegions.append(region)
         _locationManager.startMonitoringForRegion(region)
     }
@@ -101,6 +118,7 @@ internal class RegionManager {
     
     func didDetermineState(state: CLRegionState, region: CLRegion) {
         if let region_ = region as? CLBeaconRegion where state.rawValue == CLRegionState.Inside.rawValue {
+            // TODO only care if it is the uuid region
             didEnterRegion(region_)
         }
     }
@@ -121,7 +139,8 @@ internal class RegionManager {
     func removeAllRegions() {
         // stop ranging
         for region in self._locationManager.rangedRegions {
-            let beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: region.identifier)!, identifier: region.identifier)
+            let components = region.identifier.componentsSeparatedByString(";")
+            let beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: components[1])!, identifier: region.identifier)
             _locationManager.stopRangingBeaconsInRegion(beaconRegion)
         }
 
@@ -139,11 +158,14 @@ internal class RegionManager {
         let components = region.identifier.componentsSeparatedByString(";")
         var beaconRegion: CLBeaconRegion
         
-        // beacon region (id = uuid;major;minor)
-        if (components.count > 1) {
-            beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: components[0])!, major: CUnsignedShort(components[1])!, minor: CUnsignedShort(components[2])!, identifier: region.identifier)
+        if (components.count > 2) {
+            beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: components[1])!,
+                                          major: CUnsignedShort(components[2])!,
+                                          minor: CUnsignedShort(components[3])!,
+                                          identifier: region.identifier)
         } else {
-            beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: components[0])!, identifier: region.identifier)
+            beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: components[1])!,
+                                          identifier: region.identifier)
         }
         return beaconRegion
     }

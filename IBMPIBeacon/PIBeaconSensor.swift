@@ -83,7 +83,11 @@ public class PIBeaconSensor: NSObject {
     */
     public func start() {
         start({error in
-            self._piAdapter.printDebug("Failed to start beacon sensing: \(error)")
+            guard error == nil else {
+                self._piAdapter.printDebug("Failed to start beacon sensing: \(error)")
+                return
+            }
+            self._piAdapter.printDebug("Successfully started beacon sensor")
         })
     }
     
@@ -158,7 +162,7 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
     }
 
     public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        _piAdapter.printDebug("Did Enter Region: " + region.description)
+        _piAdapter.printDebug("Did Enter Region: " + region.identifier)
         guard let region = region as? CLBeaconRegion else {
             return
         }
@@ -169,7 +173,7 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
     }
     
     public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
-        _piAdapter.printDebug("Did Exit Region: " + region.description)
+        _piAdapter.printDebug("Did Exit Region: " + region.identifier)
         guard let region = region as? CLBeaconRegion else {
             return
         }
@@ -180,7 +184,7 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
     }
     
     public func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
-        _piAdapter.printDebug("Did Range Beacons In Region: " + region.description)
+        _piAdapter.printDebug("Did Range Beacons In Region: " + region.identifier)
         
         if (beacons.isEmpty) {
             return
@@ -194,6 +198,7 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
             lastReport = PI_REPORT_INTERVAL + 1
         }
         
+        // TODO remove it reporting any beacons if the list is returned with only -1s
         if lastReport > PI_REPORT_INTERVAL {
             // array is ordered by accuracy, but if there are beacons with unknown accuracy (-1.0m) they will be at the front of the array
             let filteredBeacons = beacons.filter({ $0.accuracy > 0 })
@@ -215,13 +220,13 @@ extension PIBeaconSensor: CLLocationManagerDelegate {
     
     public func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
         if let r = region as? CLBeaconRegion {
-            _piAdapter.printDebug("Started monitoring region: " + r.proximityUUID.UUIDString)
+            _piAdapter.printDebug("Started monitoring region: " + r.identifier)
         }
     }
     
     public func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
         if let r = region as? CLBeaconRegion {
-            _piAdapter.printDebug("Failed to monitor for region: " + r.proximityUUID.UUIDString + " Error: \(error)")
+            _piAdapter.printDebug("Failed to monitor for region: " + r.identifier + "\nError: \(error)")
         }
     }
     
