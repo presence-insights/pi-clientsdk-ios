@@ -12,7 +12,7 @@ EOT
 
 Pod::Spec.new do |s|
   s.name     = 'IBMPIGeofence'
-  s.version  = '1.0.1'
+  s.version  = '2.0.1'
   s.license      = {:type => 'Apache', :text => license}
   s.summary  = 'IBM Presence Insight Outdoor SDK for iOS.'
   s.description  = <<-DESC
@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   s.source   = { :git => 'https://github.com/presence-insights/pi-clientsdk-ios', :tag => s.version }
   s.requires_arc = true
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '8.0'
   s.source_files = 'IBMPIGeofence'
   s.resources = ["IBMPIGeofence/*.xcdatamodel"]
 
