@@ -28,6 +28,7 @@
 		518BE4CA1CB57EB800612FD9 /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4C81CB57EB800612FD9 /* RegionManager.swift */; };
 		518BE4D81CB6B5DB00612FD9 /* IBMPICore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518BE4D71CB6B5DB00612FD9 /* IBMPICore.framework */; };
 		518BE4E61CB81A4200612FD9 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518BE4E51CB81A4200612FD9 /* CoreLocation.framework */; };
+		EF3A4B668C0EA712210BE3DC /* Pods_IBMPIBeacon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1772B6FE3F2A370F0CEE8F8 /* Pods_IBMPIBeacon.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,9 @@
 		518BE4C81CB57EB800612FD9 /* RegionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
 		518BE4D71CB6B5DB00612FD9 /* IBMPICore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IBMPICore.framework; path = "../../Library/Developer/Xcode/DerivedData/PresenceInsightsSDK-akvndcbzjpticdarkjbrsccqjmju/Build/Products/Debug-iphonesimulator/IBMPICore.framework"; sourceTree = "<group>"; };
 		518BE4E51CB81A4200612FD9 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		B1772B6FE3F2A370F0CEE8F8 /* Pods_IBMPIBeacon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IBMPIBeacon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB4B9BB98CA82E7D5604930F /* Pods-IBMPIBeacon.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IBMPIBeacon.release.xcconfig"; path = "Pods/Target Support Files/Pods-IBMPIBeacon/Pods-IBMPIBeacon.release.xcconfig"; sourceTree = "<group>"; };
+		F74ED8FBD56B36AE8D5DF7C3 /* Pods-IBMPIBeacon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IBMPIBeacon.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IBMPIBeacon/Pods-IBMPIBeacon.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,7 @@
 			files = (
 				518BE4E61CB81A4200612FD9 /* CoreLocation.framework in Frameworks */,
 				518BE4D81CB6B5DB00612FD9 /* IBMPICore.framework in Frameworks */,
+				EF3A4B668C0EA712210BE3DC /* Pods_IBMPIBeacon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +79,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		490D46E7E7694BA9A412912A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F74ED8FBD56B36AE8D5DF7C3 /* Pods-IBMPIBeacon.debug.xcconfig */,
+				EB4B9BB98CA82E7D5604930F /* Pods-IBMPIBeacon.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		518BE3F71CB2E75A00612FD9 = {
 			isa = PBXGroup;
 			children = (
@@ -82,6 +96,8 @@
 				518BE4031CB2E75A00612FD9 /* IBMPIBeacon */,
 				518BE40F1CB2E75A00612FD9 /* IBMPIBeaconTests */,
 				518BE4021CB2E75A00612FD9 /* Products */,
+				490D46E7E7694BA9A412912A /* Pods */,
+				6720FC7C734C1D1EF88418D2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -114,6 +130,14 @@
 			path = IBMPIBeaconTests;
 			sourceTree = "<group>";
 		};
+		6720FC7C734C1D1EF88418D2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B1772B6FE3F2A370F0CEE8F8 /* Pods_IBMPIBeacon.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -132,10 +156,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 518BE4151CB2E75A00612FD9 /* Build configuration list for PBXNativeTarget "IBMPIBeacon" */;
 			buildPhases = (
+				B42DDAC3FFE5DBAA6E4E44B2 /* 📦 Check Pods Manifest.lock */,
 				518BE3FC1CB2E75A00612FD9 /* Sources */,
 				518BE3FD1CB2E75A00612FD9 /* Frameworks */,
 				518BE3FE1CB2E75A00612FD9 /* Headers */,
 				518BE3FF1CB2E75A00612FD9 /* Resources */,
+				4DB87B1C881083C59ACA991B /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -222,6 +248,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4DB87B1C881083C59ACA991B /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-IBMPIBeacon/Pods-IBMPIBeacon-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		518BE4D51CB5A3D500612FD9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -234,6 +275,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "######################\n# Options\n######################\n\nREVEAL_ARCHIVE_IN_FINDER=false\n\nFRAMEWORK_NAME=\"${PROJECT_NAME}\"\n\nSIMULATOR_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework\"\n\nDEVICE_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework\"\n\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphoneuniversal\"\n\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n\n######################\n# Build Frameworks\n######################\n\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphonesimulator 2>&1\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphoneos -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphoneos 2>&1\n\n######################\n# Create directory for universal\n######################\n\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${FRAMEWORK}\"\n\n\n######################\n# Copy files Framework\n######################\n\ncp -r \"${DEVICE_LIBRARY_PATH}/.\" \"${FRAMEWORK}\"\n\n\n######################\n# Make an universal binary\n######################\n\nlipo \"${SIMULATOR_LIBRARY_PATH}/${FRAMEWORK_NAME}\" \"${DEVICE_LIBRARY_PATH}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# For Swift framework, Swiftmodule needs to be copied in the universal framework\nif [ -d \"${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\nif [ -d \"${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\n######################\n# On Release, copy the result to release directory\n######################\nOUTPUT_DIR=\"${PROJECT_DIR}/Output\"\nTARGET_DIR=\"${OUTPUT_DIR}/${FRAMEWORK_NAME}-${CONFIGURATION}-iphoneuniversal/\"\n\nrm -rf \"$TARGET_DIR\"\nmkdir -p \"$TARGET_DIR\"\n\ncp -rf \"${FRAMEWORK}\" \"$OUTPUT_DIR\"\ncp -r \"${FRAMEWORK}\" \"$TARGET_DIR\"\n\nif [ ${REVEAL_ARCHIVE_IN_FINDER} = true ]; then\n    open \"${OUTPUT_DIR}/\"\nfi";
+		};
+		B42DDAC3FFE5DBAA6E4E44B2 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -359,6 +415,7 @@
 		};
 		518BE4161CB2E75A00612FD9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F74ED8FBD56B36AE8D5DF7C3 /* Pods-IBMPIBeacon.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -378,6 +435,7 @@
 		};
 		518BE4171CB2E75A00612FD9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB4B9BB98CA82E7D5604930F /* Pods-IBMPIBeacon.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;

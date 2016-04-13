@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		405DBD3E5B9C98FC9F949558 /* Pods_IBMPICore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42A556DA28B434AC4A255B16 /* Pods_IBMPICore.framework */; };
 		518BE4291CB2E78F00612FD9 /* IBMPICore.h in Headers */ = {isa = PBXBuildFile; fileRef = 518BE4281CB2E78F00612FD9 /* IBMPICore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		518BE4301CB2E78F00612FD9 /* IBMPICore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 518BE4251CB2E78F00612FD9 /* IBMPICore.framework */; };
 		518BE4351CB2E78F00612FD9 /* IBMPICoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518BE4341CB2E78F00612FD9 /* IBMPICoreTests.swift */; };
@@ -47,6 +48,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		32B597A323110E0690307A7C /* Pods-IBMPICore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IBMPICore.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IBMPICore/Pods-IBMPICore.debug.xcconfig"; sourceTree = "<group>"; };
+		42A556DA28B434AC4A255B16 /* Pods_IBMPICore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IBMPICore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		518BE4251CB2E78F00612FD9 /* IBMPICore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IBMPICore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		518BE4281CB2E78F00612FD9 /* IBMPICore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IBMPICore.h; sourceTree = "<group>"; };
 		518BE42A1CB2E78F00612FD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -63,6 +66,7 @@
 		518BE4BC1CB57EA100612FD9 /* PISensor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PISensor.swift; sourceTree = "<group>"; };
 		518BE4BD1CB57EA100612FD9 /* PIZone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PIZone.swift; sourceTree = "<group>"; };
 		518BE4CB1CB57EC400612FD9 /* TestConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
+		644A10FD1FE1DAA1C3DE497C /* Pods-IBMPICore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IBMPICore.release.xcconfig"; path = "Pods/Target Support Files/Pods-IBMPICore/Pods-IBMPICore.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				405DBD3E5B9C98FC9F949558 /* Pods_IBMPICore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +95,8 @@
 				518BE4271CB2E78F00612FD9 /* IBMPICore */,
 				518BE4331CB2E78F00612FD9 /* IBMPICoreTests */,
 				518BE4261CB2E78F00612FD9 /* Products */,
+				B36E7DF20C49DCF54D1308A3 /* Pods */,
+				8D12FF1C945206ABB5435731 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -130,6 +137,23 @@
 			path = IBMPICoreTests;
 			sourceTree = "<group>";
 		};
+		8D12FF1C945206ABB5435731 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				42A556DA28B434AC4A255B16 /* Pods_IBMPICore.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B36E7DF20C49DCF54D1308A3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				32B597A323110E0690307A7C /* Pods-IBMPICore.debug.xcconfig */,
+				644A10FD1FE1DAA1C3DE497C /* Pods-IBMPICore.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -148,10 +172,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 518BE4391CB2E78F00612FD9 /* Build configuration list for PBXNativeTarget "IBMPICore" */;
 			buildPhases = (
+				F4198A607A5248A69C0B3C18 /* 📦 Check Pods Manifest.lock */,
 				518BE4201CB2E78F00612FD9 /* Sources */,
 				518BE4211CB2E78F00612FD9 /* Frameworks */,
 				518BE4221CB2E78F00612FD9 /* Headers */,
 				518BE4231CB2E78F00612FD9 /* Resources */,
+				DDE980F30E92740C96E1476B /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -250,6 +276,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "######################\n# Options\n######################\n\nREVEAL_ARCHIVE_IN_FINDER=false\n\nFRAMEWORK_NAME=\"${PROJECT_NAME}\"\n\nSIMULATOR_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework\"\n\nDEVICE_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework\"\n\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphoneuniversal\"\n\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n\n######################\n# Build Frameworks\n######################\n\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphonesimulator 2>&1\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphoneos -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphoneos 2>&1\n\n######################\n# Create directory for universal\n######################\n\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${FRAMEWORK}\"\n\n\n######################\n# Copy files Framework\n######################\n\ncp -r \"${DEVICE_LIBRARY_PATH}/.\" \"${FRAMEWORK}\"\n\n\n######################\n# Make an universal binary\n######################\n\nlipo \"${SIMULATOR_LIBRARY_PATH}/${FRAMEWORK_NAME}\" \"${DEVICE_LIBRARY_PATH}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# For Swift framework, Swiftmodule needs to be copied in the universal framework\nif [ -d \"${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\nif [ -d \"${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\n######################\n# On Release, copy the result to release directory\n######################\nOUTPUT_DIR=\"${PROJECT_DIR}/Output\"\nTARGET_DIR=\"${OUTPUT_DIR}/${FRAMEWORK_NAME}-${CONFIGURATION}-iphoneuniversal/\"\n\nrm -rf \"$TARGET_DIR\"\nmkdir -p \"$TARGET_DIR\"\n\ncp -rf \"${FRAMEWORK}\" \"$OUTPUT_DIR\"\ncp -r \"${FRAMEWORK}\" \"$TARGET_DIR\"\n\nif [ ${REVEAL_ARCHIVE_IN_FINDER} = true ]; then\n    open \"${OUTPUT_DIR}/\"\nfi";
+		};
+		DDE980F30E92740C96E1476B /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-IBMPICore/Pods-IBMPICore-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F4198A607A5248A69C0B3C18 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -383,6 +439,7 @@
 		};
 		518BE43A1CB2E78F00612FD9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 32B597A323110E0690307A7C /* Pods-IBMPICore.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -402,6 +459,7 @@
 		};
 		518BE43B1CB2E78F00612FD9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 644A10FD1FE1DAA1C3DE497C /* Pods-IBMPICore.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
