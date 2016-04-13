@@ -7,4 +7,10 @@
    <FileRef
       location = "group:IBMPIBeacon.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:IBMPIGeofence.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj">
+   </FileRef>
 </Workspace>
