@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		7D2823F91CBE773B00C49B6A /* IBMPIGeofence-Universal */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7D2823FC1CBE773B00C49B6A /* Build configuration list for PBXAggregateTarget "IBMPIGeofence-Universal" */;
+			buildPhases = (
+				7D2823FD1CBE775200C49B6A /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "IBMPIGeofence-Universal";
+			productName = "IBMPIGeofence-Universal";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		7D0AB21F1C97222D00638D62 /* PIUnprotectedPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0AB21E1C97222D00638D62 /* PIUnprotectedPreferences.swift */; };
 		7DB68AB31C9AB40A001A1151 /* PIGeofencePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DB68AB21C9AB40A001A1151 /* PIGeofencePreferences.swift */; };
@@ -285,6 +299,9 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = IBM;
 				TargetAttributes = {
+					7D2823F91CBE773B00C49B6A = {
+						CreatedOnToolsVersion = 7.3;
+					};
 					7DE01ACD1C888BBB00D7C654 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = 67DBV735VF;
@@ -304,6 +321,7 @@
 			projectRoot = "";
 			targets = (
 				7DE01ACD1C888BBB00D7C654 /* IBMPIGeofence */,
+				7D2823F91CBE773B00C49B6A /* IBMPIGeofence-Universal */,
 			);
 		};
 /* End PBXProject section */
@@ -333,6 +351,19 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
+		};
+		7D2823FD1CBE775200C49B6A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "######################\n# Options\n######################\n\nREVEAL_ARCHIVE_IN_FINDER=false\n\nFRAMEWORK_NAME=\"${PROJECT_NAME}\"\n\nSIMULATOR_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework\"\n\nDEVICE_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework\"\n\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphoneuniversal\"\n\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n\n######################\n# Build Frameworks\n######################\n\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphonesimulator 2>&1\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${PROJECT_NAME} ONLY_ACTIVE_ARCH=NO -sdk iphoneos -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphoneos 2>&1\n\n######################\n# Create directory for universal\n######################\n\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${FRAMEWORK}\"\n\n\n######################\n# Copy files Framework\n######################\n\ncp -r \"${DEVICE_LIBRARY_PATH}/.\" \"${FRAMEWORK}\"\n\n\n######################\n# Make an universal binary\n######################\n\nlipo \"${SIMULATOR_LIBRARY_PATH}/${FRAMEWORK_NAME}\" \"${DEVICE_LIBRARY_PATH}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# For Swift framework, Swiftmodule needs to be copied in the universal framework\nif [ -d \"${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\nif [ -d \"${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f ${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule\\/${NULL}* \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\n######################\n# On Release, copy the result to release directory\n######################\nOUTPUT_DIR=\"${PROJECT_DIR}/Output\"\nTARGET_DIR=\"${OUTPUT_DIR}/${FRAMEWORK_NAME}-${CONFIGURATION}-iphoneuniversal/\"\n\nrm -rf \"$TARGET_DIR\"\nmkdir -p \"$TARGET_DIR\"\n\ncp -rf \"${FRAMEWORK}\" \"$OUTPUT_DIR\"\ncp -r \"${FRAMEWORK}\" \"$TARGET_DIR\"\n\nif [ ${REVEAL_ARCHIVE_IN_FINDER} = true ]; then\nopen \"${OUTPUT_DIR}/\"\nfi";
 		};
 		9B1E8B77155601BF53D987B2 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -404,6 +435,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		7D2823FA1CBE773B00C49B6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		7D2823FB1CBE773B00C49B6A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		7DE01AD41C888BBB00D7C654 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -539,6 +584,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7D2823FC1CBE773B00C49B6A /* Build configuration list for PBXAggregateTarget "IBMPIGeofence-Universal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D2823FA1CBE773B00C49B6A /* Debug */,
+				7D2823FB1CBE773B00C49B6A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		7DE01AC81C888BBB00D7C654 /* Build configuration list for PBXProject "IBMPIGeofence" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
