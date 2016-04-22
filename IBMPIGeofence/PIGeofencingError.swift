@@ -32,6 +32,8 @@ public enum PIGeofencingError:Int,ErrorType {
 	case GeoJsonWrongType
 	case GeoJsonNoFeature
 
+	case GeoJsonPIError
+
 	case GeoJsonMissingFeatureCollectionProperties
 
 	case WrongFences
@@ -58,6 +60,8 @@ extension PIGeofencingError:CustomStringConvertible {
 			return "GeoJsonMissingType"
 		case .GeoJsonWrongType:
 			return "GeoJsonWrongType"
+		case .GeoJsonPIError:
+			return "GeoJsonPIError"
 		case .GeoJsonNoFeature:
 			return "GeoJsonNoFeature"
 		case .GeoJsonMissingFeatureCollectionProperties:

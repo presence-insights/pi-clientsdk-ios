@@ -112,7 +112,7 @@ struct PIGeofencePreferences {
 			synchronize()
 		}
 		get {
-			let max = PIUnprotectedPreferences.sharedInstance.integerForKey(kMaxDownloadRetry)
+			let max = PIUnprotectedPreferences.sharedInstance.integerForKey(kMaxDownloadRetry) ?? 0
 			if max > 0 {
 				return max
 			} else {

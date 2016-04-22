@@ -161,6 +161,7 @@
 				TargetAttributes = {
 					7DB26D571C9AF0F7003D3DE9 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 67DBV735VF;
 					};
 				};
 			};
@@ -367,6 +368,7 @@
 			baseConfigurationReference = 8EE66847C8E2242D8AF21B86 /* Pods-IBMPIGeofenceSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = IBMPIGeofenceSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -380,6 +382,7 @@
 			baseConfigurationReference = 08ADF33A82D1CCE286FC03B5 /* Pods-IBMPIGeofenceSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = IBMPIGeofenceSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

@@ -78,7 +78,7 @@ public final class PIGeofencingManager:NSObject {
     /// Maximum number of regions which can be monitored simultaneously.
     public let maxRegions:Int
     
-    public lazy var dataController = PIGeofenceData.dataController
+    lazy var dataController = PIGeofenceData.dataController
 
 	/// PI Service
     let service:PIService
@@ -147,6 +147,7 @@ public final class PIGeofencingManager:NSObject {
         }
     }
 
+	/// Returns the pathes of the log files
 	public static func logFiles() -> [String] {
 		let documentsFileManager = DDLogFileManagerDefault(logsDirectory:PIGeofenceUtils.documentsDirectory.path)
 
@@ -189,6 +190,7 @@ public final class PIGeofencingManager:NSObject {
 
     }
 
+	/// Method to be called by the AppDelegate to handle the download of the geofence definitions
 	public func handleEventsForBackgroundURLSession(identifier: String, completionHandler: () -> Void) -> Bool {
 
 		DDLogInfo("PIGeofencingManager.handleEventsForBackgroundURLSession",asynchronous:false)
@@ -438,67 +440,6 @@ public final class PIGeofencingManager:NSObject {
 
     }
 
-    public func currentGeofence(completionHandler:(geofence:PIGeofence?) -> Void) {
-
-        guard let currentPosition = locationManager.location else {
-            completionHandler(geofence: nil)
-            return
-        }
-
-        // Compute North East and South West coordinates of the bbox of the regions
-        // which could be monitored
-        let region = MKCoordinateRegionMakeWithDistance(currentPosition.coordinate, Double(maxDistance), Double(maxDistance))
-
-        let nw_lat_ = region.center.latitude + 0.5 * region.span.latitudeDelta
-        let nw_lon_ = region.center.longitude - 0.5 * region.span.longitudeDelta
-        let se_lat_ = region.center.latitude - 0.5 * region.span.latitudeDelta
-        let se_lon_ = region.center.longitude + 0.5 * region.span.longitudeDelta
-
-        let nw = CLLocationCoordinate2D(latitude: nw_lat_, longitude: nw_lon_)
-        let se = CLLocationCoordinate2D(latitude: se_lat_, longitude: se_lon_)
-
-        let moc = self.dataController.writerContext
-
-        moc.performBlock {
-            do {
-                // find the geofences in the bbox of the current position
-                let fetchRequest = PIGeofence.fetchRequest
-                // We will need to access properties of all returned objects
-                fetchRequest.returnsObjectsAsFaults = false
-                // Filter out regions which are too far
-                fetchRequest.predicate = NSPredicate(format: "latitude < \(nw.latitude) and latitude > \(se.latitude) and longitude > \(nw.longitude) and longitude < \(se.longitude)")
-                guard let nearFences = try moc.executeFetchRequest(fetchRequest) as? [PIGeofence] else {
-                    fatalError("Programming error, shouldn't be there")
-                }
-                
-                // Sort fences in ascending order starting from the nearest fence
-                let sortedFences = nearFences.sort(self.compareGeofence(currentPosition))
-                
-                for geofence in sortedFences {
-                    let geofenceLocation = CLLocation(latitude: geofence.latitude.doubleValue, longitude: geofence.longitude.doubleValue)
-                    let distance = currentPosition.distanceFromLocation(geofenceLocation)
-                    if distance < geofence.radius.doubleValue {
-                        let geofenceURI = geofence.objectID.URIRepresentation()
-                        dispatch_async(dispatch_get_main_queue()){
-                            let geofenceUI = self.dataController.managedObjectWithURI(geofenceURI) as! PIGeofence
-                            completionHandler(geofence: geofenceUI)
-                        }
-                        return
-                    }
-                }
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    completionHandler(geofence: nil)
-                }
-                
-                
-            } catch {
-                DDLogError("Core Data Error \(error)")
-                assertionFailure("Core Data Error \(error)")
-                completionHandler(geofence: nil)
-            }
-        }
-    }
     
 }
 

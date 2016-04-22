@@ -126,6 +126,13 @@ extension PIGeofencingManager {
 	func seedGeojson(moc:NSManagedObjectContext,geojson:[String:AnyObject],
 		propertiesGenerator:PIGeofencePropertiesGenerator? = nil) -> PIGeofencingError? {
 
+
+			if let errors = geojson["errors"] as? [[String:AnyObject]]{
+				for error in errors {
+					DDLogError("PI error \(error)")
+				}
+				return PIGeofencingError.GeoJsonPIError
+			}
 			guard let type = geojson["type"] as? String else {
 				return PIGeofencingError.GeoJsonMissingType
 			}
@@ -143,12 +150,10 @@ extension PIGeofencingManager {
 
 			var lastSyncDate:NSDate?
 
-			if let lastSyncDateString = properties?["lastSyncDate"] as? String {
-				DDLogVerbose("LastSyncDate  \(lastSyncDateString)")
-				lastSyncDate = lastSyncDateString.ISO8601
-				if lastSyncDate == nil {
-					DDLogError("Can't parse the JSON lastSyncDate")
-				}
+			if let timestamp = properties?["updatedBefore"] as? NSNumber {
+				DDLogVerbose("Received Timestamp  \(lastSyncDate)")
+				lastSyncDate = NSDate(timeIntervalSince1970: timestamp.doubleValue)
+				DDLogVerbose("Received LastSyncDate \(lastSyncDate!.ISO8601)")
 			} else {
 				DDLogError("Missing Last Synchronization date")
 			}

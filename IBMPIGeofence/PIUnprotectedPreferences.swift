@@ -73,22 +73,22 @@ class PIUnprotectedPreferences {
 
 	}
 
-	func integerForKey(defaultName: String) -> Int {
-		return self.dict[defaultName] as! Int
+	func integerForKey(defaultName: String) -> Int? {
+		return self.dict[defaultName] as? Int
 
 	}
 
-	func floatForKey(defaultName: String) -> Float {
-		return self.dict[defaultName] as! Float
+	func floatForKey(defaultName: String) -> Float? {
+		return self.dict[defaultName] as? Float
 
 	}
 
-	func doubleForKey(defaultName: String) -> Double {
-		return self.dict[defaultName] as! Double
+	func doubleForKey(defaultName: String) -> Double? {
+		return self.dict[defaultName] as? Double
 	}
 
-	func boolForKey(defaultName: String) -> Bool {
-		return self.dict[defaultName] as! Bool
+	func boolForKey(defaultName: String) -> Bool? {
+		return self.dict[defaultName] as? Bool
 
 	}
 
