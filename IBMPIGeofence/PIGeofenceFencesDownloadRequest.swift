@@ -46,7 +46,7 @@ public final class PIGeofenceFencesDownloadRequest:NSObject,PIDownloadRequest {
 
 		var queryItems:[String:Any] = ["paginate":false]
 		if let lastSyncDate = lastSyncDate {
-			queryItems["updatedAfter"] = "\(Int64(lastSyncDate.timeIntervalSince1970))"
+			queryItems["updatedAfter"] = "\(UInt64(lastSyncDate.timeIntervalSince1970))"
 		}
 		URLComponents.percentEncodedQuery = PIGeofenceUtils.buildQueryStringWithParams(queryItems)
 
