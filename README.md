@@ -3,6 +3,8 @@ Presence Insights SDK for iOS
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
+Presence Insights is being retired. Please visit [our docs](https://presenceinsights.ibmcloud.com/pidocs/docs/en/introduction/whatsNew/) to learn more.
+
 This repository contains the source for the PresenceInsightsSDK, an iOS SDK that allows for easy integration of the IBM [Presence Insights](https://console.ng.bluemix.net/catalog/presence-insights/) service available on [Bluemix](https://console.ng.bluemix.net/).
 
 This SDK supports iOS 8+.
