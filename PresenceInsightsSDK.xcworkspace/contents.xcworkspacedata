@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:IBMPICore.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:IBMPIBeacon.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:IBMPIGeofence.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:IBMPIGeofenceSample/IBMPIGeofenceSample.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+</Workspace>

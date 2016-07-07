@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10169.1" systemVersion="15D21" minimumToolsVersion="Xcode 7.0">
+    <entity name="PIDownload" representedClassName="IBMPIDownload" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="progress" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="progressStatus" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="sessionIdentifier" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" attributeType="Date" syncable="YES"/>
+        <attribute name="taskIdentifier" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="PIGeofence" representedClassName="IBMPIGeofence" syncable="YES">
+        <attribute name="code" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" attributeType="Double" indexed="YES" syncable="YES"/>
+        <attribute name="local" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="longitude" attributeType="Double" indexed="YES" syncable="YES"/>
+        <attribute name="monitored" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="radius" attributeType="Double" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="PIDownload" positionX="-63" positionY="27" width="128" height="150"/>
+        <element name="PIGeofence" positionX="-63" positionY="-18" width="128" height="150"/>
+    </elements>
+</model>
