@@ -11,7 +11,7 @@ EOT
 
 Pod::Spec.new do |s|
   s.name         = "IBMPICore"
-  s.version      = "2.0.1"
+  s.version      = "2.0.2"
   s.summary      = "This framework provides an API Adapter for Presence Insights."
   s.description  = "IBM Presence Insights Core framework enables users to communicate with the Presence Insights services by either sending events or obtaining configuration data."
   s.homepage     = "http://presenceinsights.ibmcloud.com"

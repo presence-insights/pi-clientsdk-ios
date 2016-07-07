@@ -11,7 +11,7 @@ EOT
 
 Pod::Spec.new do |s|
   s.name         = "IBMPIBeacon"
-  s.version      = "2.0.1"
+  s.version      = "2.0.2"
   s.summary      = "This framework provides a Beacon Sensor for Presence Insights."
   s.description  = "IBM Presence Insights Beacon framework enables users to communicate to Presence Insights information about the BLE beacons placed in a venue."
   s.homepage     = "http://presenceinsights.ibmcloud.com"
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.source_files = 'IBMPIBeacon/*.{swift}'
   s.exclude_files = 'IBMPIBeaconTests/*.{swift}'
 
-  s.dependency 'IBMPICore', '2.0.1'
+  s.dependency 'IBMPICore', '2.0.2'
   s.frameworks = 'CoreLocation'
 
 end
