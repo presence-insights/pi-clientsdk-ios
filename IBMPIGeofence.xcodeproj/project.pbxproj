@@ -591,6 +591,7 @@
 				7D2823FB1CBE773B00C49B6A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7DE01AC81C888BBB00D7C654 /* Build configuration list for PBXProject "IBMPIGeofence" */ = {
 			isa = XCConfigurationList;
